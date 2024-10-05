@@ -1,0 +1,32 @@
+[
+    {
+        "model": "items.item",
+        "pk": 1,
+        "fields": {
+            "name": "Item 1",
+            "description": "Description for Item 1",
+            "contact_info": "Contact info for Item 1",
+            "owner": 1
+        }
+    },
+    {
+        "model": "items.item",
+        "pk": 2,
+        "fields": {
+            "name": "Item 2",
+            "description": "Description for Item 2",
+            "contact_info": "Contact info for Item 2",
+            "owner": 1
+        }
+    },
+    {
+        "model": "items.item",
+        "pk": 3,
+        "fields": {
+            "name": "Item 3",
+            "description": "Description for Item 3",
+            "contact_info": "Contact info for Item 3",
+            "owner": 1
+        }
+    }
+]
