@@ -1,5 +1,4 @@
 django
 django-allauth
 drf-yasg
-coverage
 django-cors-headers

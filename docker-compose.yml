@@ -5,19 +5,13 @@ services:
       dockerfile: Dockerfile
     image: reviveit-backend
     container_name: reviveit-backend
+    restart: "no"
     ports:
       - "8000:8000"
     environment:
       - DJANGO_SETTINGS_MODULE=reviveit_server.settings
     env_file:
       - ./backend/.env
-    volumes:
-      - ./backend:/app
-      - ./backend/database:/app/database
-    command: >
-      sh -c "python manage.py migrate &&
-            python manage.py createsuperuser --noinput --username $DJANGO_SUPERUSER_USERNAME &&
-            python manage.py runserver 0.0.0.0:8000"
     networks:
       - internal
 
@@ -27,10 +21,9 @@ services:
       dockerfile: Dockerfile
     image: reviveit-frontend
     container_name: reviveit-frontend
+    restart: "no"
     ports:
-      - "8080:80"
-    volumes:
-      - ./frontend:/app
+      - "80:80"
     environment:
       - API_URL=http://backend:8000
     depends_on:
