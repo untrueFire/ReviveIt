@@ -1,14 +1,16 @@
 import rest_framework.request
-from django.http import JsonResponse
 from django.contrib.auth.models import User
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+
+from .messages import *
 from .models import Item
 from .serializers import ItemSerializer, UserSerializer
-from drf_yasg import openapi
-from drf_yasg.utils import swagger_auto_schema
-from .messages import *
 
 
 @swagger_auto_schema(method="get", responses={200: ItemSerializer(), 404: ITEM_NOT_FOUND})
@@ -31,6 +33,14 @@ def get_items(_):
     serializer = ItemSerializer(items, many=True)
     return Response(serializer.data)
 
+@swagger_auto_schema(method="get", responses={200: ItemSerializer(many=True)})
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_my_items(request):
+    items = Item.objects.filter(owner=request.user)
+    serializer = ItemSerializer(items, many=True)
+    return Response(serializer.data)
+
 
 item_schema = openapi.Schema(
     type=openapi.TYPE_OBJECT,
@@ -41,7 +51,6 @@ item_schema = openapi.Schema(
     },
     required=["name", "description", "contact_info"],
 )
-
 
 @swagger_auto_schema(
     method="post",
