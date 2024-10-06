@@ -46,10 +46,15 @@ module.exports = {
       directory: __dirname + '/dist',
     },
     hot: true,
-    port: 8080,
+    port: 80,
     proxy: [
       {
         context: ['/api'],
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+      },
+      {
+        context: ['/accounts'],
         target: 'http://localhost:8000',
         changeOrigin: true,
       },

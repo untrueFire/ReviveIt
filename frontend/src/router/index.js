@@ -11,42 +11,68 @@ const routes = [
     path: '/',
     name: 'Home',
     component: Home,
+    meta: {
+      title: '首页'
+    }
   },
   {
     path: '/login',
     name: 'Login',
     component: Login,
+    meta: {
+      title: '登录'
+    }
   },
   {
     path: '/register',
     name: 'Register',
     component: Register,
+    meta: {
+      title: '注册'
+    }
   },
   {
     path: '/user',
     name: 'User',
     component: User,
+    meta: {
+      title: '我的'
+    }
   },
   {
     path: '/logout',
     name: 'Logout',
-    component: Logout
+    component: Logout,
+    meta: {
+      title: '登出确认'
+    }
   },
   {
     path: '/additem',
     name: 'AddItem',
-    component: AddItem
+    component: AddItem,
+    meta: {
+      title: '添加物品信息'
+    }
   },
   {
     path: '/edit/:id',
     name: 'EditItem',
-    component: EditItem
+    component: EditItem,
+    meta: {
+      title: '更新物品信息'
+    }
   }
 ];
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  document.title = 'ReviveIt | ' + to.meta.title || 'ReviveIt';
+  next();
 });
 
 export default router;

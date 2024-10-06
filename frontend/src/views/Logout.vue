@@ -7,21 +7,26 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router';
-import axios from 'axios';
+import { useRouter } from "vue-router";
+import axios from "axios";
+import { getCookie } from "@/utils/api";
 
 const router = useRouter();
 
 async function handleLogout() {
   try {
-    await axios.post('http://localhost:8000/accounts/logout/', '',{
-      withCredentials: true
+    const csrftoken = getCookie("csrftoken");
+    await axios.post("/accounts/logout/", "", {
+      withCredentials: true,
+      headers: {
+        "X-CsrfToken": csrftoken,
+      },
     });
-    localStorage.removeItem('isLoggedIn');
-	window.dispatchEvent(new Event('storage'));
-    router.push('/login');
+    localStorage.removeItem("isLoggedIn");
+    window.dispatchEvent(new Event("storage"));
+    router.push("/login");
   } catch (error) {
-    console.log('Error during logout:', error);
+    console.log("Error during logout:", error);
   }
 }
 </script>
