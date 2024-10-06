@@ -1,0 +1,60 @@
+<template>
+  <div class="edit-item-form">
+    <h1>编辑物品</h1>
+    <form @submit.prevent="handleUpdateItem">
+      <div class="form-group">
+        <label for="name">物品名称</label>
+        <input id="name" v-model="item.name" placeholder="物品名称" />
+      </div>
+      <div class="form-group">
+        <label for="description">物品描述</label>
+        <input id="description" v-model="item.description" placeholder="物品描述" />
+      </div>
+      <div class="form-group">
+        <label for="contact_info">联系方式</label>
+        <input id="contact_info" v-model="item.contact_info" placeholder="联系方式" />
+      </div>
+      <button type="submit">更新</button>
+    </form>
+  </div>
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useToast } from 'vue-toastification';
+import { fetchItem, updateItem } from '@/utils/api';
+
+const route = useRoute();
+const router = useRouter();
+const toast = useToast();
+
+const itemId = route.params.id;
+const item = ref({
+  name: '',
+  description: '',
+  contact_info: ''
+});
+
+onMounted(async () => {
+  try {
+    const response = await fetchItem(itemId);
+    item.value = response;
+  } catch (error) {
+    console.log('获取物品信息失败:', error);
+  }
+});
+
+async function handleUpdateItem() {
+  try {
+    await updateItem(itemId, item.value);
+    toast.success('物品更新成功');
+    router.push('/user');
+  } catch (error) {
+    console.log('更新物品失败:', error);
+    toast.error('更新物品失败');
+  }
+}
+</script>
+
+<style scoped src="@/assets/css/styles.css"></style>
