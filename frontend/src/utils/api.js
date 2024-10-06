@@ -12,7 +12,7 @@ export function getCookie(name) {
 }
 export async function fetchUserInfo() {
 	try {
-		const response = await axios.get('http://localhost:8000/api/user/', {
+		const response = await axios.get('/api/user/', {
 			withCredentials: true
 		});
 		return response.data;
@@ -24,7 +24,7 @@ export async function fetchUserInfo() {
 
 export async function fetchUserItems() {
 	try {
-		const response = await axios.get('http://localhost:8000/api/user/items/', {
+		const response = await axios.get('/api/user/items/', {
 			withCredentials: true
 		});
 		return response.data;
@@ -37,7 +37,7 @@ export async function fetchUserItems() {
 export async function deleteItem(itemId) {
 	try {
 		const csrfToken = getCookie('csrftoken');
-		await axios.post(`http://localhost:8000/api/items/delete/${itemId}/`, '', {
+		await axios.post(`/api/items/delete/${itemId}/`, '', {
 			withCredentials: true,
 			headers: {
 				'X-CSRFToken': csrfToken
@@ -52,7 +52,7 @@ export async function deleteItem(itemId) {
 
 export async function fetchItem(itemId) {
 	try {
-		const response = await axios.get(`http://localhost:8000/api/items/${itemId}/`, {
+		const response = await axios.get(`/api/items/${itemId}/`, {
 			withCredentials: true
 		});
 		return response.data;
@@ -65,7 +65,7 @@ export async function fetchItem(itemId) {
 export async function updateItem(itemId, itemData) {
 	try {
 		const csrfToken = getCookie('csrftoken');
-		const response = await axios.post(`http://localhost:8000/api/items/update/${itemId}/`, itemData, {
+		const response = await axios.post(`/api/items/update/${itemId}/`, itemData, {
 			withCredentials: true,
 			headers: {
 				'X-CSRFToken': csrfToken

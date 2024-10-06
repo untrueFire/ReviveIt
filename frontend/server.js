@@ -6,15 +6,15 @@ const compiler = webpack(config);
 const server = new WebpackDevServer(compiler, {
   hot: true,
   open: true,
-  port: 8080,
+  port: 80,
   host: 'localhost',
   historyApiFallback: true
 });
 
-server.listen(8080, 'localhost', (err) => {
+server.listen(80, 'localhost', (err) => {
   if (err) {
     console.log(err);
     return;
   }
-  console.log('Listening at http://localhost:8080');
+  console.log('Listening at http://localhost');
 });

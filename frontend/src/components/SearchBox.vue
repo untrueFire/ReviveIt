@@ -37,7 +37,7 @@ const results = ref([]);
 const handleInput = async () => {
   try {
     const response = await axios.get(
-      `http://localhost:8000/api/search/?q=${encodeURIComponent(query.value)}`
+      `/api/search/?q=${encodeURIComponent(query.value)}`
     );
     results.value = response.data;
   } catch (error) {

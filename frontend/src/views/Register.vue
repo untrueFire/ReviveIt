@@ -42,6 +42,7 @@ import { ref, onMounted } from "vue";
 import { useRouter } from 'vue-router';
 import axios from "axios";
 import { useToast } from 'vue-toastification';
+import { getCookie } from "@/utils/api";
 const username = ref("");
 const password1 = ref("");
 const password2 = ref("");
@@ -50,7 +51,7 @@ const router = useRouter();
 const toast = useToast();
 onMounted(async () => {
   try {
-    const response = await axios.get("http://localhost:8000/accounts/signup/");
+    const response = await axios.get("/accounts/signup/");
     const csrfTokenElement = extractCsrfToken(response.data);
     csrfmiddlewaretoken.value = csrfTokenElement.value;
   } catch (error) {
@@ -64,6 +65,7 @@ const handleSubmit = async () => {
     return;
   }
   try {
+    const csrftoken = getCookie("csrftoken");
     const params = new URLSearchParams();
     params.append("csrfmiddlewaretoken", csrfmiddlewaretoken.value);
     params.append("username", username.value);
@@ -71,14 +73,19 @@ const handleSubmit = async () => {
     params.append("password1", password1.value);
     params.append("password2", password2.value);
     const response = await axios.post(
-      "http://localhost:8000/accounts/signup/",
+      "/accounts/signup/",
       params,
-      { withCredentials: true }
+      { withCredentials: true,
+        headers: {
+          'X-CsrfToken': csrftoken
+        }
+       }
     );
-    // console.log(response.data);
     if (response.data.username) {
+      localStorage.setItem("isLoggedIn", "true");
+      window.dispatchEvent(new Event("storage"));
       toast.success('注册成功');
-      router.push("/login");
+      router.push("/user");
     } else {
       const errorList = response.data.match(/<ul class="errorlist(.*?)<\/ul>/s);
         if (errorList) {
