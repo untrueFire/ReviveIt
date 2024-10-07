@@ -20,4 +20,4 @@ COPY run.sh /
 
 EXPOSE 80
 
-CMD ["sh","-c", "run.sh"]
+CMD ["sh","-c", "/run.sh"]
