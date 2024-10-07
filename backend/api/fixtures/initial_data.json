@@ -1,6 +1,6 @@
 [
     {
-        "model": "items.item",
+        "model": "api.item",
         "pk": 1,
         "fields": {
             "name": "Item 1",
@@ -10,7 +10,7 @@
         }
     },
     {
-        "model": "items.item",
+        "model": "api.item",
         "pk": 2,
         "fields": {
             "name": "Item 2",
@@ -20,7 +20,7 @@
         }
     },
     {
-        "model": "items.item",
+        "model": "api.item",
         "pk": 3,
         "fields": {
             "name": "Item 3",

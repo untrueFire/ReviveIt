@@ -3,11 +3,7 @@
     <h1>用户信息</h1>
     <div v-if="user">
       <p><strong>用户名:</strong> {{ user.username }}</p>
-      <p>
-        <strong>权限：</strong>
-        <b v-if="user.is_staff">管理员</b>
-        <b v-else>普通用户</b>
-      </p>
+      <p><strong>功德:</strong> {{ user.balance }}</p>
     </div>
     <div v-else>
       <p>加载中...</p>

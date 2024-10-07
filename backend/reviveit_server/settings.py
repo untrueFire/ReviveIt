@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "insecure-secret")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = []
 
@@ -42,10 +42,11 @@ INSTALLED_APPS = [
     "django.contrib.sites",
     "rest_framework",
     "drf_yasg",
-    "items",
+    "api",
     "allauth",
     "allauth.account",
     "corsheaders",
+    "notifications",
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -131,7 +132,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -163,3 +165,9 @@ SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_SAMESITE = "None"
 CSRF_TRUSTED_ORIGINS = ["http://localhost"]
 ALLOWED_HOSTS = ["*"]
+
+
+AUTH_USER_MODEL = 'api.User'
+
+# 软删除
+DJANGO_NOTIFICATIONS_CONFIG = {'USE_JSONFIELD': True}

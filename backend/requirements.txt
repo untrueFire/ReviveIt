@@ -1,4 +1,6 @@
-django
+django==5.0.0
 django-allauth
 drf-yasg
 django-cors-headers
+django-notifications-hq
+gunicorn

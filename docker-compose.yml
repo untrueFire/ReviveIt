@@ -6,8 +6,6 @@ services:
     image: reviveit-backend
     container_name: reviveit-backend
     restart: "no"
-    ports:
-      - "8000:8000"
     environment:
       - DJANGO_SETTINGS_MODULE=reviveit_server.settings
     env_file:
@@ -25,7 +23,7 @@ services:
     ports:
       - "80:80"
     environment:
-      - API_URL=http://backend:8000
+      - API_URL=http://backend
     depends_on:
       - backend
     networks:
