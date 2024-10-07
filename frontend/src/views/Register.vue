@@ -1,7 +1,7 @@
 <template>
   <div class="register-form">
     <h1>注册</h1>
-    <form @submit.prevent="handleSubmit">
+    <form @submit.prevent="handleRegister">
       <div class="form-group">
         <label for="username">用户名</label>
         <input
@@ -59,7 +59,7 @@ onMounted(async () => {
   }
 });
 
-const handleSubmit = async () => {
+const handleRegister = async () => {
   if (password1.value !== password2.value) {
     alert("密码和确认密码不一致");
     return;
@@ -81,8 +81,8 @@ const handleSubmit = async () => {
         }
        }
     );
-    if (response.data.username) {
-      localStorage.setItem("isLoggedIn", "true");
+    if (response.data.id) {
+      localStorage.setItem("userId", response.data.id);
       window.dispatchEvent(new Event("storage"));
       toast.success('注册成功');
       router.push("/user");

@@ -175,7 +175,7 @@ class AcceptDealTestCase(TestCase):
         self.new_owner = User.objects.create_user(username="newowner", password="newpass")
         self.item = Item.objects.create(owner=self.user)
         self.transaction = Transaction.objects.create(buyer=self.new_owner, target=self.item, price=100)
-        self.notification = Notification.objects.create(actor=self.new_owner, action_object=self.transaction, recipient=self.user)
+        self.notification = Notification.objects.create(actor=self.new_owner, verb='proposed',action_object=self.transaction, recipient=self.user)
 
     def test_accept_deal_success(self):
         self.client.login(username="testuser", password="testpass")
@@ -198,7 +198,7 @@ class AcceptDealTestCase(TestCase):
     def test_accept_deal_invalid_request(self):
         self.client.login(username="newowner", password="newpass")
         response = self.client.post(reverse("accept_deal", args=[999]))
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 class RejectDealTestCase(TestCase):
 
@@ -209,12 +209,12 @@ class RejectDealTestCase(TestCase):
         self.client.login(username="testuser", password="testpass")
         self.item = Item.objects.create(owner=self.user)
         self.deal = Transaction.objects.create(buyer=self.buyer, target=self.item, price=100)
-        self.notification = Notification.objects.create(action_object=self.deal, unread=True, actor=self.buyer, recipient=self.user)
+        self.notification = Notification.objects.create(action_object=self.deal, verb='proposed', unread=True, actor=self.buyer, recipient=self.user)
 
     def test_reject_deal_success(self):
         response = self.client.post(reverse("reject_deal", args=[self.notification.id]))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()["message"], REJECT_SUCCESS)
+        self.assertEqual(response.json()["message"], SUCCCESS)
         self.buyer.refresh_from_db()
         self.assertEqual(self.buyer.balance, 200)
         self.notification.refresh_from_db()
@@ -223,14 +223,14 @@ class RejectDealTestCase(TestCase):
     def test_reject_deal_nonexistent_notification(self):
         response = self.client.post(reverse("reject_deal", args=[999]))
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(response.json()["message"], INVALID_REQUEST)
+        self.assertEqual(response.json()["message"], ITEM_NOT_FOUND)
 
     def test_reject_deal_already_read_notification(self):
         self.notification.unread = False
         self.notification.save()
 
         response = self.client.post(reverse("reject_deal", args=[self.notification.id]))
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json()["message"], INVALID_REQUEST)
 
     def test_reject_deal_unauthorized(self):
@@ -253,23 +253,23 @@ class ReviveTestCase(TestCase):
         price = 50
         response = self.client.post(reverse("revive", args=[self.item.id]), {"price": price})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json()["message"], PROPOSAL_SUBMITTED)
+        self.assertEqual(response.json()["message"], SUCCCESS)
         self.user.refresh_from_db()
         self.assertEqual(self.user.balance, balance - price)
 
     def test_revive_item_not_found(self):
         self.client.login(username="testuser", password="testpass")
-        response = self.client.post(reverse("revive", args=[999]), {"price": 50})  # Non-existent item ID
+        response = self.client.post(reverse("revive", args=[999]), {"price": 50})
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_revive_no_balance(self):
         self.client.login(username="testuser", password="testpass")
-        response = self.client.post(reverse("revive", args=[self.item.id]), {"price": 1000})  # Insufficient balance
+        response = self.client.post(reverse("revive", args=[self.item.id]), {"price": 1000})
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_revive_invalid_request(self):
         self.client.login(username="testuser", password="testpass")
-        response = self.client.post(reverse("revive", args=[self.item.id]), {"price": -10})  # Negative price
+        response = self.client.post(reverse("revive", args=[self.item.id]), {"price": -10})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_revive_unauthenticated(self):

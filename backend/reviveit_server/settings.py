@@ -64,6 +64,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
+    "api.middleware.TransactionMiddleware",
 ]
 
 ROOT_URLCONF = "reviveit_server.urls"

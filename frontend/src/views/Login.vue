@@ -56,17 +56,14 @@ const handleSubmit = async () => {
     params.append("login", username.value);
     params.append("password", password.value);
     params.append("next", "/api/user/");
-    const response = await axios.post(
-      "/accounts/login/",
-      params,
-      { withCredentials: true,
-        headers: {
-          'X-CsrfToken': csrftoken
-        }
-       }
-    );
-    if (response.data.username) {
-      localStorage.setItem("isLoggedIn", "true");
+    const response = await axios.post("/accounts/login/", params, {
+      withCredentials: true,
+      headers: {
+        "X-CsrfToken": csrftoken,
+      },
+    });
+    if (response.data.id) {
+      localStorage.setItem("userId", response.data.id);
       window.dispatchEvent(new Event("storage"));
       toast.success("登录成功");
       router.push("/user");
