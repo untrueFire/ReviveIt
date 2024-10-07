@@ -1,5 +1,5 @@
+from traceback import print_exc
 import rest_framework.request
-from django.http import JsonResponse
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import api_view, permission_classes
@@ -21,7 +21,7 @@ def get_item(_, item_id):
         serializer = ItemSerializer(item)
         return Response(serializer.data)
     except Item.DoesNotExist:
-        return JsonResponse({"message": ITEM_NOT_FOUND}, status=404)
+        return fast404
 
 
 @swagger_auto_schema(method="get", responses={200: ItemSerializer(many=True)})
@@ -64,8 +64,8 @@ def add_item(request):
     serializer = ItemSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save(owner=request.user)
-        return Response(serializer.data, status=200)
-    return Response(INVALID_REQUEST, status=400)
+        return Response(serializer.data)
+    return fast400
 
 
 @api_view(["POST"])
@@ -75,11 +75,11 @@ def delete_item(request, item_id):
         item = Item.objects.get(id=item_id)
         if item.owner == request.user or request.user.is_staff:
             item.delete()
-            return JsonResponse({"message": DELETE_SUCCESS})
+            return fast200
         else:
-            return JsonResponse({"message": PERMISSION_DENIED}, status=403)
+            return fast403
     except Item.DoesNotExist:
-        return JsonResponse({"message": ITEM_NOT_FOUND}, status=404)
+        return fast404
 
 
 @swagger_auto_schema(
@@ -99,11 +99,11 @@ def update_item(request, item_id):
                 serializer.save()
                 return Response(serializer.data, status=200)
             else:
-                return JsonResponse({"message": INVALID_REQUEST}, status=400)
+                return fast400
         else:
-            return JsonResponse({"message": PERMISSION_DENIED}, status=403)
+            return fast403
     except Item.DoesNotExist:
-        return JsonResponse({"message": ITEM_NOT_FOUND}, status=404)
+        return fast404
 
 
 @swagger_auto_schema(
@@ -140,8 +140,8 @@ def get_user_info(request):
 def accept_deal(request: rest_framework.request.Request, notification_id: int):
     try:
         notification = Notification.objects.get(id=notification_id)
-        if not notification.unread:
-            return JsonResponse({"message": INVALID_REQUEST}, status=404)
+        if not notification.unread or notification.verb != 'proposed':
+            return fast404
         deal: Transaction = notification.action_object
         item = deal.target
         new_owner = deal.buyer
@@ -150,35 +150,41 @@ def accept_deal(request: rest_framework.request.Request, notification_id: int):
             item.owner.save()
             item.owner = new_owner
             item.save()
+            notify.send(request.user, verb="accepted", recipient=new_owner, action_object=deal)
             notification.mark_as_read()
-            return JsonResponse({"message": RIVIVE_SUCCESS})
+            notification.data = 'accepted'
+            notification.save()
+            return fast200
         else:
-            return JsonResponse({"message": PERMISSION_DENIED}, status=403)
+            return fast403
     except Notification.DoesNotExist:
-        return JsonResponse({"message": INVALID_REQUEST}, status=404)
+        return fast400
 
 
 @swagger_auto_schema(
     method="post",
-    responses={200: REJECT_SUCCESS, 404: INVALID_REQUEST, 403: PERMISSION_DENIED},
+    responses={200: REJECT_SUCCESS, 400: INVALID_REQUEST, 403: PERMISSION_DENIED},
 )
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def reject_deal(request: rest_framework.request.Request, notification_id: int):
     try:
         notification = Notification.objects.get(id=notification_id)
-        if not notification.unread:
-            return JsonResponse({"message": INVALID_REQUEST}, status=404)
+        if not notification.unread or notification.verb != 'proposed':
+            return fast400
         if notification.recipient != request.user:
-            return JsonResponse({"message": PERMISSION_DENIED}, status=403)
+            return fast403
         deal: Transaction = notification.action_object
         buyer = deal.buyer
         buyer.balance += deal.price
         buyer.save()
+        notify.send(request.user, verb="rejected", recipient=buyer, action_object=deal)
         notification.mark_as_read()
-        return JsonResponse({"message": REJECT_SUCCESS})
+        notification.data = 'rejected'
+        notification.save()
+        return fast200
     except Notification.DoesNotExist:
-        return JsonResponse({"message": INVALID_REQUEST}, status=404)
+        return fast404
 
 
 @swagger_auto_schema(
@@ -200,20 +206,23 @@ def revive(request: rest_framework.request.Request, item_id):
         price = int(request.data.get("price"))
         buyer: User = request.user
         if not isinstance(price, int) or price < 0:
-            return JsonResponse({"message": INVALID_REQUEST, "price": repr(price)}, status=400)
+            return fast400
         if item.owner != buyer or buyer.is_staff:
-            if buyer.balance >= price or buyer.is_staff:
+            if buyer.balance >= price:
                 deal = Transaction.objects.create(buyer=buyer, target=item, price=price)
                 buyer.balance -= price
                 buyer.save()
                 notify.send(request.user, verb="proposed", action_object=deal, recipient=item.owner)
-                return JsonResponse({"message": PROPOSAL_SUBMITTED})
+                return fast200
             else:
-                return JsonResponse({"message": NO_BALANCE}, status=403)
+                return fast403
         else:
-            return JsonResponse({"message": INVALID_REVIVE}, status=403)
+            return fast403
     except Item.DoesNotExist:
-        return JsonResponse({"message": ITEM_NOT_FOUND}, status=404)
+        return fast404
+    except:
+        print_exc()
+        return fast400
 
 
 @swagger_auto_schema(method="get", responses={200: NotificationSerializer(many=True)})
@@ -222,3 +231,19 @@ def revive(request: rest_framework.request.Request, item_id):
 def user_notifications(request: rest_framework.request.Request):
     notifications = request.user.notifications.all()
     return Response(NotificationSerializer(notifications, many=True).data)
+
+@swagger_auto_schema(
+    method="post",
+    responses={200: REJECT_SUCCESS, 400: INVALID_REQUEST, 403: PERMISSION_DENIED},
+)
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def read(request: rest_framework.request.Request, notification_id: int):
+    try:
+        notification = Notification.objects.get(id=notification_id)
+        if notification.recipient != request.user:
+            return fast403
+        notification.mark_as_read()
+        return fast200
+    except Notification.DoesNotExist:
+        return fast404

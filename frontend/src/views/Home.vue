@@ -9,5 +9,4 @@
 import SearchBox from '../components/SearchBox.vue';
 </script>
 
-<style scoped>
-</style>
+<style scoped src="@/assets/css/styles.css"></style>

@@ -17,7 +17,7 @@ export async function fetchUserInfo() {
 		});
 		return response.data;
 	} catch (error) {
-		console.log('获取用户信息失败:', error);
+		console.error(error);
 		throw error;
 	}
 }
@@ -29,7 +29,7 @@ export async function fetchUserItems() {
 		});
 		return response.data;
 	} catch (error) {
-		console.log('获取用户物品失败:', error);
+		console.error(error);
 		throw error;
 	}
 }
@@ -45,7 +45,7 @@ export async function deleteItem(itemId) {
 		});
 		return itemId;
 	} catch (error) {
-		console.log('删除物品失败:', error);
+		console.error(error);
 		throw error;
 	}
 }
@@ -57,7 +57,7 @@ export async function fetchItem(itemId) {
 		});
 		return response.data;
 	} catch (error) {
-		console.log('获取物品信息失败:', error);
+		console.error(error);
 		throw error;
 	}
 }
@@ -73,7 +73,110 @@ export async function updateItem(itemId, itemData) {
 		});
 		return response.data;
 	} catch (error) {
-		console.log('更新物品失败:', error);
+		console.error(error);
+		throw error;
+	}
+}
+
+export async function fetchNotifications() {
+	try {
+		const response = await axios.get("/api/user/notifications/", {
+			withCredentials: true
+		});
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
+export async function acceptNotification(notificationId) {
+	try {
+		const csrfToken = getCookie('csrftoken');
+		const response = await axios.post(`/api/notification/accept/${notificationId}/`, null, {
+			withCredentials: true,
+			headers: {
+				'X-CSRFToken': csrfToken
+			}
+		});
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
+export async function rejectNotification(notificationId) {
+	try {
+		const csrfToken = getCookie('csrftoken');
+		const response = await axios.post(`/api/notification/reject/${notificationId}/`, null, {
+			withCredentials: true,
+			headers: {
+				'X-CSRFToken': csrfToken
+			}
+		});
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
+export async function ReviveItem(itemId, price) {
+	try {
+		const csrfToken = getCookie('csrftoken');
+		const response = await axios.post(`/api/items/revive/${itemId}/`, price, {
+			withCredentials: true,
+			headers: {
+				'X-CSRFToken': csrfToken
+			}
+		});
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
+export async function search(query) {
+	try {
+		const response = await axios.get(
+			`/api/search/?q=${encodeURIComponent(query)}`
+		);
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
+export async function addItem(data) {
+	try {
+		const csrfToken = getCookie("csrftoken");
+		await axios.post("/api/items/add/", data, {
+			withCredentials: true,
+			headers: {
+				"X-CSRFToken": csrfToken,
+			},
+		});
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
+export async function setRead(notificationId) {
+	try {
+		const csrfToken = getCookie('csrftoken');
+		const response = await axios.post(`/api/notification/read/${notificationId}/`, null, {
+			withCredentials: true,
+			headers: {
+				'X-CSRFToken': csrfToken
+			}
+		});
+		return response.data;
+	} catch (error) {
+		console.error(error);
 		throw error;
 	}
 }

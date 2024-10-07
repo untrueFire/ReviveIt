@@ -22,7 +22,7 @@ async function handleLogout() {
         "X-CsrfToken": csrftoken,
       },
     });
-    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("userId");
     window.dispatchEvent(new Event("storage"));
     router.push("/login");
   } catch (error) {

@@ -1,8 +1,8 @@
 const path = require('path');
 const { VueLoaderPlugin } = require('vue-loader');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { DefinePlugin } = require('webpack');
-const webpack =  require('webpack');
+const { DefinePlugin, HotModuleReplacementPlugin } = require('webpack');
+const webpack = require('webpack');
 module.exports = {
   mode: 'development',
   entry: './src/main.js',
@@ -39,7 +39,7 @@ module.exports = {
       __VUE_OPTIONS_API__: JSON.stringify(true), // 启用 Options API
       __VUE_PROD_DEVTOOLS__: JSON.stringify(true), // 生产环境下的 DevTools
       __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: JSON.stringify(true) // 生产环境下的 hydration 错误详细信息
-    })
+    }),
   ],
   devServer: {
     static: {

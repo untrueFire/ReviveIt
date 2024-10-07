@@ -6,6 +6,7 @@ import Register from '../views/Register.vue';
 import User from '../views/User.vue';
 import AddItem from '../views/AddItem.vue';
 import EditItem from '../views/EditItem.vue';
+import NotificationView from '../views/NotificationView.vue';
 const routes = [
   {
     path: '/',
@@ -52,7 +53,7 @@ const routes = [
     name: 'AddItem',
     component: AddItem,
     meta: {
-      title: '添加物品信息'
+      title: '添加物品'
     }
   },
   {
@@ -60,7 +61,15 @@ const routes = [
     name: 'EditItem',
     component: EditItem,
     meta: {
-      title: '更新物品信息'
+      title: '更新物品'
+    }
+  },
+  {
+    path: '/notifications',
+    name: 'Notifications',
+    component: NotificationView,
+    meta: {
+      title: '通知'
     }
   }
 ];
