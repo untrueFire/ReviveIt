@@ -1,95 +1,67 @@
 <template>
-  <div class="login-form">
-    <h1>登录</h1>
-    <form @submit.prevent="handleSubmit">
-      <div class="form-group">
-        <label for="username">用户名</label>
-        <input
-          type="text"
-          id="username"
-          v-model="username"
-          placeholder="请输入用户名"
-          autocomplete="username"
-        />
-      </div>
-      <div class="form-group">
-        <label for="password">密码</label>
-        <input
-          type="password"
-          id="password"
-          v-model="password"
-          placeholder="请输入密码"
-          autocomplete="current-password"
-        />
-      </div>
-      <button type="submit">登录</button>
-    </form>
-  </div>
+    <div class="login-form">
+        <h1>登录</h1>
+        <form @submit.prevent="handleSubmit">
+            <div class="form-group">
+                <label for="username">用户名</label>
+                <input type="text" id="username" v-model="username" placeholder="请输入用户名" autocomplete="username"
+                    required />
+            </div>
+            <div class="form-group">
+                <label for="password">密码</label>
+                <input type="password" id="password" v-model="password" placeholder="请输入密码"
+                    autocomplete="current-password" required />
+            </div>
+            <button type="submit">登录</button>
+        </form>
+    </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import { useRouter } from "vue-router";
+
 import axios from "axios";
 import { useToast } from "vue-toastification";
-import { getCookie } from "@/utils/api";
+import { getCsrftoken } from "@/utils/api";
+import { useStore } from "@/store";
 const username = ref("");
 const password = ref("");
-const csrfmiddlewaretoken = ref("");
 const router = useRouter();
 const toast = useToast();
-onMounted(async () => {
-  try {
-    const response = await axios.get("/accounts/login/");
-    const csrfTokenElement = extractCsrfToken(response.data);
-    csrfmiddlewaretoken.value = csrfTokenElement.value;
-  } catch (error) {
-    console.log("Error fetching CSRF token:", error);
-  }
-});
+const store = useStore();
 
 const handleSubmit = async () => {
-  try {
-    const csrftoken = getCookie("csrftoken");
-    const params = new URLSearchParams();
-    params.append("csrfmiddlewaretoken", csrfmiddlewaretoken.value);
-    params.append("login", username.value);
-    params.append("password", password.value);
-    params.append("next", "/api/user/");
-    const response = await axios.post("/accounts/login/", params, {
-      withCredentials: true,
-      headers: {
-        "X-CsrfToken": csrftoken,
-      },
-    });
-    if (response.data.id) {
-      localStorage.setItem("userId", response.data.id);
-      window.dispatchEvent(new Event("storage"));
-      toast.success("登录成功");
-      router.push("/user");
-    } else {
-      const errorList = response.data.match(/<ul class="errorlist(.*?)<\/ul>/s);
-      if (errorList) {
-        const errors = errorList[1]
-          .match(/<li>(.*?)<\/li>/g)
-          .map((error) => error.replace(/<\/?li>/g, ""));
-        errors.forEach((error) => useToast().error(error));
-      }
+    try {
+        const csrftoken = await getCsrftoken();
+        const params = new URLSearchParams();
+        params.append("login", username.value);
+        params.append("password", password.value);
+        params.append("next", "/api/user/");
+        const response = await axios.post("/accounts/login/", params, {
+            withCredentials: true,
+            headers: {
+                "X-CsrfToken": csrftoken,
+            },
+        });
+        if (response.data.id) {
+            store.user = response.data;
+            toast.success("登录成功");
+            router.push("/user");
+        } else {
+            const errorList = response.data.match(/<ul class="errorlist(.*?)<\/ul>/s);
+            if (errorList) {
+                const errors = errorList[1]
+                    .match(/<li>(.*?)<\/li>/g)
+                    .map((error) => error.replace(/<\/?li>/g, ""));
+                errors.forEach((error) => useToast().error(error));
+            }
+        }
+    } catch (error) {
+        console.warn("Error logging in:", error);
+        toast.error("登录失败");
     }
-  } catch (error) {
-    console.log("Error logging in:", error);
-    toast.error("登录失败");
-  }
 };
-
-function extractCsrfToken(html) {
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(html, "text/html");
-  const csrfTokenElement = doc.querySelector(
-    'input[name="csrfmiddlewaretoken"]'
-  );
-  return csrfTokenElement;
-}
 </script>
 
 <style scoped src="@/assets/css/styles.css"></style>

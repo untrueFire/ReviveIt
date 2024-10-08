@@ -1,8 +1,8 @@
 <template>
-  <div>
-    <h1>首页</h1>
-    <SearchBox />
-  </div>
+    <div>
+        <h1>首页</h1>
+        <SearchBox />
+    </div>
 </template>
 
 <script setup>

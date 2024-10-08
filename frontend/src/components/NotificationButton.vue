@@ -1,45 +1,30 @@
 <template>
-  <button @click="goToNotifications">
-    通知
-    <span v-if="unreadCount > 0" class="badge">{{ unreadCount }}</span>
-  </button>
+    <button @click="goToNotifications">
+        通知
+        <span v-if="store.unreadCount > 0" class="badge">{{ store.unreadCount }}</span>
+    </button>
 </template>
 
-  <script setup>
-import { ref, computed, onMounted, onUnmounted } from "vue";
+<script setup>
+import { onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
-import { fetchNotifications } from "@/utils/api";
-const notifications = ref([]);
+import { useStore } from '@/store';
+import { updateNotifications } from '@/utils/api';
 const router = useRouter();
-let intervalId = null;
+const store = useStore();
 
-const unreadNotifications = computed(() => {
-  return notifications.value.filter((notification) => notification.unread);
-});
-
-const unreadCount = computed(() => {
-  return unreadNotifications.value.length;
-});
-
-const fetchData = async () => {
-  try {
-    notifications.value = await fetchNotifications();
-  } catch (error) {
-    console.error("获取通知失败：", error);
-  }
+const goToNotifications = async () => {
+    await updateNotifications();
+    router.push("/notifications");
 };
 
-const goToNotifications = () => {
-	router.push("/notifications");
-};
-
-onMounted(() => {
-  intervalId = setInterval(fetchData, 10000);
-  fetchData();
+onMounted(async () => {
+    store.intervalId = setInterval(updateNotifications, 10000);
+    await updateNotifications();
 });
 
 onUnmounted(() => {
-  clearInterval(intervalId);
+    clearInterval(store.intervalId);
 });
 </script>
 

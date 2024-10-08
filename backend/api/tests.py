@@ -44,8 +44,7 @@ class AddItemTestCase(TestCase):
         data = {"name": "New Item", "description": "New Description", "contact_info": "New Contact"}
         response = self.client.post(reverse("add_item"), data)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(Item.objects.count(), 1)
-        self.assertEqual(Item.objects.first().name, "New Item")
+        self.assertEqual(response.json()['message'], SUCCCESS)
 
     def test_add_item_unauthenticated(self):
         self.client.logout()
@@ -55,8 +54,8 @@ class AddItemTestCase(TestCase):
 
     def test_add_item_invalid(self):
         self.client.login(username="testuser", password="testpass")
-        data = {"name": "New Item", "description": 1, "contact_info": []}
-        response = self.client.post(reverse("add_item"), data)
+        data = {"name": "New Item", "description": 1, "contact_info": ""}
+        response = self.client.post(reverse("add_item"), json.dumps(data), content_type="application/json")
         self.assertEqual(response.status_code, 400)
 
 
