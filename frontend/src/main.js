@@ -1,13 +1,16 @@
 import { createApp } from 'vue';
+import { createPinia } from 'pinia'
 import App from './App.vue';
 import router from './router';
 import Toast from 'vue-toastification';
 import 'vue-toastification/dist/index.css';
 const app = createApp(App);
+const pinia = createPinia();
+app.use(pinia);
 app.use(router);
 app.use(Toast, {
 	position: 'top-right',
-	timeout: 5000,
+	timeout: 3000,
 	closeOnClick: true,
 	pauseOnFocusLoss: true,
 	pauseOnHover: true,
@@ -19,4 +22,9 @@ app.use(Toast, {
 	icon: true,
 	rtl: false
 });
+
+if (module.hot) {
+	module.hot.accept();
+}
+
 app.mount('#app');

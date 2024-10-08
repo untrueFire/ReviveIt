@@ -1,8 +1,9 @@
 <template>
-  <div id="app">
-    <TopMenu/>
-    <router-view />
-  </div>
+    <div id="app">
+        <h1>ReviveIt</h1>
+        <TopMenu />
+        <router-view />
+    </div>
 </template>
 
 <script setup>

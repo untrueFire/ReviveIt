@@ -1,6 +1,8 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
+import { useToast } from 'vue-toastification';
+import { useStore } from '@/store';
 
-export function getCookie(name) {
+function getCookie(name) {
 	const cookies = document.cookie.split(';');
 	for (let cookie of cookies) {
 		cookie = cookie.trim();
@@ -10,173 +12,86 @@ export function getCookie(name) {
 	}
 	return null;
 }
-export async function fetchUserInfo() {
-	try {
-		const response = await axios.get('/api/user/', {
-			withCredentials: true
-		});
-		return response.data;
-	} catch (error) {
-		console.error(error);
+
+export async function getCsrftoken() {
+	if (!document.cookie.includes("csrftoken")) {
+		await get("/accounts/login");
+	}
+	return getCookie("csrftoken");
+}
+
+function errorHandler(error) {
+	if (error instanceof AxiosError && error.response.status == 403 && error.response.data &&
+		error.response.data.detail == '身份认证信息未提供。') {
+		const store = useStore();
+		const toast = useToast();
+		if (!store.isLoggedIn) {
+			return undefined;
+		}
+		store.user = undefined;
+		toast.error('登录失效');
+		clearInterval(store.intervalId);
+		window.location.href = '/login';
+	} else {
 		throw error;
 	}
 }
 
-export async function fetchUserItems() {
+export async function get(url) {
 	try {
-		const response = await axios.get('/api/user/items/', {
-			withCredentials: true
+		const response = await axios.get(url, {
+			withCredentials: true,
 		});
 		return response.data;
 	} catch (error) {
-		console.error(error);
-		throw error;
+		errorHandler(error);
 	}
 }
 
-export async function deleteItem(itemId) {
+export async function post(url, data) {
 	try {
-		const csrfToken = getCookie('csrftoken');
-		await axios.post(`/api/items/delete/${itemId}/`, '', {
+		const response = await axios.post(url, data, {
 			withCredentials: true,
 			headers: {
-				'X-CSRFToken': csrfToken
-			}
-		});
-		return itemId;
-	} catch (error) {
-		console.error(error);
-		throw error;
-	}
-}
-
-export async function fetchItem(itemId) {
-	try {
-		const response = await axios.get(`/api/items/${itemId}/`, {
-			withCredentials: true
-		});
-		return response.data;
-	} catch (error) {
-		console.error(error);
-		throw error;
-	}
-}
-
-export async function updateItem(itemId, itemData) {
-	try {
-		const csrfToken = getCookie('csrftoken');
-		const response = await axios.post(`/api/items/update/${itemId}/`, itemData, {
-			withCredentials: true,
-			headers: {
-				'X-CSRFToken': csrfToken
-			}
-		});
-		return response.data;
-	} catch (error) {
-		console.error(error);
-		throw error;
-	}
-}
-
-export async function fetchNotifications() {
-	try {
-		const response = await axios.get("/api/user/notifications/", {
-			withCredentials: true
-		});
-		return response.data;
-	} catch (error) {
-		console.error(error);
-		throw error;
-	}
-}
-
-export async function acceptNotification(notificationId) {
-	try {
-		const csrfToken = getCookie('csrftoken');
-		const response = await axios.post(`/api/notification/accept/${notificationId}/`, null, {
-			withCredentials: true,
-			headers: {
-				'X-CSRFToken': csrfToken
-			}
-		});
-		return response.data;
-	} catch (error) {
-		console.error(error);
-		throw error;
-	}
-}
-
-export async function rejectNotification(notificationId) {
-	try {
-		const csrfToken = getCookie('csrftoken');
-		const response = await axios.post(`/api/notification/reject/${notificationId}/`, null, {
-			withCredentials: true,
-			headers: {
-				'X-CSRFToken': csrfToken
-			}
-		});
-		return response.data;
-	} catch (error) {
-		console.error(error);
-		throw error;
-	}
-}
-
-export async function ReviveItem(itemId, price) {
-	try {
-		const csrfToken = getCookie('csrftoken');
-		const response = await axios.post(`/api/items/revive/${itemId}/`, price, {
-			withCredentials: true,
-			headers: {
-				'X-CSRFToken': csrfToken
-			}
-		});
-		return response.data;
-	} catch (error) {
-		console.error(error);
-		throw error;
-	}
-}
-
-export async function search(query) {
-	try {
-		const response = await axios.get(
-			`/api/search/?q=${encodeURIComponent(query)}`
-		);
-		return response.data;
-	} catch (error) {
-		console.error(error);
-		throw error;
-	}
-}
-
-export async function addItem(data) {
-	try {
-		const csrfToken = getCookie("csrftoken");
-		await axios.post("/api/items/add/", data, {
-			withCredentials: true,
-			headers: {
-				"X-CSRFToken": csrfToken,
+				'X-CSRFToken': await getCsrftoken(),
 			},
 		});
+		return response.data;
 	} catch (error) {
-		console.error(error);
-		throw error;
+		errorHandler(error);
 	}
 }
 
-export async function setRead(notificationId) {
-	try {
-		const csrfToken = getCookie('csrftoken');
-		const response = await axios.post(`/api/notification/read/${notificationId}/`, null, {
-			withCredentials: true,
-			headers: {
-				'X-CSRFToken': csrfToken
-			}
-		});
-		return response.data;
-	} catch (error) {
-		console.error(error);
-		throw error;
-	}
+export const fetchUserInfo = () => get('/api/user/');
+export const fetchUserItems = () => get('/api/user/items/');
+export const deleteItem = (itemId) => post(`/api/items/delete/${itemId}/`, '');
+export const fetchItem = (itemId) => get(`/api/items/${itemId}/`);
+export const updateItem = (itemId, itemData) =>
+	post(`/api/items/update/${itemId}/`, itemData);
+export const fetchNotifications = () => get('/api/user/notifications/');
+export const acceptNotification = (notificationId) =>
+	post(`/api/notification/accept/${notificationId}/`, null);
+export const rejectNotification = (notificationId) =>
+	post(`/api/notification/reject/${notificationId}/`, null);
+export const ReviveItem = (itemId, price) =>
+	post(`/api/items/revive/${itemId}/`, price);
+export const search = (query) =>
+	get(`/api/search/?q=${encodeURIComponent(query)}`);
+export const addItem = (data) => post('/api/items/add/', data);
+export const setRead = (notificationId) =>
+	post(`/api/notification/read/${notificationId}/`, null);
+export const logout = () => post('/accounts/logout/');
+
+export const updateNotifications = async () => {
+	fetchNotifications()
+		.then((data) => {
+			const store = useStore();
+			store.notifications = data;
+		})
+		.catch(() => { });
+};
+
+export const updateUser = async () => {
+	const store = useStore();
+	store.user = await fetchUserInfo();
 }

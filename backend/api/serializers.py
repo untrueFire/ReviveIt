@@ -2,8 +2,18 @@ from rest_framework import serializers
 from .models import *
 from notifications.models import Notification
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "username", "balance"]
+
+class PublicUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "username"]
 
 class ItemSerializer(serializers.ModelSerializer):
+    owner = PublicUserSerializer(read_only=True)
     class Meta:
         model = Item
         fields = ["id", "name", "description", "contact_info", "owner"]
@@ -15,16 +25,7 @@ class SimpleItemSerializer(serializers.ModelSerializer):
         fields = ["id", "name"]
 
 
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ["id", "username", "balance"]
 
-
-class PublicUserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ["id", "username"]
 
 
 class TransactionSerializer(serializers.ModelSerializer):

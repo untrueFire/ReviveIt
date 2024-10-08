@@ -56,15 +56,15 @@ item_schema = openapi.Schema(
 @swagger_auto_schema(
     method="post",
     request_body=item_schema,
-    responses={200: ItemSerializer(), 400: INVALID_REQUEST},
+    responses={200: SUCCCESS, 400: INVALID_REQUEST},
 )
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
-def add_item(request):
+def add_item(request: rest_framework.request.Request):
     serializer = ItemSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save(owner=request.user)
-        return Response(serializer.data)
+        return fast200
     return fast400
 
 
@@ -93,7 +93,7 @@ def update_item(request, item_id):
     assert type(request.data) == dict, type(request.data)
     try:
         item = Item.objects.get(id=item_id)
-        if item.owner == request.user:
+        if item.owner == request.user or request.user.is_staff:
             serializer = ItemSerializer(item, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
@@ -133,28 +133,35 @@ def get_user_info(request):
 
 @swagger_auto_schema(
     method="post",
-    responses={200: RIVIVE_SUCCESS, 404: INVALID_REQUEST, 403: PERMISSION_DENIED},
+    responses={200: RIVIVE_SUCCESS, 400: INVALID_REQUEST, 403: PERMISSION_DENIED, 404: ITEM_NOT_FOUND},
 )
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def accept_deal(request: rest_framework.request.Request, notification_id: int):
     try:
         notification = Notification.objects.get(id=notification_id)
-        if not notification.unread or notification.verb != 'proposed':
+        if not notification.unread or notification.verb != "proposed":
             return fast404
         deal: Transaction = notification.action_object
         item = deal.target
         new_owner = deal.buyer
-        if (new_owner != request.user and item.owner == request.user and request.user == notification.recipient) or request.user.is_staff:
-            item.owner.balance += deal.price
-            item.owner.save()
-            item.owner = new_owner
-            item.save()
-            notify.send(request.user, verb="accepted", recipient=new_owner, action_object=deal)
-            notification.mark_as_read()
-            notification.data = 'accepted'
-            notification.save()
-            return fast200
+        if new_owner != request.user and request.user == notification.recipient:
+            if item.owner == request.user:
+                item.owner.balance += deal.price
+                item.owner.save()
+                item.owner = new_owner
+                item.save()
+                notify.send(request.user, verb="accepted", recipient=new_owner, action_object=deal)
+                notification.mark_as_read()
+                notification.data = "accepted"
+                notification.save()
+                return fast200
+            else:
+                notify.send(request.user, verb="sold out", recipient=new_owner, action_object=deal)
+                notification.mark_as_read()
+                notification.data = "sold out"
+                notification.save()
+                return fast404
         else:
             return fast403
     except Notification.DoesNotExist:
@@ -170,7 +177,7 @@ def accept_deal(request: rest_framework.request.Request, notification_id: int):
 def reject_deal(request: rest_framework.request.Request, notification_id: int):
     try:
         notification = Notification.objects.get(id=notification_id)
-        if not notification.unread or notification.verb != 'proposed':
+        if not notification.unread or notification.verb != "proposed":
             return fast400
         if notification.recipient != request.user:
             return fast403
@@ -180,7 +187,7 @@ def reject_deal(request: rest_framework.request.Request, notification_id: int):
         buyer.save()
         notify.send(request.user, verb="rejected", recipient=buyer, action_object=deal)
         notification.mark_as_read()
-        notification.data = 'rejected'
+        notification.data = "rejected"
         notification.save()
         return fast200
     except Notification.DoesNotExist:
@@ -231,6 +238,7 @@ def revive(request: rest_framework.request.Request, item_id):
 def user_notifications(request: rest_framework.request.Request):
     notifications = request.user.notifications.all()
     return Response(NotificationSerializer(notifications, many=True).data)
+
 
 @swagger_auto_schema(
     method="post",
