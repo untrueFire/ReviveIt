@@ -1,8 +1,8 @@
 from django.urls import path
+
 from .views import *
 
 urlpatterns = [
-    path("items/", get_items, name="get_items"),
     path("items/<int:item_id>/", get_item, name="get_item"),
     path("items/add/", add_item, name="add_item"),
     path("items/delete/<int:item_id>/", delete_item, name="delete_item"),
@@ -15,4 +15,6 @@ urlpatterns = [
     path("user/", get_user_info, name="get_user_info"),
     path("user/items/", get_my_items, name="get_my_items"),
     path("user/notifications/", user_notifications, name="user_notifications"),
+    path("user/challenge/", challenge, name="challenge"),
+    path("user/knock/", knock, name="knock"),
 ]

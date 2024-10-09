@@ -1,11 +1,10 @@
-from traceback import print_exc
 import rest_framework.request
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
+from notifications.signals import notify
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from notifications.signals import notify
 
 from .messages import *
 from .models import *
@@ -22,15 +21,6 @@ def get_item(_, item_id):
         return Response(serializer.data)
     except Item.DoesNotExist:
         return fast404
-
-
-@swagger_auto_schema(method="get", responses={200: ItemSerializer(many=True)})
-@api_view(["GET"])
-@permission_classes([AllowAny])
-def get_items(_):
-    items = Item.objects.all()
-    serializer = ItemSerializer(items, many=True)
-    return Response(serializer.data)
 
 
 @swagger_auto_schema(method="get", responses={200: ItemSerializer(many=True)})
@@ -70,10 +60,10 @@ def add_item(request: rest_framework.request.Request):
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
-def delete_item(request, item_id):
+def delete_item(request: rest_framework.request.Request, item_id: int):
     try:
         item = Item.objects.get(id=item_id)
-        if item.owner == request.user or request.user.is_staff:
+        if item.owner == request.user:
             item.delete()
             return fast200
         else:
@@ -89,7 +79,7 @@ def delete_item(request, item_id):
 )
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
-def update_item(request, item_id):
+def update_item(request: rest_framework.request.Request, item_id: int):
     assert type(request.data) == dict, type(request.data)
     try:
         item = Item.objects.get(id=item_id)
@@ -116,8 +106,9 @@ def update_item(request, item_id):
 def search_items(request: rest_framework.request.Request):
     query = request.GET.get("q")
     if not query:
-        return get_items(request._request)
-    items = Item.objects.filter(name__icontains=query) | Item.objects.filter(description__icontains=query)
+        items = Item.objects.all()
+    else:
+        items = Item.objects.filter(name__icontains=query) | Item.objects.filter(description__icontains=query)
     serializer = ItemSerializer(items, many=True)
     return Response(serializer.data)
 
@@ -133,7 +124,7 @@ def get_user_info(request):
 
 @swagger_auto_schema(
     method="post",
-    responses={200: RIVIVE_SUCCESS, 400: INVALID_REQUEST, 403: PERMISSION_DENIED, 404: ITEM_NOT_FOUND},
+    responses={200: SUCCCESS, 400: INVALID_REQUEST, 403: PERMISSION_DENIED, 404: ITEM_NOT_FOUND},
 )
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
@@ -170,7 +161,7 @@ def accept_deal(request: rest_framework.request.Request, notification_id: int):
 
 @swagger_auto_schema(
     method="post",
-    responses={200: REJECT_SUCCESS, 400: INVALID_REQUEST, 403: PERMISSION_DENIED},
+    responses={200: SUCCCESS, 400: INVALID_REQUEST, 403: PERMISSION_DENIED},
 )
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
@@ -203,7 +194,7 @@ def reject_deal(request: rest_framework.request.Request, notification_id: int):
         },
         required=["price"],
     ),
-    responses={200: PROPOSAL_SUBMITTED, 404: ITEM_NOT_FOUND, 403: NO_BALANCE, 400: INVALID_REQUEST},
+    responses={200: SUCCCESS, 404: ITEM_NOT_FOUND, 403: NO_BALANCE, 400: INVALID_REQUEST},
 )
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
@@ -214,7 +205,7 @@ def revive(request: rest_framework.request.Request, item_id):
         buyer: User = request.user
         if not isinstance(price, int) or price < 0:
             return fast400
-        if item.owner != buyer or buyer.is_staff:
+        if item.owner != buyer:
             if buyer.balance >= price:
                 deal = Transaction.objects.create(buyer=buyer, target=item, price=price)
                 buyer.balance -= price
@@ -224,11 +215,10 @@ def revive(request: rest_framework.request.Request, item_id):
             else:
                 return fast403
         else:
-            return fast403
+            return fast400
     except Item.DoesNotExist:
         return fast404
     except:
-        print_exc()
         return fast400
 
 
@@ -242,7 +232,7 @@ def user_notifications(request: rest_framework.request.Request):
 
 @swagger_auto_schema(
     method="post",
-    responses={200: REJECT_SUCCESS, 400: INVALID_REQUEST, 403: PERMISSION_DENIED},
+    responses={200: SUCCCESS, 400: INVALID_REQUEST, 403: PERMISSION_DENIED},
 )
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
@@ -255,3 +245,56 @@ def read(request: rest_framework.request.Request, notification_id: int):
         return fast200
     except Notification.DoesNotExist:
         return fast404
+
+
+@swagger_auto_schema(
+    method="post",
+    responses={200: SUCCCESS, 400: INVALID_REQUEST, 403: NO_CRED},
+)
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def challenge(request: rest_framework.request.Request):
+    def genPoW():
+        from random import choices
+        from string import ascii_letters
+
+        return "".join(choices(ascii_letters, k=16))
+
+    chall = genPoW()
+    difficulty = 4
+    request._request.session["challenge"] = chall
+    request._request.session["difficulty"] = difficulty
+    return JsonResponse({"challenge": chall, "difficulty": difficulty})
+
+
+@swagger_auto_schema(
+    method="post",
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            "nonce": openapi.Schema(type=openapi.TYPE_STRING, description="满足challenge的答案"),
+        },
+        required=["nonce"],
+    ),
+    responses={200: SUCCCESS, 400: INVALID_REQUEST, 403: NO_CRED},
+)
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def knock(request: rest_framework.request.Request):
+    def verify(challenge: str, nonce: str, difficulty=4):
+        from hashlib import sha256
+
+        return sha256((challenge + nonce).encode()).hexdigest().endswith("0" * difficulty)
+
+    if "challenge" not in request._request.session:
+        return fast400
+
+    challenge: str = request._request.session["challenge"]
+    difficulty: int = request._request.session["difficulty"]
+    nonce: str = request.data["nonce"]
+    if not isinstance(nonce, str) or not verify(challenge, nonce, difficulty):
+        return 400
+    user: User = request.user
+    user.balance += 1
+    user.save()
+    return fast200

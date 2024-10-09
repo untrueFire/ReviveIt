@@ -56,7 +56,7 @@
                             {{ notification.action_object.target.name }}
                             <template v-if="notification.data == 'accepted'">（已同意）</template>
                             <template v-else-if="notification.data == 'rejected'">（已拒绝）</template>
-                            <template v-else-if="notification.data == 'sold out'">（已复活）</template>
+                            <template v-else-if="notification.data == 'sold out'">（已被先行复活）</template>
                         </template>
                         <template v-else-if="notification.verb == 'accepted'">
                             {{ notification.actor.username }} 同意了你以

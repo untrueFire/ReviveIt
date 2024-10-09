@@ -7,6 +7,7 @@ import User from '../views/User.vue';
 import AddItem from '../views/AddItem.vue';
 import EditItem from '../views/EditItem.vue';
 import NotificationView from '../views/NotificationView.vue';
+import WoodenFishView from '../views/WoodenFishView.vue'
 const routes = [
     {
         path: '/',
@@ -71,7 +72,15 @@ const routes = [
         meta: {
             title: '通知'
         }
-    }
+    },
+    {
+        path: '/woodenfish',
+        name: 'WoodenFish',
+        component: WoodenFishView,
+        meta: {
+            title: '电子木鱼'
+        }
+    },
 ];
 
 const router = createRouter({
