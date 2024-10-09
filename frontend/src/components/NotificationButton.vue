@@ -1,8 +1,8 @@
 <template>
-    <button @click="goToNotifications">
+    <n-button type="tertiary" @click="goToNotifications">
         通知
-        <span v-if="store.unreadCount > 0" class="badge">{{ store.unreadCount }}</span>
-    </button>
+        <n-badge :value="store.unreadCount"></n-badge>
+    </n-button>
 </template>
 
 <script setup>
@@ -19,7 +19,7 @@ const goToNotifications = async () => {
 };
 
 onMounted(async () => {
-    store.intervalId = setInterval(updateNotifications, 10000);
+    store.intervalId = setInterval(updateNotifications, 30000);
     await updateNotifications();
 });
 

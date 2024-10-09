@@ -18,7 +18,7 @@ async function handleLogout() {
     try {
         await logout();
         store.user = undefined;
-        router.push("/login");
+        router.push({ name: 'Login' });
     } catch {
         toast.error("登出失败");
     }

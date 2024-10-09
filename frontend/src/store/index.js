@@ -15,6 +15,7 @@ export const useStore = defineStore("main", () => {
 	const intervalId = ref(null);
 	const user = ref();
 	const isLoggedIn = computed(() => user.value !== undefined);
+	const theme = ref(null);
 	return {
 		notifications,
 		unreadNotifications,
@@ -22,6 +23,7 @@ export const useStore = defineStore("main", () => {
 		unreadCount,
 		user,
 		isLoggedIn,
-		intervalId
+		intervalId,
+		theme
 	};
 });

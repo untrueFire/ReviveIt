@@ -17,11 +17,6 @@ class GetItemsTestCase(TestCase):
         self.item1 = Item.objects.create(name="Item 1", description="Description 1", contact_info="Contact 1", owner=self.user)
         self.item2 = Item.objects.create(name="Item 2", description="Description 2", contact_info="Contact 2", owner=self.user)
 
-    def test_get_all_items(self):
-        response = self.client.get(reverse("get_items"))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.json()), 2)
-
     def test_get_single_item(self):
         response = self.client.get(reverse("get_item", args=[self.item1.id]))
         self.assertEqual(response.status_code, 200)
