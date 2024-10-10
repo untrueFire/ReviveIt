@@ -1,10 +1,8 @@
 <template>
-	<n-float-button>
-		<n-icon>
-			<LightModeFilled v-if="store.theme !== null" @click="store.theme = null" />
-			<DarkModeFilled v-else @click="store.theme = darkTheme" />
-		</n-icon>
-	</n-float-button>
+	<n-icon>
+		<LightModeFilled v-if="store.theme !== null" @click="store.theme = null" />
+		<DarkModeFilled v-else @click="store.theme = darkTheme" />
+	</n-icon>
 </template>
 
 <script setup>

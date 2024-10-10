@@ -80,18 +80,18 @@
 </template>
 
 <script setup>
-import { useToast } from "vue-toastification";
 import { useStore } from "@/store";
 import { updateNotifications, acceptNotification, rejectNotification, setRead } from "@/utils/api";
+import { useMessage } from "naive-ui";
 const store = useStore();
-const toast = useToast();
+const message = useMessage();
 
 const handleAcceptNotification = async (notificationId) => {
     try {
         await acceptNotification(notificationId);
-        toast.success("同意请求成功");
+        message.success("同意请求成功");
     } catch (error) {
-        toast.error("同意请求失败");
+        message.error("同意请求失败");
     }
     await updateNotifications();
 };
@@ -99,9 +99,9 @@ const handleAcceptNotification = async (notificationId) => {
 const handleRejectNotification = async (notificationId) => {
     try {
         await rejectNotification(notificationId);
-        toast.success("拒绝请求成功");
+        message.success("拒绝请求成功");
     } catch (error) {
-        toast.error("拒绝请求失败");
+        message.error("拒绝请求失败");
     }
     await updateNotifications();
 };
@@ -111,7 +111,7 @@ const handleSetRead = async (notificationId) => {
         await setRead(notificationId);
 
     } catch (error) {
-        toast.error("设置已读失败");
+        message.error("设置已读失败");
     }
     await updateNotifications();
 };

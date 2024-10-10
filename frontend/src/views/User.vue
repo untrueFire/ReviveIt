@@ -42,19 +42,19 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { useToast } from "vue-toastification";
 import { fetchUserItems, deleteItem, updateUser } from "@/utils/api";
 import { useStore } from "@/store";
-const toast = useToast();
+import { useMessage } from "naive-ui";
+const message = useMessage();
 const router = useRouter();
 const items = ref([]);
 const store = useStore();
 onMounted(async () => {
     try {
-        updateUser();
+        await updateUser();
         items.value = await fetchUserItems();
     } catch (error) {
-        toast.error("加载用户信息和物品失败:", error);
+        message.error("加载用户信息和物品失败:", error);
     }
 });
 
@@ -62,9 +62,9 @@ async function handleDeleteItem(itemId) {
     try {
         await deleteItem(itemId);
         items.value = items.value.filter((item) => item.id !== itemId);
-        toast.success("物品删除成功");
+        message.success("物品删除成功");
     } catch (error) {
-        toast.error("删除物品失败");
+        message.error("删除物品失败");
     }
 }
 
