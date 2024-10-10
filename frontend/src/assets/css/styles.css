@@ -296,7 +296,7 @@ button {
   margin-left: 5px;
 }
 
-.top-menu {
+/* .top-menu {
   background-color: #333;
   padding: 10px 0;
 }
@@ -321,7 +321,7 @@ button {
 
 .top-menu a:hover {
   text-decoration: underline;
-}
+} */
 
 .notifications-container {
   margin-top: 20px;

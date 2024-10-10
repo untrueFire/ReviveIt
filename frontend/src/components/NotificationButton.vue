@@ -1,8 +1,11 @@
 <template>
-    <n-button type="tertiary" @click="goToNotifications">
-        通知
-        <n-badge :value="store.unreadCount"></n-badge>
-    </n-button>
+    <n-badge :value="store.unreadCount" @click="goToNotifications">
+        <n-avatar round>
+            <n-icon>
+                <NotificationsItem />
+            </n-icon>
+        </n-avatar>
+    </n-badge>
 </template>
 
 <script setup>
@@ -10,6 +13,7 @@ import { onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from '@/store';
 import { updateNotifications } from '@/utils/api';
+import { Notifications as NotificationsItem } from '@vicons/ionicons5';
 const router = useRouter();
 const store = useStore();
 

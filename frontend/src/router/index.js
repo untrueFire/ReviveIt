@@ -7,7 +7,9 @@ import User from '../views/User.vue';
 import AddItem from '../views/AddItem.vue';
 import EditItem from '../views/EditItem.vue';
 import NotificationView from '../views/NotificationView.vue';
-import WoodenFishView from '../views/WoodenFishView.vue'
+import WoodenFishView from '../views/WoodenFishView.vue';
+import { useStore } from '@/store';
+import { updateUser } from '../utils/api';
 const routes = [
     {
         path: '/',
@@ -38,7 +40,8 @@ const routes = [
         name: 'User',
         component: User,
         meta: {
-            title: '我的'
+            title: '我的',
+            needLogin: true
         }
     },
     {
@@ -46,7 +49,8 @@ const routes = [
         name: 'Logout',
         component: Logout,
         meta: {
-            title: '登出确认'
+            title: '登出确认',
+            needLogin: true
         }
     },
     {
@@ -54,7 +58,8 @@ const routes = [
         name: 'AddItem',
         component: AddItem,
         meta: {
-            title: '添加物品'
+            title: '添加物品',
+            needLogin: true
         }
     },
     {
@@ -62,7 +67,8 @@ const routes = [
         name: 'EditItem',
         component: EditItem,
         meta: {
-            title: '更新物品'
+            title: '更新物品',
+            needLogin: true
         }
     },
     {
@@ -70,7 +76,8 @@ const routes = [
         name: 'Notifications',
         component: NotificationView,
         meta: {
-            title: '通知'
+            title: '通知',
+            needLogin: true
         }
     },
     {
@@ -78,7 +85,8 @@ const routes = [
         name: 'WoodenFish',
         component: WoodenFishView,
         meta: {
-            title: '电子木鱼'
+            title: '电子木鱼',
+            needLogin: true
         }
     },
 ];
@@ -88,9 +96,17 @@ const router = createRouter({
     routes,
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
     document.title = 'ReviveIt | ' + to.meta.title || 'ReviveIt';
-    next();
+    const store = useStore();
+    await updateUser();
+    if (to.meta.needLogin && !store.isLoggedIn) {
+        const message = window.$message;
+        message.error('需要登录');
+        next({'name': 'Login'});
+    } else {
+        next();
+    }
 });
 
 export default router;

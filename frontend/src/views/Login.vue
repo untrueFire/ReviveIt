@@ -18,19 +18,17 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-
+import { useMessage } from "naive-ui";
 import axios from "axios";
-import { useToast } from "vue-toastification";
 import { getCsrftoken } from "@/utils/api";
 import { useStore } from "@/store";
 const username = ref("");
 const password = ref("");
 const router = useRouter();
-const toast = useToast();
 const store = useStore();
-
+const message = useMessage();
 const handleSubmit = async () => {
     try {
         const csrftoken = await getCsrftoken();
@@ -46,7 +44,7 @@ const handleSubmit = async () => {
         });
         if (response.data.id) {
             store.user = response.data;
-            toast.success("登录成功");
+            message.success("登录成功");
             router.push("/user");
         } else {
             const errorList = response.data.match(/<ul class="errorlist(.*?)<\/ul>/s);
@@ -54,14 +52,20 @@ const handleSubmit = async () => {
                 const errors = errorList[1]
                     .match(/<li>(.*?)<\/li>/g)
                     .map((error) => error.replace(/<\/?li>/g, ""));
-                errors.forEach((error) => useToast().error(error));
+                errors.forEach((error) => message.error(error));
             }
         }
     } catch (error) {
         console.warn("Error logging in:", error);
-        toast.error("登录失败");
+        message.error("登录失败");
     }
 };
+onMounted(() => {
+    if (store.isLoggedIn) {
+        message.info("已登录");
+        router.push("/user");
+    }
+});
 </script>
 
 <style scoped src="@/assets/css/styles.css"></style>

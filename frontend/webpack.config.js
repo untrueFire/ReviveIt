@@ -2,6 +2,9 @@ const path = require('path');
 const { VueLoaderPlugin } = require('vue-loader');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { DefinePlugin, HotModuleReplacementPlugin } = require('webpack');
+const AutoImport = require('unplugin-auto-import/webpack')
+const Components = require('unplugin-vue-components/webpack')
+const { ElementPlusResolver } = require('unplugin-vue-components/resolvers')
 const webpack = require('webpack');
 module.exports = {
   mode: 'development',
@@ -40,6 +43,13 @@ module.exports = {
       __VUE_PROD_DEVTOOLS__: JSON.stringify(true), // 生产环境下的 DevTools
       __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: JSON.stringify(true) // 生产环境下的 hydration 错误详细信息
     }),
+    AutoImport({
+      resolvers: [ElementPlusResolver()],
+    }),
+    Components({
+      resolvers: [ElementPlusResolver()],
+    }),
+    new HotModuleReplacementPlugin(),
   ],
   devServer: {
     static: {
@@ -70,4 +80,5 @@ module.exports = {
   optimization: {
     usedExports: true,
   },
+  profile: true,
 };

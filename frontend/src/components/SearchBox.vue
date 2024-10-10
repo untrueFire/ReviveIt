@@ -46,23 +46,23 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { search, ReviveItem, updateUser } from "@/utils/api.js";
-import { useToast } from "vue-toastification"
 import { useStore } from "@/store";
+import { useMessage } from "naive-ui";
 const store = useStore();
 const query = ref("");
 const results = ref([]);
-const toast = useToast();
+const message = useMessage();
 const selectedItemId = ref();
 const showModal = ref(false);
 const price = ref(0);
 const handleInput = async () => {
     try {
-        if (store.isLoggedIn) {
-            updateUser();
-        }
+        // if (store.isLoggedIn) {
+        //     updateUser();
+        // }
         results.value = await search(query.value);
     } catch (error) {
-        toast.error("数据获取失败");
+        message.error("数据获取失败");
     }
 };
 
@@ -75,19 +75,18 @@ const handleReviveItem = async (itemId) => {
 const SendReviveItem = async () => {
     try {
         if (!(price.value <= store.user.balance)) {
-            toast.error("功德不足");
+            message.error("功德不足");
             return;
         }
         await ReviveItem(selectedItemId.value, { "price": price.value });
-        toast.success("请求发送成功");
+        message.success("请求发送成功");
         showModal.value = false;
     } catch (error) {
-        toast.error("请求发送失败");
+        message.error("请求发送失败");
     }
 };
 
 onMounted(() => {
-    updateUser();
     handleInput();
 });
 </script>

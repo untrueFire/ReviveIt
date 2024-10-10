@@ -26,19 +26,19 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
-import { useToast } from "vue-toastification";
-import { getCsrftoken, updateUser } from "@/utils/api";
+import { getCsrftoken } from "@/utils/api";
 import { useStore } from "@/store";
+import { useMessage } from "naive-ui";
 const store = useStore();
 const username = ref("");
 const password1 = ref("");
 const password2 = ref("");
 const router = useRouter();
-const toast = useToast();
+const message = useMessage();
 
 const handleRegister = async () => {
     if (password1.value !== password2.value) {
-        toast.error("密码和确认密码不一致");
+        message.error("密码和确认密码不一致");
         return;
     }
     try {
@@ -56,7 +56,7 @@ const handleRegister = async () => {
         });
         if (response.data.id) {
             store.user = response.data;
-            toast.success("注册成功");
+            message.success("注册成功");
             router.push("/user");
         } else {
             const errorList = response.data.match(/<ul class="errorlist(.*?)<\/ul>/s);
@@ -64,18 +64,18 @@ const handleRegister = async () => {
                 const errors = errorList[1]
                     .match(/<li>(.*?)<\/li>/g)
                     .map((error) => error.replace(/<\/?li>/g, ""));
-                errors.forEach((error) => useToast().error(error));
+                errors.forEach((error) => message.error(error));
             }
         }
     } catch (error) {
         console.log("Error during registration:", error);
-        toast.error("注册失败");
+        message.error("注册失败");
     }
 };
 
 onMounted(() => {
     if (store.isLoggedIn) {
-        toast.info("已登录");
+        message.info("已登录");
         router.push("/user");
     }
 });

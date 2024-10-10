@@ -22,12 +22,12 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useToast } from 'vue-toastification';
 import { fetchItem, updateItem } from '@/utils/api';
+import { useMessage } from 'naive-ui';
 
 const route = useRoute();
 const router = useRouter();
-const toast = useToast();
+const message = useMessage();
 
 const itemId = route.params.id;
 const item = ref({
@@ -48,11 +48,11 @@ onMounted(async () => {
 async function handleUpdateItem() {
     try {
         await updateItem(itemId, item.value);
-        toast.success('物品更新成功');
+        message.success('物品更新成功');
         router.push('/user');
     } catch (error) {
         console.log('更新物品失败:', error);
-        toast.error('更新物品失败');
+        message.error('更新物品失败');
     }
 }
 </script>

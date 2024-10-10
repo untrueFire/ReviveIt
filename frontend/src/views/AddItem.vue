@@ -21,13 +21,13 @@
 
 <script setup>
 import { ref } from "vue";
-import { useToast } from "vue-toastification";
 import { useRouter } from "vue-router";
 import { addItem } from "@/utils/api";
+import { useMessage } from "naive-ui";
 const name = ref("");
 const description = ref("");
 const contactInfo = ref("");
-const toast = useToast();
+const message = useMessage();
 const router = useRouter();
 
 const HandleAddItem = async () => {
@@ -38,10 +38,10 @@ const HandleAddItem = async () => {
             contact_info: contactInfo.value,
         };
         await addItem(data);
-        toast.success("物品添加成功");
+        message.success("物品添加成功");
         router.push("/user");
     } catch (error) {
-        toast.error("物品添加失败");
+        message.error("物品添加失败");
     }
 };
 </script>

@@ -10,17 +10,17 @@
 import { useRouter } from "vue-router";
 import { logout } from "@/utils/api";
 import { useStore } from "@/store";
-import { useToast } from "vue-toastification";
+import { useMessage } from "naive-ui";
 const store = useStore();
 const router = useRouter();
-const toast = useToast();
+const message = useMessage();
 async function handleLogout() {
     try {
         await logout();
         store.user = undefined;
         router.push({ name: 'Login' });
     } catch {
-        toast.error("登出失败");
+        message.error("登出失败");
     }
 }
 </script>

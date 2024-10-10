@@ -1,5 +1,10 @@
 <template>
-	<n-button @click="handleKnock" type="primary">我是木鱼</n-button>
+	<!-- <n-button @click="handleKnock" type="primary">我是木鱼</n-button> -->
+	<img width="100" src="/muyu.svg" alt="我是木鱼" @click="handleKnock" style="
+    display: flex;
+    left: 50%;
+    position: relative;
+    top: 20px;" />
 </template>
 
 <script setup>
