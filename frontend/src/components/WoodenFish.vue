@@ -24,12 +24,13 @@ async function handleKnock() {
 		const { challenge, difficulty } = data;
 		loadingBar.start();
 		let nonce = 0;
-		while (true) {
+		let found = false;
+		while (!found) {
 			nonce += 1;
 			const data = `${challenge}${nonce}`;
 			const hash = CryptoJS.SHA256(data).toString(CryptoJS.enc.Hex);
 			if (hash.endsWith('0'.repeat(difficulty))) {
-				break;
+				found = true;
 			}
 		}
 		return nonce.toString();
