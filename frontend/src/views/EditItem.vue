@@ -8,7 +8,7 @@
             </div>
             <div class="form-group">
                 <label for="description">物品描述</label>
-                <n-input id="description" v-model:value="item.description" placeholder="物品描述" required />
+                <n-input type="textarea" id="description" v-model:value="item.description" placeholder="物品描述" required />
             </div>
             <div class="form-group">
                 <label for="contact_info">联系方式</label>
@@ -49,6 +49,7 @@ onMounted(async () => {
         .catch((error) => {
             console.error(error);
             message.error("获取物品信息失败:");
+            router.push({ name: 'NotFound'});
         });
 });
 

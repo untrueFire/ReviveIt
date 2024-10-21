@@ -66,7 +66,8 @@ export const deleteItem = (itemId) => post(`/api/items/delete/${itemId}/`, '');
 export const fetchItem = (itemId) => get(`/api/items/${itemId}/`);
 export const updateItem = (itemId, itemData) =>
 	post(`/api/items/update/${itemId}/`, itemData);
-export const fetchNotifications = () => get('/api/user/notifications/');
+export const fetchUnread = () => get('/api/user/notifications/unread/');
+export const fetchRead = () => get('/api/user/notifications/read/');
 export const acceptNotification = (notificationId) =>
 	post(`/api/notification/accept/${notificationId}/`, null);
 export const rejectNotification = (notificationId) =>
@@ -80,11 +81,20 @@ export const setRead = (notificationId) =>
 	post(`/api/notification/read/${notificationId}/`, null);
 export const logout = () => post('/accounts/logout/');
 
-export const updateNotifications = async () => {
-	fetchNotifications()
+export const updateUnread = async () => {
+	fetchUnread()
 		.then((data) => {
 			const store = useStore();
-			store.notifications = data;
+			store.unreadNotifications = data;
+		})
+		.catch(() => { });
+};
+
+export const updateRead = async () => {
+	fetchRead()
+		.then((data) => {
+			const store = useStore();
+			store.readNotifications = data;
 		})
 		.catch(() => { });
 };

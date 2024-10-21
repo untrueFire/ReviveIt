@@ -2,13 +2,9 @@ import { ref, computed } from "vue";
 import { defineStore } from "pinia";
 
 export const useStore = defineStore("main", () => {
-	const notifications = ref([]);
-	const unreadNotifications = computed(() => {
-		return notifications.value.filter((notification) => notification.unread);
-	});
-	const readNotifications = computed(() => {
-		return notifications.value.filter((notification) => !notification.unread);
-	});
+	// const notifications = ref([]);
+	const unreadNotifications = ref([]);
+	const readNotifications = ref([]);
 	const unreadCount = computed(() => {
 		return unreadNotifications.value.length;
 	});
@@ -17,7 +13,7 @@ export const useStore = defineStore("main", () => {
 	const isLoggedIn = computed(() => user.value !== undefined);
 	const theme = ref(null);
 	return {
-		notifications,
+		// notifications,
 		unreadNotifications,
 		readNotifications,
 		unreadCount,

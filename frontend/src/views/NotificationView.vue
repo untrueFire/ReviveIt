@@ -80,12 +80,13 @@
 </template>
 
 <script setup>
+import { ref, onMounted, onUnmounted } from "vue";
 import { useStore } from "@/store";
-import { updateNotifications, acceptNotification, rejectNotification, setRead } from "@/utils/api";
+import { updateUnread, updateRead, acceptNotification, rejectNotification, setRead } from "@/utils/api";
 import { useMessage } from "naive-ui";
 const store = useStore();
 const message = useMessage();
-
+const intervalId = ref(null);
 const handleAcceptNotification = async (notificationId) => {
     try {
         await acceptNotification(notificationId);
@@ -93,7 +94,7 @@ const handleAcceptNotification = async (notificationId) => {
     } catch (error) {
         message.error("同意请求失败");
     }
-    await updateNotifications();
+    await updateUnread();
 };
 
 const handleRejectNotification = async (notificationId) => {
@@ -103,7 +104,7 @@ const handleRejectNotification = async (notificationId) => {
     } catch (error) {
         message.error("拒绝请求失败");
     }
-    await updateNotifications();
+    await updateUnread();
 };
 
 const handleSetRead = async (notificationId) => {
@@ -113,8 +114,19 @@ const handleSetRead = async (notificationId) => {
     } catch (error) {
         message.error("设置已读失败");
     }
-    await updateNotifications();
+    let notification = store.unreadNotifications.filter((item)=> item.id == notificationId)[0];
+    store.unreadNotifications = store.unreadNotifications.filter((item)=> item.id != notificationId);
+    store.readNotifications.unshift(notification);
 };
+
+onMounted(() => {
+    intervalId.value = setInterval(updateRead, 30000);
+    updateRead();
+});
+
+onUnmounted(() => {
+    clearInterval(intervalId.value);
+});
 
 </script>
 
