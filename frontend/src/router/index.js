@@ -9,6 +9,7 @@ import EditItem from '../views/EditItem.vue';
 import NotificationView from '../views/NotificationView.vue';
 import WoodenFishView from '../views/WoodenFishView.vue';
 import ViewItem from '../views/ViewItem.vue';
+import NotFound from '../views/NotFound.vue';
 import { useStore } from '@/store';
 import { updateUser } from '../utils/api';
 const routes = [
@@ -99,6 +100,11 @@ const routes = [
             needLogin: true
         }
     },
+    {
+        path: '/:pathMatch(.*)*',
+        name: 'NotFound',
+        component: NotFound
+      }
 ];
 
 const router = createRouter({
@@ -106,7 +112,7 @@ const router = createRouter({
     routes,
 });
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to, _from, next) => {
     document.title = 'ReviveIt | ' + to.meta.title || 'ReviveIt';
     const store = useStore();
     await updateUser();

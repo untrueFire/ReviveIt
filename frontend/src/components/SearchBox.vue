@@ -15,14 +15,17 @@
             <tbody>
                 <tr v-for="item in results" :key="item.id">
                     <td>{{ item.id }}</td>
-                    <td>{{ item.name }}</td>
+                    <td><n-ellipsis style="max-width: 100px">{{ item.name }}</n-ellipsis></td>
                     <td><n-ellipsis style="max-width: 240px">{{ item.description }}</n-ellipsis></td>
-                    <td>{{ item.contact_info }}</td>
+                    <td><n-ellipsis style="max-width: 100px">{{ item.contact_info }}</n-ellipsis></td>
                     <td>{{ item.owner.username }}</td>
                     <td v-if="store.isLoggedIn">
-                        <button v-if="item.owner.id != store.user.id" @click="handleReviveItem(item.id)">
-                            复活
-                        </button>
+                        <n-space>
+                            <button @click="router.push({ name: 'ViewItem', params: { id: item.id } })">详情</button>
+                            <button v-if="item.owner.id != store.user.id" @click="handleReviveItem(item.id)">
+                                复活
+                            </button>
+                        </n-space>
                     </td>
                 </tr>
             </tbody>
@@ -31,9 +34,16 @@
             <div class="modal">
                 <div class="modal-content">
                     <h2>你愿意消耗多少功德复活这件物品？</h2>
-                    <n-input-number v-model:value="price" :input-props="{ type: 'number' }" placeholder="请输入一个非负整数..." :min="0"
+                    <n-input-number
+                        v-model:value="price"
+                        :input-props="{ type: 'number' }"
+                        placeholder="请输入一个非负整数..."
+                        :min="0"
                         :max="store.user.balance" />
-                    <n-slider v-model:value="price" :step="1" :max="store.user.balance" />
+                    <n-slider
+                        v-model:value="price"
+                        :step="1"
+                        :max="store.user.balance" />
                     <p>当前可用功德：{{ store.user.balance }}</p>
                     <n-flex justify="center">
                         <button @click="SendReviveItem">确认</button>
@@ -50,6 +60,8 @@ import { ref, onMounted } from "vue";
 import { search, ReviveItem, updateUser } from "@/utils/api.js";
 import { useStore } from "@/store";
 import { useMessage } from "naive-ui";
+import { useRouter } from "vue-router";
+const router = useRouter();
 const store = useStore();
 const query = ref("");
 const results = ref([]);
@@ -79,6 +91,7 @@ const SendReviveItem = async () => {
         }
         await ReviveItem(selectedItemId.value, { "price": price.value });
         message.success("请求发送成功");
+        price.value = 0;
         showModal.value = false;
     } catch (error) {
         message.error("请求发送失败");

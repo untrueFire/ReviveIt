@@ -14,19 +14,19 @@
 import { onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from '@/store';
-import { updateNotifications } from '@/utils/api';
+import { updateUnread } from '@/utils/api';
 import { MailOutline as NotificationsItem } from '@vicons/ionicons5';
 const router = useRouter();
 const store = useStore();
 
 const goToNotifications = async () => {
-    await updateNotifications();
+    await updateUnread();
     router.push("/notifications");
 };
 
-onMounted(async () => {
-    store.intervalId = setInterval(updateNotifications, 30000);
-    await updateNotifications();
+onMounted(() => {
+    store.intervalId = setInterval(updateUnread, 30000);
+    updateUnread();
 });
 
 onUnmounted(() => {

@@ -27,8 +27,11 @@
                     <td><n-ellipsis style="max-width: 240px">{{ item.description }}</n-ellipsis></td>
                     <td><n-ellipsis style="max-width: 100px">{{ item.contact_info }}</n-ellipsis></td>
                     <td>
-                        <button @click="handleEditItem(item.id)">编辑</button>
-                        <button @click="handleDeleteItem(item.id)">删除</button>
+                        <n-space>
+                            <button @click="router.push({ name: 'ViewItem', params: { id: item.id } })">详情</button>
+                            <button @click="handleEditItem(item.id)">编辑</button>
+                            <button @click="handleDeleteItem(item.id)">删除</button>
+                        </n-space>
                     </td>
                 </tr>
             </tbody>
@@ -71,4 +74,3 @@ function handleEditItem(itemId) {
     router.push({ name: "EditItem", params: { id: itemId } });
 }
 </script>
-
