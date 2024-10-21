@@ -1,7 +1,7 @@
 <template>
     <nav class="top-menu">
         <h1>ReviveIt</h1>
-        <n-menu mode="horizontal" :options="menuOptions" style="justify-content: flex-end; display: flex; min-height: 60px;" />
+        <n-menu mode="horizontal" responsive :options="menuOptions" style="display: flex; justify-content: flex-end;" />
     </nav>
 </template>
 
@@ -11,7 +11,7 @@ import NotificationButton from "@/components/NotificationButton.vue";
 import { useStore } from "@/store";
 import { h, computed } from "vue";
 import { useMessage } from "naive-ui";
-import SwitchTheme from "@/components/SwitchTheme.vue";
+// import SwitchTheme from "@/components/SwitchTheme.vue";
 const store = useStore();
 window.$message = useMessage();
 const menuOptions = computed(() => [
@@ -71,6 +71,11 @@ const menuOptions = computed(() => [
         show: store.isLoggedIn,
     },
     {
+        label: () => h(NotificationButton),
+        key: "notification",
+        show: store.isLoggedIn,
+    },
+    {
         label: () =>
             h(
                 RouterLink,
@@ -112,15 +117,10 @@ const menuOptions = computed(() => [
         key: "woodenfish",
         show: store.isLoggedIn,
     },
-    {
-        label: () => h(NotificationButton),
-        key: "notification",
-        show: store.isLoggedIn,
-    },
-    {
-        label: () => h(SwitchTheme),
-        key: "switchtheme"
-    }
+    // {
+    //     label: () => h(SwitchTheme),
+    //     key: "switchtheme"
+    // }
 ]);
 </script>
 
