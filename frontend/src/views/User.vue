@@ -10,7 +10,7 @@
         </div>
 
         <h2>添加的物品</h2>
-        <n-data-table v-if="items.length" :columns="columns" :data="items" :pagination="pagination" :bordered="false" />
+        <n-data-table v-if="items.length" :columns="columns" :data="items" :pagination="pagination" :bordered="false" striped />
         <div v-else>
             <p>没有添加的物品</p>
         </div>
@@ -49,25 +49,30 @@ async function handleDeleteItem(itemId) {
 const columns = [
     {
         title: "ID",
-        key: "id"
+        key: "id",
+        sorter: 'default',
+        resizable: true,
     },
     {
         title: "物品名称",
         key: "name",
         ellipsis: true,
-        resizable: true
+        sorter: 'default',
+        resizable: true,
     },
     {
         title: "物品描述",
         key: "description",
         ellipsis: true,
-        resizable: true
+        sorter: 'default',
+        resizable: true,
     },
     {
         title: "联系方式",
         key: "contact_info",
         ellipsis: true,
-        resizable: true
+        sorter: 'default',
+        resizable: true,
     },
     {
         title: "操作",
@@ -114,6 +119,7 @@ const columns = [
         }
     }
 ];
+
 const paginationReactive = reactive({
       page: 1,
       pageSize: 20,

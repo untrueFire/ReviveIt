@@ -28,6 +28,7 @@ def get_item(_, item_id):
     manual_parameters=[
         openapi.Parameter("limit", openapi.IN_QUERY, description="返回数量上限", type=openapi.TYPE_INTEGER, required=False),
         openapi.Parameter("offset", openapi.IN_QUERY, description="起始下标", type=openapi.TYPE_INTEGER, required=False),
+        openapi.Parameter("orderby", openapi.IN_QUERY, description="基于某列排序", type=openapi.TYPE_STRING, required=False),
     ],
     responses={200: ItemSerializer(many=True)},
 )
@@ -36,7 +37,11 @@ def get_item(_, item_id):
 def get_my_items(request: rest_framework.request.Request):
     limit = int(request._request.GET.get("limit", default=100))
     offset = int(request._request.GET.get("offset", default=0))
-    items = request.user.item_set.all()[offset : offset + limit]
+    orderby = request._request.GET.get("orderby")
+    items = request.user.item_set.all()
+    if orderby:
+        items = items.order_by(orderby)
+    items = items[offset : offset + limit]
     serializer = ItemSerializer(items, many=True)
     return Response(serializer.data)
 
@@ -111,6 +116,7 @@ def update_item(request: rest_framework.request.Request, item_id: int):
         openapi.Parameter("q", openapi.IN_QUERY, description="物品名称或描述", type=openapi.TYPE_STRING, required=False),
         openapi.Parameter("limit", openapi.IN_QUERY, description="返回数量上限", type=openapi.TYPE_INTEGER, required=False),
         openapi.Parameter("offset", openapi.IN_QUERY, description="起始下标", type=openapi.TYPE_INTEGER, required=False),
+        openapi.Parameter("orderby", openapi.IN_QUERY, description="基于某列排序", type=openapi.TYPE_STRING, required=False),
     ],
     responses={200: ItemSerializer()},
 )
@@ -120,9 +126,11 @@ def search_items(request: rest_framework.request.Request):
     query = request._request.GET.get("q")
     limit = int(request._request.GET.get("limit", default=100))
     offset = int(request._request.GET.get("offset", default=0))
-    if not query:
-        items = Item.objects.all()
-    else:
+    orderby = request._request.GET.get("orderby")
+    items = Item.objects.all()
+    if orderby:
+        items = items.order_by(orderby)
+    if query:
         items = Item.objects.filter(name__icontains=query) | Item.objects.filter(description__icontains=query)
     serializer = ItemSerializer(items[offset : offset + limit], many=True)
     return Response(serializer.data)

@@ -1,49 +1,14 @@
 <template>
     <div>
         <input type="text" v-model="query" @input="handleInput" placeholder="搜索..." class="searchBox" />
-        <table v-if="results.length">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>物品名称</th>
-                    <th>物品描述</th>
-                    <th>联系方式</th>
-                    <th>持有者</th>
-                    <th v-if="store.isLoggedIn">操作</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="item in results" :key="item.id">
-                    <td>{{ item.id }}</td>
-                    <td><n-ellipsis style="max-width: 100px">{{ item.name }}</n-ellipsis></td>
-                    <td><n-ellipsis style="max-width: 240px">{{ item.description }}</n-ellipsis></td>
-                    <td><n-ellipsis style="max-width: 100px">{{ item.contact_info }}</n-ellipsis></td>
-                    <td>{{ item.owner.username }}</td>
-                    <td v-if="store.isLoggedIn">
-                        <n-space>
-                            <button @click="router.push({ name: 'ViewItem', params: { id: item.id } })">详情</button>
-                            <button v-if="item.owner.id != store.user.id" @click="handleReviveItem(item.id)">
-                                复活
-                            </button>
-                        </n-space>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <n-data-table v-if="results.length" :columns="columns" :data="results" :pagination="pagination" striped />
         <div v-if="showModal" class="modal-overlay">
             <div class="modal">
                 <div class="modal-content">
                     <h2>你愿意消耗多少功德复活这件物品？</h2>
-                    <n-input-number
-                        v-model:value="price"
-                        :input-props="{ type: 'number' }"
-                        placeholder="请输入一个非负整数..."
-                        :min="0"
-                        :max="store.user.balance" />
-                    <n-slider
-                        v-model:value="price"
-                        :step="1"
-                        :max="store.user.balance" />
+                    <n-input-number v-model:value="price" :input-props="{ type: 'number' }" placeholder="请输入一个非负整数..."
+                        :min="0" :max="store.user.balance" />
+                    <n-slider v-model:value="price" :step="1" :max="store.user.balance" />
                     <p>当前可用功德：{{ store.user.balance }}</p>
                     <n-flex justify="center">
                         <button @click="SendReviveItem">确认</button>
@@ -56,10 +21,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { h, ref, onMounted, computed, reactive } from "vue";
 import { search, ReviveItem, updateUser } from "@/utils/api.js";
 import { useStore } from "@/store";
-import { useMessage } from "naive-ui";
+import { useMessage, NButton, NSpace } from "naive-ui";
 import { useRouter } from "vue-router";
 const router = useRouter();
 const store = useStore();
@@ -97,6 +62,100 @@ const SendReviveItem = async () => {
         message.error("请求发送失败");
     }
 };
+
+function handleViewItem(itemId) {
+    router.push({ name: 'ViewItem', params: { id: itemId } });
+}
+
+const columns = computed(() => {
+    let res = [
+        {
+            title: "ID",
+            key: "id",
+            sorter: 'default',
+            resizable: true,
+        },
+        {
+            title: "物品名称",
+            key: "name",
+            ellipsis: true,
+            resizable: true,
+            sorter: 'default'
+        },
+        {
+            title: "物品描述",
+            key: "description",
+            ellipsis: true,
+            resizable: true,
+            sorter: 'default'
+        },
+        {
+            title: "联系方式",
+            key: "contact_info",
+            ellipsis: true,
+            resizable: true,
+            sorter: 'default'
+        },
+        {
+            title: "持有者",
+            key: "owner.username",
+            resizable: true,
+        }
+    ];
+    if (store.isLoggedIn) {
+        res.push({
+            title: "操作",
+            key: "actions",
+            render(row) {
+                let buttons = [
+                    h(
+                        NButton,
+                        {
+                            strong: true,
+                            tertiary: true,
+                            size: "small",
+                            onClick: () => handleViewItem(row.id)
+                        },
+                        { default: () => '详情' }
+                    )];
+                if (row.owner.id != store.user.id) {
+                    buttons.push(h(
+                        NButton,
+                        {
+                            strong: true,
+                            tertiary: true,
+                            size: "small",
+                            onClick: () => handleReviveItem(row.id),
+                        },
+                        { default: () => '复活' }
+                    ))
+                }
+                return h(
+                    NSpace,
+                    null,
+                    () => buttons
+                );
+            }
+        });
+    }
+    return res;
+}
+);
+
+const paginationReactive = reactive({
+      page: 1,
+      pageSize: 20,
+      showSizePicker: true,
+      pageSizes: [10, 20, 50, 100],
+      onChange: (page) => {
+        paginationReactive.page = page;
+      },
+      onUpdatePageSize: (pageSize) => {
+        paginationReactive.pageSize = pageSize;
+        paginationReactive.page = 1;
+      }
+});
+const pagination = paginationReactive;
 
 onMounted(() => {
     handleInput();
