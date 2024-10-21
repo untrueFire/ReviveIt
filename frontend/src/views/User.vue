@@ -10,32 +10,7 @@
         </div>
 
         <h2>添加的物品</h2>
-        <table v-if="items.length" class="items-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>物品名称</th>
-                    <th>物品描述</th>
-                    <th>联系方式</th>
-                    <th>操作</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="item in items" :key="item.id">
-                    <td>{{ item.id }}</td>
-                    <td><n-ellipsis style="max-width: 100px">{{ item.name }}</n-ellipsis></td>
-                    <td><n-ellipsis style="max-width: 240px">{{ item.description }}</n-ellipsis></td>
-                    <td><n-ellipsis style="max-width: 100px">{{ item.contact_info }}</n-ellipsis></td>
-                    <td>
-                        <n-space>
-                            <button @click="router.push({ name: 'ViewItem', params: { id: item.id } })">详情</button>
-                            <button @click="handleEditItem(item.id)">编辑</button>
-                            <button @click="handleDeleteItem(item.id)">删除</button>
-                        </n-space>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <n-data-table v-if="items.length" :columns="columns" :data="items" :pagination="pagination" :bordered="false" />
         <div v-else>
             <p>没有添加的物品</p>
         </div>
@@ -43,22 +18,23 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { h, ref, onMounted, reactive } from "vue";
 import { useRouter } from "vue-router";
 import { fetchUserItems, deleteItem } from "@/utils/api";
 import { useStore } from "@/store";
-import { useMessage } from "naive-ui";
+import { useMessage, NButton, NSpace } from "naive-ui";
 const message = useMessage();
 const router = useRouter();
 const items = ref([]);
 const store = useStore();
-onMounted(async () => {
-    fetchUserItems()
-        .then((data) => {
-            items.value = data;
-        })
-        .catch((error) => message.error("加载用户信息和物品失败:", error));
-});
+
+function handleViewItem(itemId) {
+    router.push({ name: 'ViewItem', params: { id: itemId } });
+}
+
+function handleEditItem(itemId) {
+    router.push({ name: "EditItem", params: { id: itemId } });
+}
 
 async function handleDeleteItem(itemId) {
     try {
@@ -70,7 +46,95 @@ async function handleDeleteItem(itemId) {
     }
 }
 
-function handleEditItem(itemId) {
-    router.push({ name: "EditItem", params: { id: itemId } });
-}
+const columns = [
+    {
+        title: "ID",
+        key: "id"
+    },
+    {
+        title: "物品名称",
+        key: "name",
+        ellipsis: true,
+        resizable: true
+    },
+    {
+        title: "物品描述",
+        key: "description",
+        ellipsis: true,
+        resizable: true
+    },
+    {
+        title: "联系方式",
+        key: "contact_info",
+        ellipsis: true,
+        resizable: true
+    },
+    {
+        title: "操作",
+        key: "actions",
+        render(row) {
+            return h(
+                NSpace,
+                null,
+                () => [
+                    h(
+                        NButton,
+                        {
+                            strong: true,
+                            tertiary: true,
+                            size: "small",
+                            onClick: () => handleViewItem(row.id)
+                        },
+                        { default: () => '详情' }
+                    ),
+                    h(
+                        NButton,
+                        {
+                            strong: true,
+                            tertiary: true,
+                            size: "small",
+                            onClick: () => handleEditItem(row.id)
+
+                        },
+                        { default: () => '编辑' }
+                    ),
+                    h(
+                        NButton,
+                        {
+                            strong: true,
+                            tertiary: true,
+                            size: "small",
+                            onClick: () => handleDeleteItem(row.id)
+
+                        },
+                        { default: () => '删除' }
+                    )
+                ]
+            );
+        }
+    }
+];
+const paginationReactive = reactive({
+      page: 1,
+      pageSize: 20,
+      showSizePicker: true,
+      pageSizes: [10, 20, 50, 100],
+      onChange: (page) => {
+        paginationReactive.page = page;
+      },
+      onUpdatePageSize: (pageSize) => {
+        paginationReactive.pageSize = pageSize;
+        paginationReactive.page = 1;
+      }
+});
+const pagination = paginationReactive;
+
+onMounted(async () => {
+    fetchUserItems()
+        .then((data) => {
+            items.value = data;
+        })
+        .catch((error) => message.error("加载用户信息和物品失败:", error));
+});
+
 </script>
