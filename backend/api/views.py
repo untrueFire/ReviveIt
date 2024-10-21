@@ -11,7 +11,14 @@ from .models import *
 from .serializers import *
 
 
-@swagger_auto_schema(method="get", responses={200: ItemSerializer(), 404: ITEM_NOT_FOUND})
+@swagger_auto_schema(
+    method="get",
+    manual_parameters=[
+        openapi.Parameter("item_id", openapi.IN_PATH, description="要查询的物品ID", type=openapi.TYPE_INTEGER, required=True),
+    ],
+    operation_summary="查询指定ID的物品",
+    responses={200: ItemSerializer(), 404: NOT_FOUND},
+)
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def get_item(_, item_id):
@@ -28,8 +35,9 @@ def get_item(_, item_id):
     manual_parameters=[
         openapi.Parameter("limit", openapi.IN_QUERY, description="返回数量上限", type=openapi.TYPE_INTEGER, required=False),
         openapi.Parameter("offset", openapi.IN_QUERY, description="起始下标", type=openapi.TYPE_INTEGER, required=False),
-        openapi.Parameter("orderby", openapi.IN_QUERY, description="基于某列排序", type=openapi.TYPE_STRING, required=False),
+        openapi.Parameter("orderby", openapi.IN_QUERY, description="排序字段", type=openapi.TYPE_STRING, required=False),
     ],
+    operation_summary="查询当前用户的物品",
     responses={200: ItemSerializer(many=True)},
 )
 @api_view(["GET"])
@@ -60,6 +68,7 @@ item_schema = openapi.Schema(
 @swagger_auto_schema(
     method="post",
     request_body=item_schema,
+    operation_summary="添加物品",
     responses={200: SUCCCESS, 400: INVALID_REQUEST},
 )
 @api_view(["POST"])
@@ -72,6 +81,14 @@ def add_item(request: rest_framework.request.Request):
     return fast400
 
 
+@swagger_auto_schema(
+    method="post",
+    manual_parameters=[
+        openapi.Parameter("item_id", openapi.IN_PATH, description="要删除的物品ID", type=openapi.TYPE_INTEGER, required=True),
+    ],
+    operation_summary="删除指定ID的物品",
+    responses={200: SUCCCESS, 400: INVALID_REQUEST, 403: PERMISSION_DENIED, 404: NOT_FOUND},
+)
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def delete_item(request: rest_framework.request.Request, item_id: int):
@@ -88,7 +105,11 @@ def delete_item(request: rest_framework.request.Request, item_id: int):
 
 @swagger_auto_schema(
     method="post",
+    manual_parameters=[
+        openapi.Parameter("item_id", openapi.IN_PATH, description="要更新的物品ID", type=openapi.TYPE_INTEGER, required=True),
+    ],
     request_body=item_schema,
+    operation_summary="更新指定ID的物品",
     responses={200: ItemSerializer()},
 )
 @api_view(["POST"])
@@ -116,8 +137,9 @@ def update_item(request: rest_framework.request.Request, item_id: int):
         openapi.Parameter("q", openapi.IN_QUERY, description="物品名称或描述", type=openapi.TYPE_STRING, required=False),
         openapi.Parameter("limit", openapi.IN_QUERY, description="返回数量上限", type=openapi.TYPE_INTEGER, required=False),
         openapi.Parameter("offset", openapi.IN_QUERY, description="起始下标", type=openapi.TYPE_INTEGER, required=False),
-        openapi.Parameter("orderby", openapi.IN_QUERY, description="基于某列排序", type=openapi.TYPE_STRING, required=False),
+        openapi.Parameter("orderby", openapi.IN_QUERY, description="排序字段", type=openapi.TYPE_STRING, required=False),
     ],
+    operation_summary="根据关键字查询物品",
     responses={200: ItemSerializer()},
 )
 @api_view(["GET"])
@@ -136,7 +158,7 @@ def search_items(request: rest_framework.request.Request):
     return Response(serializer.data)
 
 
-@swagger_auto_schema(method="get", responses={200: UserSerializer()})
+@swagger_auto_schema(method="get", operation_summary="查询当前用户的信息", responses={200: UserSerializer(), 403: NO_CRED})
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def get_user_info(request):
@@ -147,7 +169,11 @@ def get_user_info(request):
 
 @swagger_auto_schema(
     method="post",
-    responses={200: SUCCCESS, 400: INVALID_REQUEST, 403: PERMISSION_DENIED, 404: ITEM_NOT_FOUND},
+    manual_parameters=[
+        openapi.Parameter("notification_id", openapi.IN_PATH, description="要同意的通知ID", type=openapi.TYPE_INTEGER, required=True),
+    ],
+    operation_summary="同意指定ID的通知",
+    responses={200: SUCCCESS, 400: INVALID_REQUEST, 403: PERMISSION_DENIED, 404: NOT_FOUND},
 )
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
@@ -184,7 +210,11 @@ def accept_deal(request: rest_framework.request.Request, notification_id: int):
 
 @swagger_auto_schema(
     method="post",
-    responses={200: SUCCCESS, 400: INVALID_REQUEST, 403: PERMISSION_DENIED},
+    manual_parameters=[
+        openapi.Parameter("notification_id", openapi.IN_PATH, description="要拒绝的通知ID", type=openapi.TYPE_INTEGER, required=True),
+    ],
+    operation_summary="拒绝指定ID的通知",
+    responses={200: SUCCCESS, 400: INVALID_REQUEST, 403: PERMISSION_DENIED, 404: NOT_FOUND},
 )
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
@@ -217,7 +247,11 @@ def reject_deal(request: rest_framework.request.Request, notification_id: int):
         },
         required=["price"],
     ),
-    responses={200: SUCCCESS, 404: ITEM_NOT_FOUND, 403: NO_BALANCE, 400: INVALID_REQUEST},
+    manual_parameters=[
+        openapi.Parameter("item_id", openapi.IN_PATH, description="要复活的物品ID", type=openapi.TYPE_INTEGER, required=True),
+    ],
+    operation_summary="复活指定ID的物品",
+    responses={200: SUCCCESS, 404: NOT_FOUND, 403: NO_BALANCE, 400: INVALID_REQUEST},
 )
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
@@ -245,7 +279,7 @@ def revive(request: rest_framework.request.Request, item_id):
         return fast400
 
 
-@swagger_auto_schema(method="get", responses={200: NotificationSerializer(many=True)})
+@swagger_auto_schema(method="get", operation_summary="获取当前用户所有通知", responses={200: NotificationSerializer(many=True)})
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def user_notifications(request: rest_framework.request.Request):
@@ -253,7 +287,7 @@ def user_notifications(request: rest_framework.request.Request):
     return Response(NotificationSerializer(notifications, many=True).data)
 
 
-@swagger_auto_schema(method="get", responses={200: NotificationSerializer(many=True)})
+@swagger_auto_schema(method="get", operation_summary="获取当前用户所有未读通知", responses={200: NotificationSerializer(many=True)})
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def user_notifications_unread(request: rest_framework.request.Request):
@@ -261,7 +295,7 @@ def user_notifications_unread(request: rest_framework.request.Request):
     return Response(NotificationSerializer(notifications, many=True).data)
 
 
-@swagger_auto_schema(method="get", responses={200: NotificationSerializer(many=True)})
+@swagger_auto_schema(method="get", operation_summary="获取当前用户所有已读通知", responses={200: NotificationSerializer(many=True)})
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def user_notifications_read(request: rest_framework.request.Request):
@@ -271,6 +305,10 @@ def user_notifications_read(request: rest_framework.request.Request):
 
 @swagger_auto_schema(
     method="post",
+    manual_parameters=[
+        openapi.Parameter("notification_id", openapi.IN_PATH, description="要标为已读的通知ID", type=openapi.TYPE_INTEGER, required=True),
+    ],
+    operation_summary="将指定ID的通知标为已读",
     responses={200: SUCCCESS, 400: INVALID_REQUEST, 403: PERMISSION_DENIED},
 )
 @api_view(["POST"])
@@ -288,7 +326,15 @@ def read(request: rest_framework.request.Request, notification_id: int):
 
 @swagger_auto_schema(
     method="post",
-    responses={200: SUCCCESS, 400: INVALID_REQUEST, 403: NO_CRED},
+    operation_summary="生成一个PoW（工作量证明）",
+    responses={
+        200: openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={"challenge": openapi.Schema(type=openapi.TYPE_STRING), "difficulty": openapi.Schema(type=openapi.TYPE_INTEGER)},
+        ),
+        400: INVALID_REQUEST,
+        403: NO_CRED,
+    },
 )
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
@@ -316,6 +362,8 @@ def challenge(request: rest_framework.request.Request):
         },
         required=["nonce"],
     ),
+    operation_description="验证规则是`sha256(challenge + nonce)`以`difficulty`个`0`结尾",
+    operation_summary="验证一个PoW",
     responses={200: SUCCCESS, 400: INVALID_REQUEST, 403: NO_CRED},
 )
 @api_view(["POST"])

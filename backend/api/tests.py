@@ -9,6 +9,7 @@ from .messages import *
 from .models import *
 from .serializers import *
 
+
 class GetItemsTestCase(TestCase):
 
     def setUp(self):
@@ -19,13 +20,13 @@ class GetItemsTestCase(TestCase):
 
     def test_get_single_item(self):
         response = self.client.get(reverse("get_item", args=[self.item1.id]))
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json()["name"], "Item 1")
 
     def test_get_nonexistent_item(self):
         response = self.client.get(reverse("get_item", args=[999]))
-        self.assertEqual(response.status_code, 404)
-        self.assertEqual(response.json()["message"], ITEM_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.json()["message"], NOT_FOUND)
 
 
 class AddItemTestCase(TestCase):
@@ -38,20 +39,20 @@ class AddItemTestCase(TestCase):
     def test_add_item_success(self):
         data = {"name": "New Item", "description": "New Description", "contact_info": "New Contact"}
         response = self.client.post(reverse("add_item"), data)
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()['message'], SUCCCESS)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json()["message"], SUCCCESS)
 
     def test_add_item_unauthenticated(self):
         self.client.logout()
         data = {"name": "New Item", "description": "New Description", "contact_info": "New Contact"}
         response = self.client.post(reverse("add_item"), data)
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_add_item_invalid(self):
         self.client.login(username="testuser", password="testpass")
         data = {"name": "New Item", "description": 1, "contact_info": ""}
         response = self.client.post(reverse("add_item"), json.dumps(data), content_type="application/json")
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
 class DeleteItemTestCase(TestCase):
@@ -65,21 +66,21 @@ class DeleteItemTestCase(TestCase):
 
     def test_delete_item(self):
         response = self.client.post(reverse("delete_item", args=[self.item.id]))
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Item.objects.count(), 0)
 
     def test_delete_nonexistent_item(self):
         response = self.client.post(reverse("delete_item", args=[999]))
-        self.assertEqual(response.status_code, 404)
-        self.assertEqual(response.json()["message"], ITEM_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.json()["message"], NOT_FOUND)
 
     def test_delete_item_unauthorized(self):
         self.client.logout()
         response = self.client.post(reverse("delete_item", args=[self.item.id]))
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.client.login(username="testuser2", password="testpass2")
         response = self.client.post(reverse("delete_item", args=[self.item.id]))
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class UpdateItemTestCase(TestCase):
@@ -93,26 +94,26 @@ class UpdateItemTestCase(TestCase):
     def test_update_item(self):
         data = {"name": "Updated Item"}
         response = self.client.post(reverse("update_item", args=[self.item.id]), json.dumps(data), content_type="application/json")
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.item.refresh_from_db()
         self.assertEqual(self.item.name, data["name"])
 
     def test_update_nonexistent_item(self):
         data = {"name": "Updated Item", "description": "Updated Description", "contact_info": "Updated Contact"}
         response = self.client.post(reverse("update_item", args=[999]), json.dumps(data), content_type="application/json")
-        self.assertEqual(response.status_code, 404)
-        self.assertEqual(response.json()["message"], ITEM_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.json()["message"], NOT_FOUND)
 
     def test_update_item_unauthorized(self):
         self.client.logout()
         data = {"name": "Updated Item", "description": "Updated Description", "contact_info": "Updated Contact"}
         response = self.client.post(reverse("update_item", args=[self.item.id]), json.dumps(data), content_type="application/json")
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_update_item_invalid_data(self):
         data = {"name": []}
         response = self.client.post(reverse("update_item", args=[self.item.id]), json.dumps(data), content_type="application/json")
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.json()["message"], INVALID_REQUEST)
 
     def test_update_item_not_owner(self):
@@ -120,7 +121,7 @@ class UpdateItemTestCase(TestCase):
         self.client.login(username="anotheruser", password="anotherpass")
         data = {"name": "Updated Item", "description": "Updated Description", "contact_info": "Updated Contact"}
         response = self.client.post(reverse("update_item", args=[self.item.id]), json.dumps(data), content_type="application/json")
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(response.json()["message"], PERMISSION_DENIED)
 
 
@@ -134,13 +135,13 @@ class SearchItemsTestCase(TestCase):
 
     def test_search_items(self):
         response = self.client.get(reverse("search_items"), {"q": "Item 1"})
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.json()), 1)
         self.assertEqual(response.json()[0]["name"], "Item 1")
 
     def test_search_items_no_query(self):
         response = self.client.get(reverse("search_items"))
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.json()), 2)
 
 
@@ -153,13 +154,13 @@ class GetUserInfoTestCase(TestCase):
 
     def test_get_user_info(self):
         response = self.client.get(reverse("get_user_info"))
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json()["username"], "testuser")
 
     def test_get_user_info_unauthenticated(self):
         self.client.logout()
         response = self.client.get(reverse("get_user_info"))
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class AcceptDealTestCase(TestCase):
@@ -169,7 +170,7 @@ class AcceptDealTestCase(TestCase):
         self.new_owner = User.objects.create_user(username="newowner", password="newpass")
         self.item = Item.objects.create(owner=self.user)
         self.transaction = Transaction.objects.create(buyer=self.new_owner, target=self.item, price=100)
-        self.notification = Notification.objects.create(actor=self.new_owner, verb='proposed',action_object=self.transaction, recipient=self.user)
+        self.notification = Notification.objects.create(actor=self.new_owner, verb="proposed", action_object=self.transaction, recipient=self.user)
 
     def test_accept_deal_success(self):
         self.client.login(username="testuser", password="testpass")
@@ -194,6 +195,7 @@ class AcceptDealTestCase(TestCase):
         response = self.client.post(reverse("accept_deal", args=[999]))
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+
 class RejectDealTestCase(TestCase):
 
     def setUp(self):
@@ -202,42 +204,44 @@ class RejectDealTestCase(TestCase):
         self.buyer = User.objects.create_user(username="buyer", password="buyerpass")
         self.client.login(username="testuser", password="testpass")
         self.item = Item.objects.create(owner=self.user)
-        self.deal = Transaction.objects.create(buyer=self.buyer, target=self.item, price=100)
-        self.notification = Notification.objects.create(action_object=self.deal, verb='proposed', unread=True, actor=self.buyer, recipient=self.user)
+        self.price = 50
+        self.deal = Transaction.objects.create(buyer=self.buyer, target=self.item, price=self.price)
+        self.notification = Notification.objects.create(action_object=self.deal, verb="proposed", unread=True, actor=self.buyer, recipient=self.user)
 
     def test_reject_deal_success(self):
+        balance = self.buyer.balance
         response = self.client.post(reverse("reject_deal", args=[self.notification.id]))
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json()["message"], SUCCCESS)
         self.buyer.refresh_from_db()
-        self.assertEqual(self.buyer.balance, 200)
+        self.assertEqual(self.buyer.balance, balance + self.price)
         self.notification.refresh_from_db()
         self.assertFalse(self.notification.unread)
 
     def test_reject_deal_nonexistent_notification(self):
         response = self.client.post(reverse("reject_deal", args=[999]))
-        self.assertEqual(response.status_code, 404)
-        self.assertEqual(response.json()["message"], ITEM_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.json()["message"], NOT_FOUND)
 
     def test_reject_deal_already_read_notification(self):
         self.notification.unread = False
         self.notification.save()
 
         response = self.client.post(reverse("reject_deal", args=[self.notification.id]))
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.json()["message"], INVALID_REQUEST)
 
     def test_reject_deal_unauthorized(self):
         self.client.login(username="buyer", password="buyerpass")
         response = self.client.post(reverse("reject_deal", args=[self.notification.id]))
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(response.json()["message"], PERMISSION_DENIED)
 
 
 class ReviveTestCase(TestCase):
     def setUp(self):
         self.client = Client()
-        self.user = User.objects.create_user(username="testuser", password="testpass")
+        self.user = User.objects.create_user(username="testuser", password="testpass", balance=100)
         self.user2 = User.objects.create_user(username="testuser2", password="testpass2")
         self.item = Item.objects.create(owner=self.user2)
 
@@ -266,10 +270,10 @@ class ReviveTestCase(TestCase):
         response = self.client.post(reverse("revive", args=[self.item.id]), {"price": -10})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_revive_unauthenticated(self):
+    def test_revive_self(self):
         self.client.login(username="testuser2", password="testpass2")
         response = self.client.post(reverse("revive", args=[self.item.id]), {"price": 0})
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
 class UserNotificationsTestCase(TestCase):
@@ -287,6 +291,7 @@ class UserNotificationsTestCase(TestCase):
     def test_user_notifications_unauthenticated(self):
         response = self.client.get(reverse("user_notifications"))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
 
 class GetMyItemTestCase(TestCase):
     def setUp(self):
