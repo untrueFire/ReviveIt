@@ -272,14 +272,6 @@ th {
   align-items: center;
 }
 
-/* input[type="number"] {
-  width: 100%;
-  padding: 10px;
-  margin: 10px 0;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-} */
-
 button {
   padding: 5px 10px;
   border: none;
@@ -297,16 +289,10 @@ button {
 }
 
 .top-menu {
-  /* background-color: #fff; */
-  padding: 10px 0;
-}
-
-.top-menu ul {
   list-style-type: none;
-  margin: 0;
+  margin: 10px;
   padding: 0;
   display: flex;
-  justify-content: flex-end;
 }
 
 .top-menu li {
@@ -327,4 +313,8 @@ button {
   margin-top: 20px;
   border: 1px solid #ccc;
   padding: 10px;
+}
+
+.v-overflow {
+  justify-content: flex-end;
 }

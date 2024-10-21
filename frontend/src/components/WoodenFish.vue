@@ -1,10 +1,10 @@
 <template>
-	<!-- <n-button @click="handleKnock" type="primary">我是木鱼</n-button> -->
 	<img width="100" src="/muyu.svg" alt="我是木鱼" @click="handleKnock" style="
     display: flex;
     left: 50%;
     position: relative;
-    top: 20px;" />
+    top: 20px;
+	transition: width 0.5s ease;" />
 </template>
 
 <script setup>
@@ -34,11 +34,11 @@ async function handleKnock() {
 		}).catch((err) => {
 			loadingBar.error();
 			console.error(err);
-			message.error('失败了失败了失败了');
+			message.error('点击过快');
 		})
 	).catch((err) => {
 		console.error(err);
-		message.error('出师未捷身先死');
+		message.error('木鱼被敲坏了......');
 	})
 }
 </script>

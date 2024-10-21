@@ -8,7 +8,6 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     NAlert: typeof import('naive-ui')['NAlert']
-    NAvatar: typeof import('naive-ui')['NAvatar']
     NBackTop: typeof import('naive-ui')['NBackTop']
     NBadge: typeof import('naive-ui')['NBadge']
     NButton: typeof import('naive-ui')['NButton']
@@ -19,7 +18,6 @@ declare module 'vue' {
     NFlex: typeof import('naive-ui')['NFlex']
     NForm: typeof import('naive-ui')['NForm']
     NFormItem: typeof import('naive-ui')['NFormItem']
-    NIcon: typeof import('naive-ui')['NIcon']
     NInput: typeof import('naive-ui')['NInput']
     NInputNumber: typeof import('naive-ui')['NInputNumber']
     NLoadingBarProvider: typeof import('naive-ui')['NLoadingBarProvider']
