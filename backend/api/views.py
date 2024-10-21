@@ -229,6 +229,20 @@ def user_notifications(request: rest_framework.request.Request):
     notifications = request.user.notifications.all()
     return Response(NotificationSerializer(notifications, many=True).data)
 
+@swagger_auto_schema(method="get", responses={200: NotificationSerializer(many=True)})
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def user_notifications_unread(request: rest_framework.request.Request):
+    notifications = request.user.notifications.unread()
+    return Response(NotificationSerializer(notifications, many=True).data)
+
+@swagger_auto_schema(method="get", responses={200: NotificationSerializer(many=True)})
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def user_notifications_read(request: rest_framework.request.Request):
+    notifications = request.user.notifications.read()
+    return Response(NotificationSerializer(notifications, many=True).data)
+
 
 @swagger_auto_schema(
     method="post",

@@ -1,11 +1,13 @@
 <template>
-    <n-badge :value="store.unreadCount" @click="goToNotifications">
-        <n-avatar round>
-            <n-icon>
-                <NotificationsItem />
-            </n-icon>
-        </n-avatar>
-    </n-badge>
+    <div>
+        <n-badge :value="store.unreadCount" @click="goToNotifications" style="display: flex; align-items: center;">
+            <n-avatar round>
+                <n-icon>
+                    <NotificationsItem />
+                </n-icon>
+            </n-avatar>
+        </n-badge>
+    </div>
 </template>
 
 <script setup>
@@ -13,7 +15,7 @@ import { onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from '@/store';
 import { updateNotifications } from '@/utils/api';
-import { Notifications as NotificationsItem } from '@vicons/ionicons5';
+import { MailOutline as NotificationsItem } from '@vicons/ionicons5';
 const router = useRouter();
 const store = useStore();
 
@@ -31,5 +33,3 @@ onUnmounted(() => {
     clearInterval(store.intervalId);
 });
 </script>
-
-<style scoped src="@/assets/css/styles.css"></style>

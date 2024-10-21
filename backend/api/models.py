@@ -2,7 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.conf import settings
 class User(AbstractUser):
-    balance = models.PositiveIntegerField(default=100)
+    balance = models.PositiveIntegerField(default=0)
     class Meta(AbstractUser.Meta):
         swappable = "AUTH_USER_MODEL"
 

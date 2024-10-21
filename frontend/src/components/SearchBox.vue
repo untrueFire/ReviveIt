@@ -1,6 +1,6 @@
 <template>
     <div>
-        <input type="text" v-model="query" @input="handleInput" placeholder="搜索..." />
+        <input type="text" v-model="query" @input="handleInput" placeholder="搜索..." class="searchBox" />
         <table v-if="results.length">
             <thead>
                 <tr>
@@ -16,12 +16,11 @@
                 <tr v-for="item in results" :key="item.id">
                     <td>{{ item.id }}</td>
                     <td>{{ item.name }}</td>
-                    <td>{{ item.description }}</td>
+                    <td><n-ellipsis style="max-width: 240px">{{ item.description }}</n-ellipsis></td>
                     <td>{{ item.contact_info }}</td>
                     <td>{{ item.owner.username }}</td>
-                    <td>
-                        <button v-if="store.isLoggedIn && item.owner.id != store.user.id"
-                            @click="handleReviveItem(item.id)">
+                    <td v-if="store.isLoggedIn">
+                        <button v-if="item.owner.id != store.user.id" @click="handleReviveItem(item.id)">
                             复活
                         </button>
                     </td>
@@ -32,11 +31,14 @@
             <div class="modal">
                 <div class="modal-content">
                     <h2>你愿意消耗多少功德复活这件物品？</h2>
-                    <input v-model.number="price" type="number" placeholder="请输入一个非负整数..." min="0"
-                        v-bind:max="store.user.balance" />
+                    <n-input-number v-model:value="price" :input-props="{ type: 'number' }" placeholder="请输入一个非负整数..." :min="0"
+                        :max="store.user.balance" />
+                    <n-slider v-model:value="price" :step="1" :max="store.user.balance" />
                     <p>当前可用功德：{{ store.user.balance }}</p>
-                    <button @click="SendReviveItem">确认</button>
-                    <button @click="showModal = false">取消</button>
+                    <n-flex justify="center">
+                        <button @click="SendReviveItem">确认</button>
+                        <button @click="showModal = false">取消</button>
+                    </n-flex>
                 </div>
             </div>
         </div>
@@ -57,9 +59,6 @@ const showModal = ref(false);
 const price = ref(0);
 const handleInput = async () => {
     try {
-        // if (store.isLoggedIn) {
-        //     updateUser();
-        // }
         results.value = await search(query.value);
     } catch (error) {
         message.error("数据获取失败");
@@ -90,5 +89,3 @@ onMounted(() => {
     handleInput();
 });
 </script>
-
-<style scoped src="@/assets/css/styles.css"></style>

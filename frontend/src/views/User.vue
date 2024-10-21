@@ -23,9 +23,9 @@
             <tbody>
                 <tr v-for="item in items" :key="item.id">
                     <td>{{ item.id }}</td>
-                    <td>{{ item.name }}</td>
-                    <td>{{ item.description }}</td>
-                    <td>{{ item.contact_info }}</td>
+                    <td><n-ellipsis style="max-width: 100px">{{ item.name }}</n-ellipsis></td>
+                    <td><n-ellipsis style="max-width: 240px">{{ item.description }}</n-ellipsis></td>
+                    <td><n-ellipsis style="max-width: 100px">{{ item.contact_info }}</n-ellipsis></td>
                     <td>
                         <button @click="handleEditItem(item.id)">编辑</button>
                         <button @click="handleDeleteItem(item.id)">删除</button>
@@ -42,7 +42,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { fetchUserItems, deleteItem, updateUser } from "@/utils/api";
+import { fetchUserItems, deleteItem } from "@/utils/api";
 import { useStore } from "@/store";
 import { useMessage } from "naive-ui";
 const message = useMessage();
@@ -50,12 +50,11 @@ const router = useRouter();
 const items = ref([]);
 const store = useStore();
 onMounted(async () => {
-    try {
-        await updateUser();
-        items.value = await fetchUserItems();
-    } catch (error) {
-        message.error("加载用户信息和物品失败:", error);
-    }
+    fetchUserItems()
+        .then((data) => {
+            items.value = data;
+        })
+        .catch((error) => message.error("加载用户信息和物品失败:", error));
 });
 
 async function handleDeleteItem(itemId) {
@@ -73,4 +72,3 @@ function handleEditItem(itemId) {
 }
 </script>
 
-<style scoped src="@/assets/css/styles.css"></style>

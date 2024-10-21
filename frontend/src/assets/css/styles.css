@@ -176,7 +176,7 @@
   background-color: #0056b3;
 }
 
-input {
+input.searchBox {
   width: 100%;
   padding: 10px;
   font-size: 16px;
@@ -272,13 +272,13 @@ th {
   align-items: center;
 }
 
-input[type="number"] {
+/* input[type="number"] {
   width: 100%;
   padding: 10px;
   margin: 10px 0;
   border: 1px solid #ccc;
   border-radius: 5px;
-}
+} */
 
 button {
   padding: 5px 10px;

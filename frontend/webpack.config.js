@@ -1,10 +1,10 @@
 const path = require('path');
 const { VueLoaderPlugin } = require('vue-loader');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { DefinePlugin, HotModuleReplacementPlugin } = require('webpack');
-const AutoImport = require('unplugin-auto-import/webpack')
-const Components = require('unplugin-vue-components/webpack')
-const { ElementPlusResolver } = require('unplugin-vue-components/resolvers')
+const { DefinePlugin } = require('webpack');
+const AutoImport = require('unplugin-auto-import/webpack');
+const Components = require('unplugin-vue-components/webpack');
+const { NaiveUiResolver } = require('unplugin-vue-components/resolvers');
 const webpack = require('webpack');
 module.exports = {
   mode: 'development',
@@ -34,22 +34,22 @@ module.exports = {
     new VueLoaderPlugin(),
     new HtmlWebpackPlugin({
       template: './public/index.html',
+      title: 'ReviveIt'
     }),
     new DefinePlugin({
       BASE_URL: JSON.stringify('/'),
     }),
     new webpack.DefinePlugin({
-      __VUE_OPTIONS_API__: JSON.stringify(true), // 启用 Options API
-      __VUE_PROD_DEVTOOLS__: JSON.stringify(true), // 生产环境下的 DevTools
-      __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: JSON.stringify(true) // 生产环境下的 hydration 错误详细信息
+      __VUE_OPTIONS_API__: JSON.stringify(false),
+      __VUE_PROD_DEVTOOLS__: JSON.stringify(false),
+      __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: JSON.stringify(false)
     }),
-    AutoImport({
-      resolvers: [ElementPlusResolver()],
+    AutoImport.default({
+      resolvers: [NaiveUiResolver()],
     }),
-    Components({
-      resolvers: [ElementPlusResolver()],
+    Components.default({
+      resolvers: [NaiveUiResolver()],
     }),
-    new HotModuleReplacementPlugin(),
   ],
   devServer: {
     static: {

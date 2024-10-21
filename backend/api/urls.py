@@ -15,6 +15,8 @@ urlpatterns = [
     path("user/", get_user_info, name="get_user_info"),
     path("user/items/", get_my_items, name="get_my_items"),
     path("user/notifications/", user_notifications, name="user_notifications"),
+    path("user/notifications/read/", user_notifications_read, name="user_notifications_read"),
+    path("user/notifications/unread/", user_notifications_unread, name="user_notifications_unread"),
     path("user/challenge/", challenge, name="challenge"),
     path("user/knock/", knock, name="knock"),
 ]
