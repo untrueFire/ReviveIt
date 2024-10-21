@@ -1,21 +1,12 @@
 <template>
 	<div>
 		<h1>物品详情</h1>
-		<!-- <n-flex vertical>
-			<n-layout>
-				<n-layout-header>{{ item.name }}</n-layout-header>
-				<n-layout-content embedded content-style="padding: 24px;">
-					{{ item.description }}
-				</n-layout-content>
-				<n-layout-footer>{{ item.contact_info }}</n-layout-footer>
-			</n-layout>
-		</n-flex> -->
 		<div class="container">
 			<n-card
 				embedded
 				:title="item.name"
 				:segmented="{
-				content: true,
+				content: 'soft',
 				footer: 'soft',
 			}">
 				{{ item.description }}
@@ -64,7 +55,7 @@ onMounted(async () => {
 
 <style scoped>
 .n-card {
-	max-width: 80%;
+	max-width: 70%;
 	margin: auto;
 }
 </style>

@@ -123,8 +123,8 @@
 }
 
 .user-profile {
-  max-width: 800px;
-  margin: 0 auto;
+  max-width: 70%;
+  margin: auto;
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 5px;

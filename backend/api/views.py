@@ -23,11 +23,20 @@ def get_item(_, item_id):
         return fast404
 
 
-@swagger_auto_schema(method="get", responses={200: ItemSerializer(many=True)})
+@swagger_auto_schema(
+    method="get",
+    manual_parameters=[
+        openapi.Parameter("limit", openapi.IN_QUERY, description="返回数量上限", type=openapi.TYPE_INTEGER, required=False),
+        openapi.Parameter("offset", openapi.IN_QUERY, description="起始下标", type=openapi.TYPE_INTEGER, required=False),
+    ],
+    responses={200: ItemSerializer(many=True)},
+)
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def get_my_items(request: rest_framework.request.Request):
-    items = request.user.item_set.all()
+    limit = int(request._request.GET.get("limit", default=100))
+    offset = int(request._request.GET.get("offset", default=0))
+    items = request.user.item_set.all()[offset : offset + limit]
     serializer = ItemSerializer(items, many=True)
     return Response(serializer.data)
 
@@ -98,18 +107,24 @@ def update_item(request: rest_framework.request.Request, item_id: int):
 
 @swagger_auto_schema(
     method="get",
-    manual_parameters=[openapi.Parameter("q", openapi.IN_QUERY, description="物品名称或描述", type=openapi.TYPE_STRING, required=False)],
+    manual_parameters=[
+        openapi.Parameter("q", openapi.IN_QUERY, description="物品名称或描述", type=openapi.TYPE_STRING, required=False),
+        openapi.Parameter("limit", openapi.IN_QUERY, description="返回数量上限", type=openapi.TYPE_INTEGER, required=False),
+        openapi.Parameter("offset", openapi.IN_QUERY, description="起始下标", type=openapi.TYPE_INTEGER, required=False),
+    ],
     responses={200: ItemSerializer()},
 )
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def search_items(request: rest_framework.request.Request):
-    query = request.GET.get("q")
+    query = request._request.GET.get("q")
+    limit = int(request._request.GET.get("limit", default=100))
+    offset = int(request._request.GET.get("offset", default=0))
     if not query:
         items = Item.objects.all()
     else:
         items = Item.objects.filter(name__icontains=query) | Item.objects.filter(description__icontains=query)
-    serializer = ItemSerializer(items, many=True)
+    serializer = ItemSerializer(items[offset : offset + limit], many=True)
     return Response(serializer.data)
 
 
@@ -229,12 +244,14 @@ def user_notifications(request: rest_framework.request.Request):
     notifications = request.user.notifications.all()
     return Response(NotificationSerializer(notifications, many=True).data)
 
+
 @swagger_auto_schema(method="get", responses={200: NotificationSerializer(many=True)})
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def user_notifications_unread(request: rest_framework.request.Request):
     notifications = request.user.notifications.unread()
     return Response(NotificationSerializer(notifications, many=True).data)
+
 
 @swagger_auto_schema(method="get", responses={200: NotificationSerializer(many=True)})
 @api_view(["GET"])
@@ -268,6 +285,7 @@ def read(request: rest_framework.request.Request, notification_id: int):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def challenge(request: rest_framework.request.Request):
+
     def genPoW():
         from random import choices
         from string import ascii_letters
@@ -295,6 +313,7 @@ def challenge(request: rest_framework.request.Request):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def knock(request: rest_framework.request.Request):
+
     def verify(challenge: str, nonce: str, difficulty=4):
         from hashlib import sha256
 
