@@ -1,6 +1,7 @@
 <template>
     <nav class="top-menu">
-        <n-menu mode="horizontal" :options="menuOptions" />
+        <h1>ReviveIt</h1>
+        <n-menu mode="horizontal" :options="menuOptions" style="justify-content: flex-end; display: flex; min-height: 60px;" />
     </nav>
 </template>
 
@@ -123,4 +124,3 @@ const menuOptions = computed(() => [
 ]);
 </script>
 
-<style scoped src="@/assets/css/styles.css"></style>

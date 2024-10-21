@@ -1,7 +1,7 @@
 <template>
     <div class="login-form">
         <h1>登录</h1>
-        <form @submit.prevent="handleSubmit">
+        <n-form>
             <div class="form-group">
                 <label for="username">用户名</label>
                 <input type="text" id="username" v-model="username" placeholder="请输入用户名" autocomplete="username"
@@ -12,8 +12,8 @@
                 <input type="password" id="password" v-model="password" placeholder="请输入密码"
                     autocomplete="current-password" required />
             </div>
-            <button type="submit">登录</button>
-        </form>
+            <n-button attr-type="submit" @click="handleSubmit">登录</n-button>
+        </n-form>
     </div>
 </template>
 
@@ -68,4 +68,4 @@ onMounted(() => {
 });
 </script>
 
-<style scoped src="@/assets/css/styles.css"></style>
+

@@ -8,6 +8,7 @@ import AddItem from '../views/AddItem.vue';
 import EditItem from '../views/EditItem.vue';
 import NotificationView from '../views/NotificationView.vue';
 import WoodenFishView from '../views/WoodenFishView.vue';
+import ViewItem from '../views/ViewItem.vue';
 import { useStore } from '@/store';
 import { updateUser } from '../utils/api';
 const routes = [
@@ -86,6 +87,15 @@ const routes = [
         component: WoodenFishView,
         meta: {
             title: '电子木鱼',
+            needLogin: true
+        }
+    },
+    {
+        path: '/view/:id',
+        name: 'ViewItem',
+        component: ViewItem,
+        meta: {
+            title: '物品详情',
             needLogin: true
         }
     },

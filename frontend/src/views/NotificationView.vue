@@ -118,4 +118,4 @@ const handleSetRead = async (notificationId) => {
 
 </script>
 
-<style scoped src="@/assets/css/styles.css"></style>
+

@@ -14,8 +14,8 @@ import { useLoadingBar, useMessage } from "naive-ui";
 const message = useMessage();
 const loadingBar = useLoadingBar();
 async function handleKnock() {
-	post('/api/user/challenge/').then((response) => {
-		const { challenge, difficulty } = response;
+	post('/api/user/challenge/').then((data) => {
+		const { challenge, difficulty } = data;
 		loadingBar.start();
 		let nonce = 0;
 		while (true) {

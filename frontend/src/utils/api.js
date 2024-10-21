@@ -1,7 +1,5 @@
 import axios, { AxiosError } from 'axios';
-import { useToast } from 'vue-toastification';
 import { useStore } from '@/store';
-
 function getCookie(name) {
 	const cookies = document.cookie.split(';');
 	for (let cookie of cookies) {
@@ -21,15 +19,15 @@ export async function getCsrftoken() {
 }
 
 function errorHandler(error) {
-	if (error instanceof AxiosError && error.response.status == 403 && error.response.data &&
+	if (error instanceof AxiosError && error.response && error.response.status == 403 && error.response.data &&
 		error.response.data.detail == '身份认证信息未提供。') {
 		const store = useStore();
-		const toast = useToast();
 		if (!store.isLoggedIn) {
 			return undefined;
 		}
 		store.user = undefined;
-		toast.error('登录失效');
+		const message = window.$message;
+		message.error('登录失效');
 		clearInterval(store.intervalId);
 		window.location.href = '/login';
 	} else {

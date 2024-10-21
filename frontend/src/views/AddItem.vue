@@ -1,21 +1,21 @@
 <template>
     <div class="add-item-form">
         <h1>添加物品</h1>
-        <form @submit.prevent="HandleAddItem">
+        <n-form>
             <div class="form-group">
                 <label for="name">物品名称</label>
-                <input id="name" v-model="name" placeholder="物品名称" required />
+                <n-input id="name" v-model:value="name" placeholder="物品名称" required />
             </div>
             <div class="form-group">
                 <label for="description">物品描述</label>
-                <input id="description" v-model="description" placeholder="物品描述" required />
+                <n-input type="textarea" id="description" v-model:value="description" placeholder="物品描述" required />
             </div>
             <div class="form-group">
                 <label for="contactInfo">联系方式</label>
-                <input id="contactInfo" v-model="contactInfo" placeholder="联系方式" required />
+                <n-input id="contactInfo" v-model:value="contactInfo" placeholder="联系方式" required />
             </div>
-            <button type="submit">添加</button>
-        </form>
+            <n-button attr-type="submit" @click="HandleAddItem">添加</n-button>
+        </n-form>
     </div>
 </template>
 
@@ -46,4 +46,3 @@ const HandleAddItem = async () => {
 };
 </script>
 
-<style scoped src="@/assets/css/styles.css"></style>
