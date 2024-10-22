@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "insecure-secret")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("MODE", 'DEBUG') == 'DEBUG'
 
 ALLOWED_HOSTS = []
 
@@ -99,6 +99,7 @@ DATABASES = {
 }
 
 
+# 密码规则，在实际生产中请按需使用，这里为了开发调试时方便就都注释掉了
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 

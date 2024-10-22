@@ -1,4 +1,10 @@
+"""
+实现了请求事务化（原子化）和自动 fallback 到 400
+"""
+from traceback import format_exc
+
 from django.db import transaction
+
 from .messages import fast400
 
 
@@ -7,8 +13,8 @@ def atomic_transaction(func):
         try:
             with transaction.atomic():
                 return func(*args, **kwargs)
-        except Exception as e:
-            print(f"Transaction rolled back: {e}")
+        except:
+            print(f"Transaction rolled back: {format_exc()}")
             return fast400
 
     return wrapper

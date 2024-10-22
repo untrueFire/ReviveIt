@@ -1,6 +1,5 @@
 from django.http import JsonResponse
 
-
 SUCCCESS = "请求成功"
 NOT_FOUND = "未找到"
 PERMISSION_DENIED = "权限不足"
