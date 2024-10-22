@@ -5,6 +5,7 @@ from django.test import Client, TestCase
 from django.urls import reverse
 from notifications.models import Notification
 from rest_framework import status
+
 from .messages import *
 from .models import *
 from .serializers import *
@@ -139,6 +140,11 @@ class SearchItemsTestCase(TestCase):
         self.assertEqual(len(response.json()), 1)
         self.assertEqual(response.json()[0]["name"], "Item 1")
 
+        response = self.client.get(reverse("search_items"), {"q": "", "orderby": "-name"})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.json()), 2)
+        self.assertEqual(response.json()[0]["name"], "Item 2")
+
     def test_search_items_no_query(self):
         response = self.client.get(reverse("search_items"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -171,6 +177,7 @@ class AcceptDealTestCase(TestCase):
         self.item = Item.objects.create(owner=self.user)
         self.transaction = Transaction.objects.create(buyer=self.new_owner, target=self.item, price=100)
         self.notification = Notification.objects.create(actor=self.new_owner, verb="proposed", action_object=self.transaction, recipient=self.user)
+        self.notification2 = Notification.objects.create(actor=self.new_owner, verb="proposed", action_object=self.transaction, recipient=self.user)
 
     def test_accept_deal_success(self):
         self.client.login(username="testuser", password="testpass")
@@ -182,8 +189,14 @@ class AcceptDealTestCase(TestCase):
         self.user.refresh_from_db()
         self.assertEqual(self.item.owner, self.new_owner)
         self.assertEqual(self.user.balance, balance + deal.price)
+
         response = self.client.post(reverse("accept_deal", args=[self.notification.id]))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        response = self.client.post(reverse("accept_deal", args=[self.notification2.id]))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.notification2.refresh_from_db()
+        self.assertEqual(self.notification2.data, "sold out")
 
     def test_accept_deal_permission_denied(self):
         self.client.login(username="newowner", password="newpass")
@@ -288,6 +301,23 @@ class UserNotificationsTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.json()), 1)
 
+    def test_user_notifications_unread(self):
+        self.client.login(username="testuser", password="testpass")
+        response = self.client.get(reverse("user_notifications_unread"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.json()), 1)
+
+    def test_user_notifications_read(self):
+        self.client.login(username="testuser", password="testpass")
+        response = self.client.get(reverse("user_notifications_read"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.json()), 0)
+        self.notification.mark_as_read()
+        response = self.client.get(reverse("user_notifications_read"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.json()), 1)
+
+
     def test_user_notifications_unauthenticated(self):
         response = self.client.get(reverse("user_notifications"))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -305,12 +335,108 @@ class GetMyItemTestCase(TestCase):
         response = self.client.get(reverse("get_my_items"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json(), [])
+
         self.item1 = Item.objects.create(name="Item 1", description="Description 1", contact_info="Contact 1", owner=self.user)
         response = self.client.get(reverse("get_my_items"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.json()), 1)
         self.assertEqual(response.json()[0], ItemSerializer(self.item1).data)
 
+        self.item3 = Item.objects.create(name="Item 3", description="Description 3", contact_info="Contact 3", owner=self.user)
+        response = self.client.get(reverse("get_my_items"), QUERY_STRING="orderby=-name")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.json()), 2)
+        self.assertEqual(response.json()[0], ItemSerializer(self.item3).data)
+
     def test_get_my_items_unauthenticated(self):
         response = self.client.get(reverse("get_my_items"))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+class ReadTestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username='testuser', password='testpassword')
+        self.other_user = User.objects.create_user(username='otheruser', password='otherpassword')
+        self.notification = Notification.objects.create(actor=self.other_user, recipient=self.user)
+
+
+    def test_read_notification_success(self):
+        self.client.login(username='testuser', password='testpassword')
+        response = self.client.post(reverse('read', args=[self.notification.id]))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.notification.refresh_from_db()
+        self.assertFalse(self.notification.unread)
+
+    def test_read_notification_unauthorized(self):
+        self.client.logout()
+        response = self.client.post(reverse('read', args=[self.notification.id]))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_read_notification_not_found(self):
+        self.client.login(username='testuser', password='testpassword')
+        response = self.client.post(reverse('read', args=[999]))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_read_notification_not_recipient(self):
+        self.client.login(username='otheruser', password='otherpassword')
+        response = self.client.post(reverse('read', args=[self.notification.id]))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class ChallengeViewTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='testuser', password='testpassword')
+        self.client = Client()
+
+    def test_challenge_success(self):
+        self.client.login(username='testuser', password='testpassword')
+        response = self.client.post(reverse('challenge'))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn("challenge", response.json())
+        self.assertIn("difficulty", response.json())
+
+    def test_challenge_unauthorized(self):
+        response = self.client.post(reverse('challenge'))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+class KnockViewTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='testuser', password='testpassword')
+        self.user2 = User.objects.create_user(username='testuser2', password='testpassword2')
+        self.client = Client()
+        self.client.login(username='testuser', password='testpassword')
+        response = self.client.post(reverse('challenge')).json()
+        self.challenge = response["challenge"]
+        self.difficulty = response["difficulty"]
+
+    def test_knock_success(self):
+        nonce = self.generate_valid_nonce(self.challenge, self.difficulty)
+        response = self.client.post(reverse('knock'), data={"nonce": nonce})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.balance, 1)
+
+    def test_knock_unauthorized(self):
+        self.client.logout()
+        response = self.client.post(reverse('knock'), data={"nonce": "invalid_nonce"})
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_knock_no_challenge(self):
+        self.client.login(username='testuser2', password='testpassword2')
+        response = self.client.post(reverse('knock'), data={"nonce": "invalid_nonce"})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_knock_invalid_nonce(self):
+        self.client.login(username='testuser', password='testpassword')
+        response = self.client.post(reverse('knock'), data={"nonce": "invalid_nonce"})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def generate_valid_nonce(self, challenge, difficulty):
+        from hashlib import sha256
+        from random import choices
+        from string import ascii_letters
+
+        while True:
+            nonce = "".join(choices(ascii_letters, k=16))
+            if sha256((challenge + nonce).encode()).hexdigest().endswith("0" * difficulty):
+                return nonce

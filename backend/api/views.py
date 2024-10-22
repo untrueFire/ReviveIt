@@ -380,7 +380,7 @@ def knock(request: rest_framework.request.Request):
     difficulty: int = request._request.session["difficulty"]
     nonce: str = request.data["nonce"]
     if not isinstance(nonce, str) or not verify(challenge, nonce, difficulty):
-        return 400
+        return fast400
     user: User = request.user
     user.balance += 1
     user.save()
