@@ -10,6 +10,7 @@ The program allows to add item information (item name, item description, contact
 - Implemented the universal equivalent generation mechanism for item "revival"
 
 ## Usage
+(Recommended) First modify `backend/.env` to configure admin account and server secret key
 ```sh
 docker compose up -d
 ```
