@@ -275,8 +275,6 @@ def revive(request: rest_framework.request.Request, item_id):
             return fast400
     except Item.DoesNotExist:
         return fast404
-    except:
-        return fast400
 
 
 @swagger_auto_schema(method="get", operation_summary="获取当前用户所有通知", responses={200: NotificationSerializer(many=True)})
