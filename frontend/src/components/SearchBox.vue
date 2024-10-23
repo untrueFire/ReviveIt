@@ -37,7 +37,7 @@ const price = ref(0);
 const handleInput = async () => {
     try {
         results.value = await search(query.value);
-    } catch (error) {
+    } catch {
         message.error("数据获取失败");
     }
 };
@@ -59,7 +59,7 @@ const SendReviveItem = async () => {
         message.success("请求发送成功");
         price.value = 0;
         showModal.value = false;
-    } catch (error) {
+    } catch {
         message.error("请求发送失败");
     }
 };

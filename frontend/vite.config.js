@@ -8,14 +8,10 @@ export default defineConfig({
   server: {
     port: 80,
     proxy: {
-      '/api': {
+      '^/api|accounts/.*': {
         target: 'http://localhost:8000',
         changeOrigin: true,
-      },
-      '/accounts': {
-        target: 'http://localhost:8000',
-        changeOrigin: true,
-      },
+      }
     },
     historyApiFallback: true,
   },
