@@ -1,5 +1,5 @@
 # ReviveIt
-[![HitCount](https://hits.dwyl.com/untrueFire/ReviveIt.svg?style=flat-square&show=unique)](http://hits.dwyl.com/untrueFire/ReviveIt)
+[![HitCount](https://img.shields.io/endpoint?url=https%3A%2F%2Fhits.dwyl.com%2FuntrueFire%2FReviveIt.json%3Fcolor%3Dmarine)](http://hits.dwyl.com/untrueFire/ReviveIt)
 
 [English](./README.md) | 中文
 
