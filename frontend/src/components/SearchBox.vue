@@ -11,8 +11,8 @@
                     <n-slider v-model:value="price" :step="1" :max="store.user.balance" />
                     <p>当前可用功德：{{ store.user.balance }}</p>
                     <n-flex justify="center">
-                        <button @click="SendReviveItem">确认</button>
-                        <button @click="showModal = false">取消</button>
+                        <n-button @click="SendReviveItem">确认</n-button>
+                        <n-button @click="showModal = false">取消</n-button>
                     </n-flex>
                 </div>
             </div>
@@ -21,8 +21,7 @@
 </template>
 
 <script setup>
-import { h, ref, onMounted, computed } from "vue";
-import { pagination } from "../utils/constants.js";
+import { h, ref, onMounted, computed, reactive } from "vue";
 import { search, ReviveItem, updateUser } from "../utils/api.js";
 import { useStore } from "../store";
 import { useMessage, NButton, NFlex } from "naive-ui";
@@ -75,6 +74,7 @@ const columns = computed(() => {
             title: "ID",
             key: "id",
             sorter: 'default',
+            ellipsis: true,
             resizable: true,
         },
         {
@@ -101,6 +101,7 @@ const columns = computed(() => {
         {
             title: "持有者",
             key: "owner.username",
+            ellipsis: true,
             resizable: true,
         }
     ];
@@ -144,7 +145,20 @@ const columns = computed(() => {
     return res;
 }
 );
-
+const paginationReactive = reactive({
+	page: 1,
+	pageSize: 10,
+	showSizePicker: true,
+	pageSizes: [10, 20, 50],
+	onChange: (page) => {
+	  paginationReactive.page = page;
+	},
+	onUpdatePageSize: (pageSize) => {
+	  paginationReactive.pageSize = pageSize;
+	  paginationReactive.page = 1;
+	}
+});
+const pagination = paginationReactive;
 onMounted(() => {
     handleInput();
 });

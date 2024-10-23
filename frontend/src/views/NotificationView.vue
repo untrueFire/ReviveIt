@@ -3,18 +3,12 @@
         <n-tabs type="line" placement="left">
             <n-tab-pane name="unread" tab="未读通知">
                 <n-data-table v-if="store.unreadNotifications.length > 0" :columns="columns"
-                    :data="store.unreadNotifications" :pagination="pagination" striped />
+                    :data="store.unreadNotifications" virtual-scroll :max-height="600" striped />
                 <p v-else>暂无未读通知</p>
             </n-tab-pane>
             <n-tab-pane name="read" tab="已读通知">
-                <n-data-table v-if="store.readNotifications.length > 0" :columns="columns2" :max-height="600"
-                    :data="store.readNotifications" virtual-scroll striped />
-                <!-- <n-virtual-list v-if="store.readNotifications.length > 0" style="max-height: 600px" :item-size="42"
-                    :items="store.readNotifications" item-resizable>
-                    <template #default="{ item }">
-                        <n-card :key="item.id" size="small" :title="relativeTime(item)"> {{ format(item,1) }}</n-card>
-                    </template>
-</n-virtual-list> -->
+                <n-data-table v-if="store.readNotifications.length > 0" :columns="columns2"
+                    :data="store.readNotifications" virtual-scroll :max-height="600" striped />
                 <p v-else>暂无已读通知</p>
             </n-tab-pane>
         </n-tabs>
@@ -23,7 +17,6 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, h } from "vue";
-import { pagination } from "../utils/constants";
 import { useStore } from "../store";
 import { updateUnread, updateRead, acceptNotification, rejectNotification, setRead } from "../utils/api";
 import { useMessage, NFlex, NButton, NTime } from "naive-ui";
@@ -114,12 +107,14 @@ const columns = [
         title: '时间',
         key: 'time',
         resizable: true,
-        sorter: 'default',
+        ellipsis: true,
+        sorter: (row1, row2) => (new Date(row1.timestamp).getTime() - new Date(row2.timestamp).getTime()),
         render: relativeTime
     },
     {
         title: '内容',
         key: 'content',
+        ellipsis: true,
         resizable: true,
         render: row => format(row, 0)
     },
@@ -127,6 +122,7 @@ const columns = [
         title: '操作',
         key: "actions",
         resizable: true,
+        ellipsis: true,
         render(row) {
             if (row.verb == 'proposed') {
                 return h(
@@ -177,19 +173,22 @@ const columns2 = [
         title: '时间',
         key: 'time',
         resizable: true,
-        sorter: 'default',
+        ellipsis: true,
+        sorter: (row1, row2) => (new Date(row1.timestamp).getTime() - new Date(row2.timestamp).getTime()),
         render: relativeTime
     },
     {
         title: '内容',
         key: 'content',
         resizable: true,
+        ellipsis: true,
         render: row => format(row, 1)[0]
     },
     {
         title: '结果',
         key: "result",
         resizable: true,
+        ellipsis: true,
         render: row => format(row, 1)[1],
         filterOptions: [
             {

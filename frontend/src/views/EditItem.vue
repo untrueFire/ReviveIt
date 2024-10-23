@@ -14,7 +14,7 @@
                 <label for="contact_info">联系方式</label>
                 <n-input id="contact_info" v-model:value="item.contact_info" placeholder="联系方式" required />
             </div>
-            <button @click="handleUpdateItem">更新</button>
+            <n-button @click="handleUpdateItem">更新</n-button>
         </n-form>
     </div>
 </template>
