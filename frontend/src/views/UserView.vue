@@ -18,11 +18,12 @@
 </template>
 
 <script setup>
-import { h, ref, onMounted, reactive } from "vue";
+import { h, ref, onMounted } from "vue";
+import { pagination } from "../utils/constants";
 import { useRouter } from "vue-router";
 import { fetchUserItems, deleteItem } from "../utils/api";
 import { useStore } from "../store";
-import { useMessage, NButton, NSpace } from "naive-ui";
+import { useMessage, NButton, NFlex } from "naive-ui";
 const message = useMessage();
 const router = useRouter();
 const items = ref([]);
@@ -77,9 +78,10 @@ const columns = [
     {
         title: "操作",
         key: "actions",
+        resizable: true,
         render(row) {
             return h(
-                NSpace,
+                NFlex,
                 null,
                 () => [
                     h(
@@ -120,20 +122,6 @@ const columns = [
     }
 ];
 
-const paginationReactive = reactive({
-      page: 1,
-      pageSize: 20,
-      showSizePicker: true,
-      pageSizes: [10, 20, 50, 100],
-      onChange: (page) => {
-        paginationReactive.page = page;
-      },
-      onUpdatePageSize: (pageSize) => {
-        paginationReactive.pageSize = pageSize;
-        paginationReactive.page = 1;
-      }
-});
-const pagination = paginationReactive;
 
 onMounted(async () => {
     fetchUserItems()

@@ -1,92 +1,82 @@
 <template>
-    <div class="notifications-container">
-        <template v-if="store.unreadNotifications.length > 0">
-            <h2>未读通知</h2>
-            <table>
-                <tr v-for="notification in store.unreadNotifications" :key="notification.id">
-                    <td>
-                        <template v-if="notification.verb == 'proposed'">
-                            {{ notification.actor.username }} 请求以
-                            {{ notification.action_object.price }} 功德的代价复活
-                            {{ notification.action_object.target.name }}
-                        </template>
-                        <template v-else-if="notification.verb == 'accepted'">
-                            {{ notification.actor.username }} 同意了你以
-                            {{ notification.action_object.price }} 功德的代价复活
-                            {{ notification.action_object.target.name }} 的请求
-                        </template>
-                        <template v-else-if="notification.verb == 'rejected'">
-                            {{ notification.actor.username }} 拒绝了你以
-                            {{ notification.action_object.price }} 功德的代价复活
-                            {{ notification.action_object.target.name }} 的请求
-                        </template>
-                        <template v-else-if="notification.verb == 'sold out'">
-                            你向 {{ notification.actor.username }} 请求的 {{ notification.action_object.target.name }} 已被先行复活
-                        </template>
-                        <template v-if="notification.verb == 'proposed'">
-                            <button @click="handleAcceptNotification(notification.id)">
-                                同意
-                            </button>
-                            <button @click="handleRejectNotification(notification.id)">
-                                拒绝
-                            </button>
-                        </template>
-                        <template v-else-if="
-                            notification.verb == 'accepted' ||
-                            notification.verb == 'rejected' ||
-                            notification.verb == 'sold out'
-                        ">
-                            <button @click="handleSetRead(notification.id)">已读</button>
-                        </template>
-                    </td>
-                </tr>
-            </table>
-        </template>
-        <template v-else>
-            <p>暂无未读通知</p>
-        </template>
-        <template v-if="store.readNotifications.length > 0">
-            <h2>已读通知</h2>
-            <table>
-                <tr v-for="notification in store.readNotifications" :key="notification.id">
-                    <td>
-                        <template v-if="notification.verb == 'proposed'">
-                            {{ notification.actor.username }} 请求以
-                            {{ notification.action_object.price }} 功德的代价复活
-                            {{ notification.action_object.target.name }}
-                            <template v-if="notification.data == 'accepted'">（已同意）</template>
-                            <template v-else-if="notification.data == 'rejected'">（已拒绝）</template>
-                            <template v-else-if="notification.data == 'sold out'">（已被先行复活）</template>
-                        </template>
-                        <template v-else-if="notification.verb == 'accepted'">
-                            {{ notification.actor.username }} 同意了你以
-                            {{ notification.action_object.price }} 功德的代价复活
-                            {{ notification.action_object.target.name }} 的请求
-                        </template>
-                        <template v-else-if="notification.verb == 'rejected'">
-                            {{ notification.actor.username }} 拒绝了你以
-                            {{ notification.action_object.price }} 功德的代价复活
-                            {{ notification.action_object.target.name }} 的请求
-                        </template>
-                        <template v-else-if="notification.verb == 'sold out'">
-                            你向 {{ notification.actor.username }} 请求的 {{ notification.action_object.target.name }} 已被先行复活
-                        </template>
-                    </td>
-                </tr>
-            </table>
-        </template>
-        <template v-else>暂无已读通知</template>
-    </div>
+    <n-flex vertical class="notifications-container">
+        <n-tabs type="line" placement="left">
+            <n-tab-pane name="unread" tab="未读通知">
+                <n-data-table v-if="store.unreadNotifications.length > 0" :columns="columns"
+                    :data="store.unreadNotifications" :pagination="pagination" striped />
+                <p v-else>暂无未读通知</p>
+            </n-tab-pane>
+            <n-tab-pane name="read" tab="已读通知">
+                <n-data-table v-if="store.readNotifications.length > 0" :columns="columns2" :max-height="600"
+                    :data="store.readNotifications" virtual-scroll striped />
+                <!-- <n-virtual-list v-if="store.readNotifications.length > 0" style="max-height: 600px" :item-size="42"
+                    :items="store.readNotifications" item-resizable>
+                    <template #default="{ item }">
+                        <n-card :key="item.id" size="small" :title="relativeTime(item)"> {{ format(item,1) }}</n-card>
+                    </template>
+</n-virtual-list> -->
+                <p v-else>暂无已读通知</p>
+            </n-tab-pane>
+        </n-tabs>
+    </n-flex>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, h } from "vue";
+import { pagination } from "../utils/constants";
 import { useStore } from "../store";
 import { updateUnread, updateRead, acceptNotification, rejectNotification, setRead } from "../utils/api";
-import { useMessage } from "naive-ui";
+import { useMessage, NFlex, NButton, NTime } from "naive-ui";
 const store = useStore();
 const message = useMessage();
 const intervalId = ref(null);
+
+const relativeTime = notification => h(NTime, {
+    time: new Date(notification.timestamp),
+    to: Date.now(),
+    type: "relative"
+})
+
+const format = (notification, type) => {
+    let str = '', res = ''
+    switch (notification.verb) {
+        case 'proposed':
+            str = `${notification.actor.username} 请求以 ${notification.action_object.price} 功德的代价复活 ${notification.action_object.target.name}`
+            if (type == 1) {
+                switch (notification.data) {
+                    case 'accepted':
+                        res = '已同意'
+                        break
+                    case 'rejected':
+                        res = '已拒绝'
+                        break
+                    case 'sold out':
+                        res = '已被先行复活'
+                        break
+                }
+            }
+            break
+        case 'accepted':
+            str = `${notification.actor.username} 同意了你以 ${notification.action_object.price} 功德的代价复活 ${notification.action_object.target.name} 的请求`
+            if (type == 1)
+                res = '已同意'
+            break
+        case 'rejected':
+            str = `${notification.actor.username} 拒绝了你以 ${notification.action_object.price} 功德的代价复活 ${notification.action_object.target.name} 的请求`
+            if (type == 1)
+                res = '已拒绝'
+            break
+        case 'sold out':
+            str = `你向 ${notification.actor.username} 请求的 ${notification.action_object.target.name} 已被先行复活`
+            if (type == 1)
+                res = '已被先行复活'
+            break
+    }
+    if (type == 1)
+        return [str, res]
+    return str
+}
+
 const handleAcceptNotification = async (notificationId) => {
     try {
         await acceptNotification(notificationId);
@@ -114,10 +104,112 @@ const handleSetRead = async (notificationId) => {
     } catch {
         message.error("设置已读失败");
     }
-    let notification = store.unreadNotifications.filter((item)=> item.id == notificationId)[0];
-    store.unreadNotifications = store.unreadNotifications.filter((item)=> item.id != notificationId);
+    let notification = store.unreadNotifications.filter((item) => item.id == notificationId)[0];
+    store.unreadNotifications = store.unreadNotifications.filter((item) => item.id != notificationId);
     store.readNotifications.unshift(notification);
 };
+
+const columns = [
+    {
+        title: '时间',
+        key: 'time',
+        resizable: true,
+        sorter: 'default',
+        render: relativeTime
+    },
+    {
+        title: '内容',
+        key: 'content',
+        resizable: true,
+        render: row => format(row, 0)
+    },
+    {
+        title: '操作',
+        key: "actions",
+        resizable: true,
+        render(row) {
+            if (row.verb == 'proposed') {
+                return h(
+                    NFlex,
+                    null,
+                    () => [
+                        h(
+                            NButton,
+                            {
+                                strong: true,
+                                tertiary: true,
+                                size: "small",
+                                onClick: () => handleAcceptNotification(row.id)
+                            },
+                            { default: () => '同意' }
+                        ),
+                        h(
+                            NButton,
+                            {
+                                strong: true,
+                                tertiary: true,
+                                size: "small",
+                                onClick: () => handleRejectNotification(row.id)
+                            },
+                            { default: () => '拒绝' }
+                        ),
+                    ]
+                )
+            } else {
+                return h(
+                    NButton,
+                    {
+                        strong: true,
+                        tertiary: true,
+                        size: "small",
+                        onClick: () => handleSetRead(row.id)
+                    },
+                    { default: () => '已读' }
+                )
+            }
+
+        }
+    }
+]
+
+const columns2 = [
+    {
+        title: '时间',
+        key: 'time',
+        resizable: true,
+        sorter: 'default',
+        render: relativeTime
+    },
+    {
+        title: '内容',
+        key: 'content',
+        resizable: true,
+        render: row => format(row, 1)[0]
+    },
+    {
+        title: '结果',
+        key: "result",
+        resizable: true,
+        render: row => format(row, 1)[1],
+        filterOptions: [
+            {
+                label: '已同意',
+                value: '已同意'
+            },
+            {
+                label: '已拒绝',
+                value: '已拒绝'
+            },
+            {
+                label: '已被先行复活',
+                value: '已被先行复活'
+            },
+        ],
+        filter(value, row) {
+            return ~format(row, 1)[1].indexOf(value)
+        }
+    }
+]
 
 onMounted(() => {
     intervalId.value = setInterval(updateRead, 30000);
@@ -127,7 +219,4 @@ onMounted(() => {
 onUnmounted(() => {
     clearInterval(intervalId.value);
 });
-
 </script>
-
-
