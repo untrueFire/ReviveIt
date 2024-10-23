@@ -21,7 +21,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { fetchItem } from "@/utils/api";
+import { fetchItem } from "../utils/api";
 import { useMessage } from "naive-ui";
 
 const route = useRoute();

@@ -10,7 +10,7 @@ import NotificationView from '../views/NotificationView.vue';
 import WoodenFishView from '../views/WoodenFishView.vue';
 import ViewItem from '../views/ViewItem.vue';
 import NotFound from '../views/NotFound.vue';
-import { useStore } from '@/store';
+import { useStore } from '../store';
 import { updateUser } from '../utils/api';
 const routes = [
     {

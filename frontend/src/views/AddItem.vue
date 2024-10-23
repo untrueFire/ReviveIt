@@ -22,7 +22,7 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { addItem } from "@/utils/api";
+import { addItem } from "../utils/api";
 import { useMessage } from "naive-ui";
 const name = ref("");
 const description = ref("");

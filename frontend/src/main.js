@@ -1,17 +1,14 @@
-import { createApp } from 'vue';
+import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-import App from './App.vue';
-import naive from "naive-ui";
-import router from './router';
-import './assets/css/styles.css';
-const app = createApp(App);
-const pinia = createPinia();
-app.use(naive);
-app.use(pinia);
-app.use(router);
+import naive from "naive-ui"
+import router from './router'
+import App from './App.vue'
+import './styles.css'
 
-if (module.hot) {
-	module.hot.accept();
-}
+const app = createApp(App)
+const pinia = createPinia()
+app.use(naive)
+app.use(pinia)
+app.use(router)
 
-app.mount('#app');
+app.mount('#app')

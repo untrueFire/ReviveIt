@@ -1,5 +1,5 @@
 import axios, { AxiosError } from 'axios';
-import { useStore } from '@/store';
+import { useStore } from '../store';
 function getCookie(name) {
 	const cookies = document.cookie.split(';');
 	for (let cookie of cookies) {

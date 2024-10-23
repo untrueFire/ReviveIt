@@ -8,8 +8,8 @@
 
 <script setup>
 import { useRouter } from "vue-router";
-import { logout } from "@/utils/api";
-import { useStore } from "@/store";
+import { logout } from "../utils/api";
+import { useStore } from "../store";
 import { useMessage } from "naive-ui";
 const store = useStore();
 const router = useRouter();

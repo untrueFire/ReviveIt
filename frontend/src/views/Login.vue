@@ -22,8 +22,8 @@ import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useMessage } from "naive-ui";
 import axios from "axios";
-import { getCsrftoken } from "@/utils/api";
-import { useStore } from "@/store";
+import { getCsrftoken } from "../utils/api";
+import { useStore } from "../store";
 const username = ref("");
 const password = ref("");
 const router = useRouter();
@@ -35,7 +35,6 @@ const handleSubmit = async () => {
         const params = new URLSearchParams();
         params.append("login", username.value);
         params.append("password", password.value);
-        params.append("next", "/api/user/");
         const response = await axios.post("/accounts/login/", params, {
             withCredentials: true,
             headers: {

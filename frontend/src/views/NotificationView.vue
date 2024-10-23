@@ -81,8 +81,8 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
-import { useStore } from "@/store";
-import { updateUnread, updateRead, acceptNotification, rejectNotification, setRead } from "@/utils/api";
+import { useStore } from "../store";
+import { updateUnread, updateRead, acceptNotification, rejectNotification, setRead } from "../utils/api";
 import { useMessage } from "naive-ui";
 const store = useStore();
 const message = useMessage();

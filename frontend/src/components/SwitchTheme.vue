@@ -6,7 +6,7 @@
 </template>
 
 <script setup>
-import { useStore } from '@/store';
+import { useStore } from '../store';
 import { LightModeFilled, DarkModeFilled } from '@vicons/material';
 import { darkTheme } from 'naive-ui';
 const store = useStore();
