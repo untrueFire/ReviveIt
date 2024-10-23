@@ -40,7 +40,7 @@ const HandleAddItem = async () => {
         await addItem(data);
         message.success("物品添加成功");
         router.push("/user");
-    } catch (error) {
+    } catch {
         message.error("物品添加失败");
     }
 };

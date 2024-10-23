@@ -91,7 +91,7 @@ const handleAcceptNotification = async (notificationId) => {
     try {
         await acceptNotification(notificationId);
         message.success("同意请求成功");
-    } catch (error) {
+    } catch {
         message.error("同意请求失败");
     }
     await updateUnread();
@@ -101,7 +101,7 @@ const handleRejectNotification = async (notificationId) => {
     try {
         await rejectNotification(notificationId);
         message.success("拒绝请求成功");
-    } catch (error) {
+    } catch {
         message.error("拒绝请求失败");
     }
     await updateUnread();
@@ -111,7 +111,7 @@ const handleSetRead = async (notificationId) => {
     try {
         await setRead(notificationId);
 
-    } catch (error) {
+    } catch {
         message.error("设置已读失败");
     }
     let notification = store.unreadNotifications.filter((item)=> item.id == notificationId)[0];

@@ -41,7 +41,7 @@ async function handleDeleteItem(itemId) {
         await deleteItem(itemId);
         items.value = items.value.filter((item) => item.id !== itemId);
         message.success("物品删除成功");
-    } catch (error) {
+    } catch {
         message.error("删除物品失败");
     }
 }

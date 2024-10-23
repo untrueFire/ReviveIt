@@ -1,9 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Home from '../views/Home.vue';
-import Login from '../views/Login.vue';
-import Logout from '../views/Logout.vue';
-import Register from '../views/Register.vue';
-import User from '../views/User.vue';
+import HomePage from '../views/HomeView.vue';
+import LoginView from '../views/LoginView.vue';
+import LogoutView from '../views/LogoutView.vue';
+import RegisterView from '../views/RegisterView.vue';
+import UserView from '../views/UserView.vue';
 import AddItem from '../views/AddItem.vue';
 import EditItem from '../views/EditItem.vue';
 import NotificationView from '../views/NotificationView.vue';
@@ -16,7 +16,7 @@ const routes = [
     {
         path: '/',
         name: 'Home',
-        component: Home,
+        component: HomePage,
         meta: {
             title: '首页'
         }
@@ -24,7 +24,7 @@ const routes = [
     {
         path: '/login',
         name: 'Login',
-        component: Login,
+        component: LoginView,
         meta: {
             title: '登录'
         }
@@ -32,7 +32,7 @@ const routes = [
     {
         path: '/register',
         name: 'Register',
-        component: Register,
+        component: RegisterView,
         meta: {
             title: '注册'
         }
@@ -40,7 +40,7 @@ const routes = [
     {
         path: '/user',
         name: 'User',
-        component: User,
+        component: UserView,
         meta: {
             title: '我的',
             needLogin: true
@@ -49,7 +49,7 @@ const routes = [
     {
         path: '/logout',
         name: 'Logout',
-        component: Logout,
+        component: LogoutView,
         meta: {
             title: '登出确认',
             needLogin: true
