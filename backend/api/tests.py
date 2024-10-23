@@ -1,6 +1,5 @@
 import json
 
-from api.models import Item, Transaction
 from django.test import Client, TestCase
 from django.urls import reverse
 from notifications.models import Notification

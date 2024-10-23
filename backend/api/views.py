@@ -115,7 +115,6 @@ def delete_item(request: rest_framework.request.Request, item_id: int):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def update_item(request: rest_framework.request.Request, item_id: int):
-    assert type(request.data) == dict, type(request.data)
     try:
         item = Item.objects.get(id=item_id)
         if item.owner == request.user or request.user.is_staff:
