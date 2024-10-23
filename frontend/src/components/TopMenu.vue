@@ -7,11 +7,11 @@
 
 <script setup>
 import { RouterLink } from "vue-router";
-import NotificationButton from "@/components/NotificationButton.vue";
-import { useStore } from "@/store";
+import NotificationButton from "./NotificationButton.vue";
+import { useStore } from "../store";
 import { h, computed } from "vue";
 import { useMessage } from "naive-ui";
-// import SwitchTheme from "@/components/SwitchTheme.vue";
+// import SwitchTheme from "./SwitchTheme.vue";
 const store = useStore();
 window.$message = useMessage();
 const menuOptions = computed(() => [

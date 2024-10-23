@@ -6,8 +6,8 @@
 
 <script setup>
 import { onMounted, onUnmounted } from "vue";
-import { useStore } from '@/store';
-import { updateUnread } from '@/utils/api';
+import { useStore } from '../store';
+import { updateUnread } from '../utils/api';
 const store = useStore();
 
 onMounted(() => {

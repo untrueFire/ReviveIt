@@ -41,8 +41,8 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { post } from "@/utils/api";
-import { useStore } from "@/store";
+import { post } from "../utils/api";
+import { useStore } from "../store";
 import { useMessage } from "naive-ui";
 const store = useStore();
 const router = useRouter();

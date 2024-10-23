@@ -22,8 +22,8 @@
 
 <script setup>
 import { h, ref, onMounted, computed, reactive } from "vue";
-import { search, ReviveItem, updateUser } from "@/utils/api.js";
-import { useStore } from "@/store";
+import { search, ReviveItem, updateUser } from "../utils/api.js";
+import { useStore } from "../store";
 import { useMessage, NButton, NSpace } from "naive-ui";
 import { useRouter } from "vue-router";
 const router = useRouter();

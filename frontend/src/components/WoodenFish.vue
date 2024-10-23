@@ -1,5 +1,5 @@
 <template>
-	<img width="100" src="/muyu.svg" alt="我是木鱼" @click="handleKnock" :style="style" />
+	<img draggable="false" width="100" src="../assets/muyu.svg" alt="我是木鱼" @click="handleKnock" :style="style" />
 </template>
 
 <script setup>

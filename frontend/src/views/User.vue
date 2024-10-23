@@ -20,8 +20,8 @@
 <script setup>
 import { h, ref, onMounted, reactive } from "vue";
 import { useRouter } from "vue-router";
-import { fetchUserItems, deleteItem } from "@/utils/api";
-import { useStore } from "@/store";
+import { fetchUserItems, deleteItem } from "../utils/api";
+import { useStore } from "../store";
 import { useMessage, NButton, NSpace } from "naive-ui";
 const message = useMessage();
 const router = useRouter();
