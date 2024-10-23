@@ -6,8 +6,6 @@ services:
     image: reviveit-backend
     container_name: reviveit-backend
     restart: "no"
-    environment:
-      - DJANGO_SETTINGS_MODULE=reviveit_server.settings
     env_file:
       - ./backend/.env
     networks:
