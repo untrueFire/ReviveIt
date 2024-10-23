@@ -1,4 +1,6 @@
 # ReviveIt
+[![HitCount](https://hits.dwyl.com/untrueFire/ReviveIt.svg?style=flat-square&show=unique)](http://hits.dwyl.com/untrueFire/ReviveIt)
+
 [English](./README.md) | 中文
 
 > 大学生经常有些物品觉得扔掉可惜，不处理又觉得浪费自己的地方。这是一个物品“复活”软件

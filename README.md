@@ -1,4 +1,6 @@
 # ReviveIt
+[![HitCount](https://hits.dwyl.com/untrueFire/ReviveIt.svg?style=flat-square&show=unique)](http://hits.dwyl.com/untrueFire/ReviveIt)
+
 English | [中文](./README_zh.md)
 
 > We often feel that some items are a pity to throw away, and do not deal with them and feel that they are wasting their place. This is an item "revive" software
