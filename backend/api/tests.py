@@ -279,6 +279,9 @@ class ReviveTestCase(TestCase):
 
     def test_revive_invalid_request(self):
         self.client.login(username="testuser", password="testpass")
+        response = self.client.post(reverse("revive", args=[self.item.id]), {})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
         response = self.client.post(reverse("revive", args=[self.item.id]), {"price": -10})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
