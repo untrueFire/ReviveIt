@@ -50,7 +50,8 @@ const handleReviveItem = async (itemId) => {
 
 const SendReviveItem = async () => {
     try {
-        if (!(price.value <= store.user.balance)) {
+        price.value = Number(price.value);
+        if (!(Number.isFinite(price.value) && price.value <= store.user.balance && price.value >= 0)) {
             message.error("功德不足");
             return;
         }
