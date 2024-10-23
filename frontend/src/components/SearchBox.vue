@@ -2,21 +2,13 @@
     <div>
         <n-input type="text" v-model:value="query" @input="handleInput" placeholder="搜索名称或描述..." class="searchBox" />
         <n-data-table v-if="results.length" :columns="columns" :data="results" :pagination="pagination" striped />
-        <div v-if="showModal" class="modal-overlay">
-            <div class="modal">
-                <div class="modal-content">
-                    <h2>你愿意消耗多少功德复活这件物品？</h2>
-                    <n-input-number v-model:value="price" :input-props="{ type: 'number' }" placeholder="请输入一个非负整数..."
-                        :min="0" :max="store.user.balance" />
-                    <n-slider v-model:value="price" :step="1" :max="store.user.balance" />
-                    <p>当前可用功德：{{ store.user.balance }}</p>
-                    <n-flex justify="center">
-                        <n-button @click="SendReviveItem">确认</n-button>
-                        <n-button @click="showModal = false">取消</n-button>
-                    </n-flex>
-                </div>
-            </div>
-        </div>
+        <n-modal v-model:show="showModal" class="modal-content" preset="dialog" title="你愿意消耗多少功德复活这件物品？"
+            positiveText="确认" negativeText="取消" @positive-click="SendReviveItem" @negative-click="showModal = false" :icon="render">
+            <n-input-number v-model:value="price" :input-props="{ type: 'number' }" placeholder="请输入一个非负整数..." :min="0"
+                :max="store.user.balance" />
+            <n-slider v-model:value="price" :step="1" :max="store.user.balance" />
+            当前可用功德：{{ store.user.balance }}
+        </n-modal>
     </div>
 </template>
 
@@ -24,8 +16,9 @@
 import { h, ref, onMounted, computed, reactive } from "vue";
 import { search, ReviveItem, updateUser } from "../utils/api.js";
 import { useStore } from "../store";
-import { useMessage, NButton, NFlex } from "naive-ui";
+import { useMessage, NButton, NFlex, NIcon, NIconWrapper } from "naive-ui";
 import { useRouter } from "vue-router";
+import { QuestionMarkRound } from '@vicons/material'
 const router = useRouter();
 const store = useStore();
 const query = ref("");
@@ -34,6 +27,9 @@ const message = useMessage();
 const selectedItemId = ref();
 const showModal = ref(false);
 const price = ref(0);
+
+const render = () => h(NIconWrapper, { size: 20, "border-radius": 10 }, h(NIcon, { size: 18, component: QuestionMarkRound }, null))
+
 const handleInput = async () => {
     try {
         results.value = await search(query.value);
@@ -146,17 +142,17 @@ const columns = computed(() => {
 }
 );
 const paginationReactive = reactive({
-	page: 1,
-	pageSize: 10,
-	showSizePicker: true,
-	pageSizes: [10, 20, 50],
-	onChange: (page) => {
-	  paginationReactive.page = page;
-	},
-	onUpdatePageSize: (pageSize) => {
-	  paginationReactive.pageSize = pageSize;
-	  paginationReactive.page = 1;
-	}
+    page: 1,
+    pageSize: 10,
+    showSizePicker: true,
+    pageSizes: [10, 20, 50],
+    onChange: (page) => {
+        paginationReactive.page = page;
+    },
+    onUpdatePageSize: (pageSize) => {
+        paginationReactive.pageSize = pageSize;
+        paginationReactive.page = 1;
+    }
 });
 const pagination = paginationReactive;
 onMounted(() => {

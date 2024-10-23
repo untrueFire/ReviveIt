@@ -13,7 +13,6 @@
 </template>
 
 <script setup>
-import { NMessageProvider, NNotificationProvider, zhCN, dateZhCN } from 'naive-ui';
 import { useStore } from './store';
 import TopMenu from './components/TopMenu.vue';
 // const osThemeRef = useOsTheme();
