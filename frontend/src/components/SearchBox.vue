@@ -1,6 +1,6 @@
 <template>
     <div>
-        <input type="text" v-model="query" @input="handleInput" placeholder="搜索名称或描述..." class="searchBox" />
+        <n-input type="text" v-model:value="query" @input="handleInput" placeholder="搜索名称或描述..." class="searchBox" />
         <n-data-table v-if="results.length" :columns="columns" :data="results" :pagination="pagination" striped />
         <div v-if="showModal" class="modal-overlay">
             <div class="modal">

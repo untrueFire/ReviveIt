@@ -65,6 +65,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
     "api.middleware.TransactionMiddleware",
+    'django.middleware.gzip.GZipMiddleware',
 ]
 
 ROOT_URLCONF = "reviveit_backend.urls"
