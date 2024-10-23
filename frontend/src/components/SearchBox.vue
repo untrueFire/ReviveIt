@@ -21,10 +21,11 @@
 </template>
 
 <script setup>
-import { h, ref, onMounted, computed, reactive } from "vue";
+import { h, ref, onMounted, computed } from "vue";
+import { pagination } from "../utils/constants.js";
 import { search, ReviveItem, updateUser } from "../utils/api.js";
 import { useStore } from "../store";
-import { useMessage, NButton, NSpace } from "naive-ui";
+import { useMessage, NButton, NFlex } from "naive-ui";
 import { useRouter } from "vue-router";
 const router = useRouter();
 const store = useStore();
@@ -107,6 +108,7 @@ const columns = computed(() => {
         res.push({
             title: "操作",
             key: "actions",
+            resizable: true,
             render(row) {
                 let buttons = [
                     h(
@@ -132,7 +134,7 @@ const columns = computed(() => {
                     ))
                 }
                 return h(
-                    NSpace,
+                    NFlex,
                     null,
                     () => buttons
                 );
@@ -142,21 +144,6 @@ const columns = computed(() => {
     return res;
 }
 );
-
-const paginationReactive = reactive({
-      page: 1,
-      pageSize: 20,
-      showSizePicker: true,
-      pageSizes: [10, 20, 50, 100],
-      onChange: (page) => {
-        paginationReactive.page = page;
-      },
-      onUpdatePageSize: (pageSize) => {
-        paginationReactive.pageSize = pageSize;
-        paginationReactive.page = 1;
-      }
-});
-const pagination = paginationReactive;
 
 onMounted(() => {
     handleInput();
