@@ -3,7 +3,8 @@
         <n-input type="text" v-model:value="query" @input="handleInput" placeholder="搜索名称或描述..." class="searchBox" />
         <n-data-table v-if="results.length" :columns="columns" :data="results" :pagination="pagination" striped />
         <n-modal v-model:show="showModal" class="modal-content" preset="dialog" title="你愿意消耗多少功德复活这件物品？"
-            positiveText="确认" negativeText="取消" @positive-click="SendReviveItem" @negative-click="showModal = false" :icon="render">
+            positiveText="确认" negativeText="取消" @positive-click="SendReviveItem" @negative-click="showModal = false"
+            :icon="render">
             <n-input-number v-model:value="price" :input-props="{ type: 'number' }" placeholder="请输入一个非负整数..." :min="0"
                 :max="store.user.balance" />
             <n-slider v-model:value="price" :step="1" :max="store.user.balance" />
@@ -28,7 +29,14 @@ const selectedItemId = ref();
 const showModal = ref(false);
 const price = ref(0);
 
-const render = () => h(NIconWrapper, { size: 20, "border-radius": 10 }, h(NIcon, { size: 18, component: QuestionMarkRound }, null))
+const render = () => h(
+    NIconWrapper,
+    { size: 20, "border-radius": 10 },
+    () => h(
+        NIcon,
+        { size: 18, component: QuestionMarkRound }
+    )
+)
 
 const handleInput = async () => {
     try {
@@ -39,7 +47,7 @@ const handleInput = async () => {
 };
 
 const handleReviveItem = async (itemId) => {
-    updateUser();
+    await updateUser();
     selectedItemId.value = itemId;
     showModal.value = true;
 };

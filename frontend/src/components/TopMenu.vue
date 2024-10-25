@@ -11,7 +11,7 @@ import NotificationButton from "./NotificationButton.vue";
 import { useStore } from "../store";
 import { h, computed } from "vue";
 import { useMessage } from "naive-ui";
-// import SwitchTheme from "./SwitchTheme.vue";
+import SwitchTheme from "./SwitchTheme.vue";
 const store = useStore();
 window.$message = useMessage();
 const menuOptions = computed(() => [
@@ -117,10 +117,10 @@ const menuOptions = computed(() => [
         key: "woodenfish",
         show: store.isLoggedIn,
     },
-    // {
-    //     label: () => h(SwitchTheme),
-    //     key: "switchtheme"
-    // }
+    {
+        label: () => h(SwitchTheme),
+        key: "switchtheme"
+    }
 ]);
 </script>
 

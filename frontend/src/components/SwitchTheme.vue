@@ -1,7 +1,7 @@
 <template>
-	<n-icon>
-		<LightModeFilled v-if="store.theme !== null" @click="store.theme = null" />
-		<DarkModeFilled v-else @click="store.theme = darkTheme" />
+	<n-icon @click="toggleTheme">
+		<LightModeFilled v-if="store.theme !== null" />
+		<DarkModeFilled v-else/>
 	</n-icon>
 </template>
 
@@ -10,4 +10,11 @@ import { useStore } from '../store';
 import { LightModeFilled, DarkModeFilled } from '@vicons/material';
 import { darkTheme } from 'naive-ui';
 const store = useStore();
+const toggleTheme = () => {
+	if (store.theme !== null) {
+		store.theme = null;
+	} else {
+		store.theme = darkTheme;
+	}
+}
 </script>

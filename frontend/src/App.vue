@@ -1,5 +1,6 @@
 <template>
-    <n-config-provider :key="store.theme" :theme="store.theme" :locale="zhCN" :date-locale="dateZhCN">
+    <n-config-provider :theme="store.theme" :locale="zhCN" :date-locale="dateZhCN">
+        <n-global-style />
         <n-notification-provider>
             <n-message-provider>
                 <n-loading-bar-provider>
@@ -13,9 +14,9 @@
 </template>
 
 <script setup>
-import { zhCN, dateZhCN } from 'naive-ui';
+import { zhCN, dateZhCN, useOsTheme, darkTheme } from 'naive-ui';
 import { useStore } from './store';
-// const osThemeRef = useOsTheme();
+const osThemeRef = useOsTheme();
 const store = useStore();
-// store.theme = osThemeRef.value === 'dark' ? darkTheme : null;
+store.theme = osThemeRef.value === 'dark' ? darkTheme : null;
 </script>
