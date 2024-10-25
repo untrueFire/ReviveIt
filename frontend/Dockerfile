@@ -2,14 +2,15 @@ FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-COPY package*.json yarn.lock ./
+COPY package*.json pnpm-lock.yaml ./
 
-RUN yarn config set registry https://registry.npmmirror.com/ &&\
-	yarn --frozen-lockfile
-
+RUN corepack enable &&\
+	corepack prepare pnpm@9.12.2 &&\
+	pnpm config set registry https://registry.npmmirror.com/ &&\
+	pnpm install --frozen-lockfile
 COPY . .
 
-RUN yarn build
+RUN pnpm build
 
 FROM nginx:alpine
 

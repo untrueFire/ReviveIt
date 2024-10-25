@@ -4,20 +4,20 @@ This is the frontend of ReviveIt, written in Vue3, mainly uses [Naive UI](https:
 
 ## Project setup
 ```
-yarn
+pnpm install
 ```
 
 ### Compiles and hot-reloads for development
 ```
-yarn dev
+pnpm dev
 ```
 
 ### Compiles and minifies for production
 ```
-yarn build
+pnpm build
 ```
 
 ### Lints and fixes files
 ```
-yarn lint
+pnpm lint
 ```

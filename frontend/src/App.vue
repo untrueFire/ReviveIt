@@ -15,7 +15,6 @@
 <script setup>
 import { zhCN, dateZhCN } from 'naive-ui';
 import { useStore } from './store';
-import TopMenu from './components/TopMenu.vue';
 // const osThemeRef = useOsTheme();
 const store = useStore();
 // store.theme = osThemeRef.value === 'dark' ? darkTheme : null;
