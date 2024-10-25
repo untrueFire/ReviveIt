@@ -1,5 +1,7 @@
 # ReviveIt
-[![HitCount](https://img.shields.io/endpoint?url=https%3A%2F%2Fhits.dwyl.com%2FuntrueFire%2FReviveIt.json%3Fcolor%3Dmarine)](http://hits.dwyl.com/untrueFire/ReviveIt) [![Coverage](https://coveralls.io/repos/github/untrueFire/ReviveIt/badge.svg)](https://coveralls.io/r/untrueFire/ReviveIt) [![Django CI](https://github.com/untrueFire/ReviveIt/actions/workflows/django.yml/badge.svg)](https://github.com/untrueFire/ReviveIt/actions/workflows/django.yml)
+![Vite](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E) ![Django REST](https://img.shields.io/badge/django%20rest-ff1709?style=for-the-badge&logo=django&logoColor=white) ![Docker](https://img.shields.io/badge/Docker-2CA5E0?style=for-the-badge&logo=docker&logoColor=white) ![PNPM](https://img.shields.io/badge/pnpm-yellow?style=for-the-badge&logo=pnpm&logoColor=white)
+
+[![HitCount](https://img.shields.io/endpoint?logo=github&url=https%3A%2F%2Fhits.dwyl.com%2FuntrueFire%2FReviveIt.json%3Fcolor%3Dmarine)](http://hits.dwyl.com/untrueFire/ReviveIt) [![Coveralls](https://img.shields.io/coverallsCoverage/github/untrueFire/ReviveIt)](https://coveralls.io/r/untrueFire/ReviveIt) [![Django CI](https://github.com/untrueFire/ReviveIt/actions/workflows/django.yml/badge.svg)](https://github.com/untrueFire/ReviveIt/actions/workflows/django.yml) ![GitHub Release](https://img.shields.io/github/v/release/untrueFire/ReviveIt?include_prereleases&display_name=tag&style=flat)
 
 [English](./README.md) | 中文
 
