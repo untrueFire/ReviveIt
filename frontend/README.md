@@ -2,22 +2,32 @@
 
 This is the frontend of ReviveIt, written in Vue3, mainly uses [Naive UI](https://www.naiveui.com/) as UI framework.
 
-## Project setup
-```
+## Project Setup
+
+```sh
 pnpm install
 ```
 
-### Compiles and hot-reloads for development
-```
+### Compile and Hot-Reload for Development
+
+```sh
 pnpm dev
 ```
 
-### Compiles and minifies for production
-```
+### Type-Check, Compile and Minify for Production
+
+```sh
 pnpm build
 ```
 
-### Lints and fixes files
+### Run Unit Tests with [Vitest](https://vitest.dev/)
+
+```sh
+pnpm test:unit
 ```
+
+### Lint with [ESLint](https://eslint.org/)
+
+```sh
 pnpm lint
 ```

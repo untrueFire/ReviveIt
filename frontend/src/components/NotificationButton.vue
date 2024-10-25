@@ -4,18 +4,18 @@
     </n-badge>
 </template>
 
-<script setup>
-import { onMounted, onUnmounted } from "vue";
-import { useStore } from '../store';
-import { updateUnread } from '../utils/api';
-const store = useStore();
+<script setup lang="ts">
+import { onMounted, onUnmounted } from 'vue'
+import { useStore } from '../stores'
+import { updateUnread } from '../utils/api'
+const store = useStore()
 
 onMounted(() => {
-    store.intervalId = setInterval(updateUnread, 30000);
-    updateUnread();
-});
+    store.intervalId = setInterval(updateUnread, 30000)
+    updateUnread()
+})
 
 onUnmounted(() => {
-    clearInterval(store.intervalId);
-});
+    clearInterval(store.intervalId)
+})
 </script>

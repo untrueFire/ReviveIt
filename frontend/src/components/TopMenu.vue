@@ -1,19 +1,24 @@
 <template>
     <nav class="top-menu">
         <h1>ReviveIt</h1>
-        <n-menu mode="horizontal" responsive :options="menuOptions" style="display: flex; justify-content: flex-end;" />
+        <n-menu
+            mode="horizontal"
+            responsive
+            :options="menuOptions"
+            style="display: flex; justify-content: flex-end"
+        />
     </nav>
 </template>
 
-<script setup>
-import { RouterLink } from "vue-router";
-import NotificationButton from "./NotificationButton.vue";
-import { useStore } from "../store";
-import { h, computed } from "vue";
-import { useMessage } from "naive-ui";
-import SwitchTheme from "./SwitchTheme.vue";
-const store = useStore();
-window.$message = useMessage();
+<script setup lang="ts">
+import { RouterLink } from 'vue-router'
+import NotificationButton from './NotificationButton.vue'
+import { useStore } from '../stores'
+import { h, computed } from 'vue'
+import { useMessage } from 'naive-ui'
+import SwitchTheme from './SwitchTheme.vue'
+const store = useStore()
+window.$message = useMessage()
 const menuOptions = computed(() => [
     {
         label: () =>
@@ -21,12 +26,12 @@ const menuOptions = computed(() => [
                 RouterLink,
                 {
                     to: {
-                        name: "Home",
+                        name: 'Home',
                     },
                 },
-                { default: () => "广场" }
+                { default: () => '广场' },
             ),
-        key: "home",
+        key: 'home',
     },
     {
         label: () =>
@@ -34,12 +39,12 @@ const menuOptions = computed(() => [
                 RouterLink,
                 {
                     to: {
-                        name: "Login",
+                        name: 'Login',
                     },
                 },
-                { default: () => "登录" }
+                { default: () => '登录' },
             ),
-        key: "login",
+        key: 'login',
         show: !store.isLoggedIn,
     },
     {
@@ -48,12 +53,12 @@ const menuOptions = computed(() => [
                 RouterLink,
                 {
                     to: {
-                        name: "Register",
+                        name: 'Register',
                     },
                 },
-                { default: () => "注册" }
+                { default: () => '注册' },
             ),
-        key: "register",
+        key: 'register',
         show: !store.isLoggedIn,
     },
     {
@@ -62,17 +67,17 @@ const menuOptions = computed(() => [
                 RouterLink,
                 {
                     to: {
-                        name: "User",
+                        name: 'User',
                     },
                 },
-                { default: () => "我的" }
+                { default: () => '我的' },
             ),
-        key: "user",
+        key: 'user',
         show: store.isLoggedIn,
     },
     {
         label: () => h(NotificationButton),
-        key: "notification",
+        key: 'notification',
         show: store.isLoggedIn,
     },
     {
@@ -81,12 +86,12 @@ const menuOptions = computed(() => [
                 RouterLink,
                 {
                     to: {
-                        name: "Logout",
+                        name: 'Logout',
                     },
                 },
-                { default: () => "登出" }
+                { default: () => '登出' },
             ),
-        key: "logout",
+        key: 'logout',
         show: store.isLoggedIn,
     },
     {
@@ -95,12 +100,12 @@ const menuOptions = computed(() => [
                 RouterLink,
                 {
                     to: {
-                        name: "AddItem",
+                        name: 'AddItem',
                     },
                 },
-                { default: () => "添加物品" }
+                { default: () => '添加物品' },
             ),
-        key: "additem",
+        key: 'additem',
         show: store.isLoggedIn,
     },
     {
@@ -109,18 +114,17 @@ const menuOptions = computed(() => [
                 RouterLink,
                 {
                     to: {
-                        name: "WoodenFish",
+                        name: 'WoodenFish',
                     },
                 },
-                { default: () => "木鱼" }
+                { default: () => '木鱼' },
             ),
-        key: "woodenfish",
+        key: 'woodenfish',
         show: store.isLoggedIn,
     },
     {
         label: () => h(SwitchTheme),
-        key: "switchtheme"
-    }
-]);
+        key: 'switchtheme',
+    },
+])
 </script>
-

@@ -6,22 +6,21 @@
     </div>
 </template>
 
-<script setup>
-import { useRouter } from "vue-router";
-import { logout } from "../utils/api";
-import { useStore } from "../store";
-import { useMessage } from "naive-ui";
-const store = useStore();
-const router = useRouter();
-const message = useMessage();
+<script setup lang="ts">
+import { useRouter } from 'vue-router'
+import { logout } from '../utils/api'
+import { useStore } from '../stores'
+import { useMessage } from 'naive-ui'
+const store = useStore()
+const router = useRouter()
+const message = useMessage()
 async function handleLogout() {
     try {
-        await logout();
-        store.user = undefined;
-        router.push({ name: 'Login' });
+        await logout()
+        store.user = undefined
+        router.push({ name: 'Login' })
     } catch {
-        message.error("登出失败");
+        message.error('登出失败')
     }
 }
 </script>
-

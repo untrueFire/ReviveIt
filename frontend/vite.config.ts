@@ -1,10 +1,14 @@
-/// <reference types="vitest/config" />
-import { defineConfig } from 'vite';
-import vue from '@vitejs/plugin-vue';
+import { fileURLToPath, URL } from 'node:url'
+
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import vueDevTools from 'vite-plugin-vue-devtools'
+
 import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
 import { NaiveUiResolver } from 'unplugin-vue-components/resolvers';
 
+// https://vite.dev/config/
 export default defineConfig({
   server: {
     port: 80,
@@ -13,11 +17,11 @@ export default defineConfig({
         target: 'http://localhost:8000',
         changeOrigin: true,
       }
-    },
-    historyApiFallback: true,
+    }
   },
   plugins: [
     vue(),
+    vueDevTools(),
     AutoImport({
       resolvers: [NaiveUiResolver()],
       dts: true
@@ -27,7 +31,9 @@ export default defineConfig({
       dts: true
     }),
   ],
-  test: {
-    
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url))
+    }
   }
 })

@@ -5,6 +5,6 @@
     </div>
 </template>
 
-<script setup>
-import SearchBox from '../components/SearchBox.vue';
+<script setup lang="ts">
+import SearchBox from '../components/SearchBox.vue'
 </script>
