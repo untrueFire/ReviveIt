@@ -44,7 +44,7 @@
 
 <script setup lang="ts">
 import { h, ref, onMounted, computed } from 'vue'
-import { pagination } from '../utils/constants'
+import { pagination, choice, tagTypes } from '../utils/constants'
 import { search, ReviveItem, updateUser } from '../utils/api.js'
 import { useStore } from '../stores/index.js'
 import {
@@ -54,6 +54,7 @@ import {
     NIcon,
     NIconWrapper,
     type DataTableColumn,
+    NTag,
 } from 'naive-ui'
 import { useRouter } from 'vue-router'
 import { QuestionMarkRound } from '@vicons/material'
@@ -127,6 +128,26 @@ const columns = computed(() => {
             ellipsis: true,
             resizable: true,
             sorter: 'default',
+        },
+        {
+            title: '标签',
+            key: 'tags',
+            ellipsis: true,
+            resizable: true,
+            render: (row: Item) =>
+                h(NFlex, () =>
+                    row.tags.map((tag: string) =>
+                        h(
+                            NTag,
+                            {
+                                round: true,
+                                bordered: false,
+                                type: choice(tagTypes),
+                            },
+                            () => tag,
+                        ),
+                    ),
+                ),
         },
         {
             title: '物品描述',

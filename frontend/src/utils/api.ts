@@ -1,5 +1,11 @@
 import axios, { AxiosError } from 'axios'
 import { useStore } from '../stores'
+
+/**
+ * Retrieve the value of a cookie from `document.cookie` string
+ * @param name name of the cookie to get
+ * @returns value of the cookie if found, `null` if not found
+ */
 function getCookie(name: string) {
     const cookies = document.cookie.split(';')
     for (let cookie of cookies) {
@@ -11,6 +17,11 @@ function getCookie(name: string) {
     return null
 }
 
+/**
+ * Get csrf token in cookie,
+ * fetch it first if not found
+ * @returns `csrftoken` in cookie
+ */
 export async function getCsrftoken() {
     if (!document.cookie.includes('csrftoken')) {
         await get('/accounts/login')
@@ -18,6 +29,13 @@ export async function getCsrftoken() {
     return getCookie('csrftoken')
 }
 
+/**
+ * Error handler for expirated login status
+ *
+ * Redirect to login page when visiting
+ * pages that require login without login status
+ * @param error
+ */
 function errorHandler(error: Error) {
     if (
         error instanceof AxiosError &&
@@ -28,7 +46,7 @@ function errorHandler(error: Error) {
     ) {
         const store = useStore()
         if (!store.isLoggedIn) {
-            return undefined
+            return
         }
         store.user = undefined
         const message = window.$message
@@ -40,6 +58,13 @@ function errorHandler(error: Error) {
     }
 }
 
+/**
+ * Wrapper for `axios.get` function
+ * using `withCredentials: true` to
+ * handle cross reigon
+ * @param url the url to visit
+ * @returns `response.data`
+ */
 export async function get(url: string) {
     try {
         const response = await axios.get(url, {
@@ -51,6 +76,13 @@ export async function get(url: string) {
     }
 }
 
+/**
+ * Wrapper function for `axios.post`
+ * with the `X-CSRFToken` header from cookie
+ * @param url the url to visit
+ * @param data the data to post
+ * @returns `response.data`
+ */
 export async function post(url: string, data: string | object | null = null) {
     try {
         const response = await axios.post(url, data, {
@@ -88,7 +120,10 @@ export const setRead = (notificationId: number) =>
     post(`/api/notification/read/${notificationId}/`, null)
 export const logout = () => post('/accounts/logout/', null)
 
-export const updateUnread = async () => {
+/**
+ * Fetch and set unread notifications
+ */
+export const updateUnread = () => {
     fetchUnread()
         .then(data => {
             const store = useStore()
@@ -97,6 +132,9 @@ export const updateUnread = async () => {
         .catch(() => {})
 }
 
+/**
+ * Fetch and set read notifications
+ */
 export const updateRead = () => {
     fetchRead()
         .then(data => {
@@ -106,6 +144,9 @@ export const updateRead = () => {
         .catch(() => {})
 }
 
+/**
+ * Fetch and set user info
+ */
 export const updateUser = async () => {
     const store = useStore()
     store.user = await fetchUserInfo()

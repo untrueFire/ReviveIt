@@ -43,6 +43,7 @@ export interface Item {
      */
     contact_info: string
     owner: PublicUser
+    tags: string[]
 }
 
 export interface User {

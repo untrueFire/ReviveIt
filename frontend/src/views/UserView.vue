@@ -26,11 +26,11 @@
 
 <script setup lang="ts">
 import { h, ref, onMounted } from 'vue'
-import { pagination } from '../utils/constants'
+import { pagination, choice, tagTypes } from '../utils/constants'
 import { useRouter } from 'vue-router'
 import { fetchUserItems, deleteItem } from '../utils/api'
 import { useStore } from '../stores'
-import { useMessage, NButton, NFlex } from 'naive-ui'
+import { useMessage, NButton, NFlex, NTag } from 'naive-ui'
 import type { Item } from '@/types/Api'
 const message = useMessage()
 const router = useRouter()
@@ -68,6 +68,26 @@ const columns = [
         ellipsis: true,
         sorter: 'default',
         resizable: true,
+    },
+    {
+        title: '标签',
+        key: 'tags',
+        ellipsis: true,
+        resizable: true,
+        render: (row: Item) =>
+            h(NFlex, () =>
+                row.tags.map((tag: string) =>
+                    h(
+                        NTag,
+                        {
+                            round: true,
+                            bordered: false,
+                            type: choice(tagTypes),
+                        },
+                        () => tag,
+                    ),
+                ),
+            ),
     },
     {
         title: '物品描述',
