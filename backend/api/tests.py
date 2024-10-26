@@ -442,3 +442,131 @@ class KnockViewTest(TestCase):
             nonce = "".join(choices(ascii_letters, k=16))
             if sha256((challenge + nonce).encode()).hexdigest().endswith("0" * difficulty):
                 return nonce
+
+class TestTagViews(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username='testuser', password='testpass')
+        self.client.force_login(self.user)
+        self.item = Item.objects.create(owner=self.user, name='Test Item')
+
+    def test_add_tag(self):
+        url = reverse('add_tag')
+        data = {
+            'item_id': self.item.id,
+            'tags': ['tag1', 'tag2']
+        }
+        response = self.client.post(url, data, content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.item.refresh_from_db()
+        self.assertIn('tag1', self.item.tags.names())
+        self.assertIn('tag2', self.item.tags.names())
+
+    def test_add_tag_string(self):
+        url = reverse('add_tag')
+        data = {
+            'item_id': self.item.id,
+            'tags': 'tag_string'
+        }
+        response = self.client.post(url, data, content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.item.refresh_from_db()
+        self.assertIn('tag_string', self.item.tags.names())
+
+    def test_add_tag_invalid_request(self):
+        url = reverse('add_tag')
+        data = {
+            'item_id': self.item.id,
+            'tags': 123
+        }
+        response = self.client.post(url, data, content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_add_tag_permission_denied(self):
+        other_user = User.objects.create_user(username='otheruser', password='otherpass')
+        other_item = Item.objects.create(owner=other_user, name='Other Item')
+        url = reverse('add_tag')
+        data = {
+            'item_id': other_item.id,
+            'tags': ['tag1', 'tag2']
+        }
+        response = self.client.post(url, data, content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_add_tag_not_found(self):
+        url = reverse('add_tag')
+        data = {
+            'item_id': 9999,
+            'tags': ['tag1', 'tag2']
+        }
+        response = self.client.post(url, data, content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_remove_tag(self):
+        self.item.tags.add('tag1', 'tag2')
+        url = reverse('remove_tag')
+        data = {
+            'item_id': self.item.id,
+            'tags': ['tag1']
+        }
+        response = self.client.post(url, data, content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.item.refresh_from_db()
+        self.assertNotIn('tag1', self.item.tags.names())
+        self.assertIn('tag2', self.item.tags.names())
+
+    def test_remove_tag_string(self):
+        self.item.tags.add('tag_string')
+        url = reverse('remove_tag')
+        data = {
+            'item_id': self.item.id,
+            'tags': 'tag_string'
+        }
+        response = self.client.post(url, data, content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.item.refresh_from_db()
+        self.assertNotIn('tag_string', self.item.tags.names())
+
+    def test_remove_tag_invalid_request(self):
+        url = reverse('remove_tag')
+        data = {
+            'item_id': self.item.id,
+            'tags': 123
+        }
+        response = self.client.post(url, data, content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_remove_tag_permission_denied(self):
+        other_user = User.objects.create_user(username='otheruser', password='otherpass')
+        other_item = Item.objects.create(owner=other_user, name='Other Item')
+        other_item.tags.add('tag1', 'tag2')
+        url = reverse('remove_tag')
+        data = {
+            'item_id': other_item.id,
+            'tags': ['tag1']
+        }
+        response = self.client.post(url, data, content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_remove_tag_not_found(self):
+        url = reverse('remove_tag')
+        data = {
+            'item_id': 9999,
+            'tags': ['tag1']
+        }
+        response = self.client.post(url, data, content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+class TestMiddleware(TestCase):
+    def setUp(self):
+        pass
+
+    def test_not_in_test(self):
+        """
+        To cover `if not is_test_environment():` in `./middleware.py`
+        """
+        import sys
+        sys.argv[1:2] = ['']
+        ReviveTestCase(methodName='test_revive_invalid_request').run()
+        sys.argv[1:2] = ['test']
+

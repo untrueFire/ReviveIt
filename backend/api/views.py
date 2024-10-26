@@ -55,6 +55,7 @@ def get_my_items(request: rest_framework.request.Request):
 
 
 item_schema = openapi.Schema(
+    title="item",
     type=openapi.TYPE_OBJECT,
     properties={
         "name": openapi.Schema(type=openapi.TYPE_STRING, description="物品名称"),
@@ -74,7 +75,7 @@ item_schema = openapi.Schema(
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def add_item(request: rest_framework.request.Request):
-    serializer = ItemSerializer(data=request.data)
+    serializer = ItemSerializer(data=request.data, partial=True)
     if serializer.is_valid():
         serializer.save(owner=request.user)
         return fast200
@@ -117,7 +118,7 @@ def delete_item(request: rest_framework.request.Request, item_id: int):
 def update_item(request: rest_framework.request.Request, item_id: int):
     try:
         item = Item.objects.get(id=item_id)
-        if item.owner == request.user or request.user.is_staff:
+        if item.owner == request.user:
             serializer = ItemSerializer(item, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
@@ -326,6 +327,7 @@ def read(request: rest_framework.request.Request, notification_id: int):
     operation_summary="生成一个PoW（工作量证明）",
     responses={
         200: openapi.Schema(
+            title="PoW",
             type=openapi.TYPE_OBJECT,
             properties={"challenge": openapi.Schema(type=openapi.TYPE_STRING), "difficulty": openapi.Schema(type=openapi.TYPE_INTEGER)},
         ),
@@ -384,3 +386,65 @@ def knock(request: rest_framework.request.Request):
     user.balance += 1
     user.save()
     return fast200
+
+
+@swagger_auto_schema(
+    method="post",
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            "item_id": openapi.Schema(type=openapi.TYPE_INTEGER, description="物品ID"),
+            "tags": openapi.Schema(title="tags", type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_STRING), description="要添加的标签"),
+        },
+        required=["item_id", "tags"],
+    ),
+    operation_summary="为指定ID的物品添加标签",
+    responses={200: SUCCCESS, 400: INVALID_REQUEST, 403: PERMISSION_DENIED, 404: NOT_FOUND},
+)
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def add_tag(request: rest_framework.request.Request):
+    try:
+        item_id, tags = request.data.values()
+        item = Item.objects.get(id=int(item_id))
+        if item.owner == request.user:
+            if isinstance(tags, str):
+                tags = [tags]
+            item.tags.add(*list(tags))
+            item.save()
+            return fast200
+        else:
+            return fast403
+    except Item.DoesNotExist:
+        return fast404
+
+
+@swagger_auto_schema(
+    method="post",
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            "item_id": openapi.Schema(type=openapi.TYPE_INTEGER, description="物品ID"),
+            "tags": openapi.Schema(title="tags", type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_STRING), description="要移除的标签"),
+        },
+        required=["item_id", "tags"],
+    ),
+    operation_summary="为指定ID的物品移除标签",
+    responses={200: SUCCCESS, 400: INVALID_REQUEST, 403: PERMISSION_DENIED, 404: NOT_FOUND},
+)
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def remove_tag(request: rest_framework.request.Request):
+    try:
+        item_id, tags = request.data.values()
+        item = Item.objects.get(id=int(item_id))
+        if item.owner == request.user:
+            if isinstance(tags, str):
+                tags = [tags]
+            item.tags.remove(*list(tags))
+            item.save()
+            return fast200
+        else:
+            return fast403
+    except Item.DoesNotExist:
+        return fast404

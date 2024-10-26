@@ -4,3 +4,4 @@ drf-yasg
 django-cors-headers
 django-notifications-hq
 gunicorn
+django-taggit

@@ -81,7 +81,7 @@ export const rejectNotification = (notificationId: number) =>
 export const ReviveItem = (itemId: number, data: { price: number }) =>
     post(`/api/items/revive/${itemId}/`, data)
 export const search = (query: string | number | boolean) =>
-    get(`/api/search/?q=${encodeURIComponent(query)}`)
+    get(`/api/items/search/?q=${encodeURIComponent(query)}`)
 export const addItem = (itemData: PartialItem) =>
     post('/api/items/add/', itemData)
 export const setRead = (notificationId: number) =>
@@ -97,7 +97,7 @@ export const updateUnread = async () => {
         .catch(() => {})
 }
 
-export const updateRead = async () => {
+export const updateRead = () => {
     fetchRead()
         .then(data => {
             const store = useStore()

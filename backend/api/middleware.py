@@ -1,6 +1,7 @@
 """
 实现了请求事务化（原子化）和自动 fallback 到 400
 """
+import sys
 from traceback import format_exc
 
 from django.db import transaction
@@ -8,13 +9,18 @@ from django.db import transaction
 from .messages import fast400
 
 
+def is_test_environment():
+    # https://stackoverflow.com/a/11366998
+    return sys.argv[1:2] == ['test']
+
 def atomic_transaction(func):
     def wrapper(*args, **kwargs):
         try:
             with transaction.atomic():
                 return func(*args, **kwargs)
         except:
-            print(f"Transaction rolled back: {format_exc()}")
+            if not is_test_environment():
+                print(f"Transaction rolled back: {format_exc()}")
             return fast400
 
     return wrapper

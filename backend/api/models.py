@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from taggit.managers import TaggableManager
 
 
 class User(AbstractUser):
@@ -12,12 +13,13 @@ class User(AbstractUser):
 
 class ItemManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(deleted=False) # 软删除
+        return super().get_queryset().filter(deleted=False)  # 软删除
 
 
 class Item(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
+    tags = TaggableManager()
     contact_info = models.CharField(max_length=200)
     owner: User = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default=1)
     deleted = models.BooleanField(default=False)
