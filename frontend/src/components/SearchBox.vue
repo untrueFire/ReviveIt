@@ -8,9 +8,9 @@
             class="searchBox"
         />
         <n-data-table
-            v-if="results.length"
+            v-if="items.length"
             :columns="columns"
-            :data="results"
+            :data="items"
             :pagination="pagination"
             striped
         />
@@ -62,9 +62,9 @@ import type { Item, User } from '@/types/Api'
 const router = useRouter()
 const store = useStore()
 const query = ref('')
-const results = ref([])
+const items = ref<Item[]>([])
 const message = useMessage()
-const selectedItemId = ref()
+const selectedItemId = ref(0)
 const showModal = ref(false)
 const price = ref(0)
 
@@ -75,7 +75,7 @@ const render = () =>
 
 const handleInput = async () => {
     try {
-        results.value = await search(query.value)
+        items.value = await search(query.value)
     } catch {
         message.error('数据获取失败')
     }
@@ -114,7 +114,7 @@ function handleViewItem(itemId: number) {
 }
 
 const columns = computed(() => {
-    const res: Array<DataTableColumn<Item>> = [
+    const res: DataTableColumn<Item>[] = [
         {
             title: 'ID',
             key: 'id',
@@ -134,9 +134,9 @@ const columns = computed(() => {
             key: 'tags',
             ellipsis: true,
             resizable: true,
-            render: (row: Item) =>
+            render: row =>
                 h(NFlex, () =>
-                    row.tags.map((tag: string) =>
+                    row.tags.map(tag =>
                         h(
                             NTag,
                             {
@@ -148,6 +148,12 @@ const columns = computed(() => {
                         ),
                     ),
                 ),
+            filterOptions: [
+                ...new Set(items.value.flatMap(item => item.tags)),
+            ].map(tag => ({ label: tag, value: tag })),
+            filter: (value, row) => {
+                return Boolean(row.tags.includes(value as string))
+            },
         },
         {
             title: '物品描述',

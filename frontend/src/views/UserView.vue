@@ -25,12 +25,18 @@
 </template>
 
 <script setup lang="ts">
-import { h, ref, onMounted } from 'vue'
+import { h, ref, onMounted, computed, type ComputedRef } from 'vue'
 import { pagination, randomTagType } from '../utils/constants'
 import { useRouter } from 'vue-router'
 import { fetchUserItems, deleteItem } from '../utils/api'
 import { useStore } from '../stores'
-import { useMessage, NButton, NFlex, NTag } from 'naive-ui'
+import {
+    useMessage,
+    NButton,
+    NFlex,
+    NTag,
+    type DataTableColumn,
+} from 'naive-ui'
 import type { Item } from '@/types/Api'
 const message = useMessage()
 const router = useRouter()
@@ -55,7 +61,7 @@ async function handleDeleteItem(itemId: number) {
     }
 }
 
-const columns = [
+const columns: ComputedRef<DataTableColumn<Item>[]> = computed(() => [
     {
         title: 'ID',
         key: 'id',
@@ -74,9 +80,9 @@ const columns = [
         key: 'tags',
         ellipsis: true,
         resizable: true,
-        render: (row: Item) =>
+        render: row =>
             h(NFlex, () =>
-                row.tags.map((tag: string) =>
+                row.tags.map(tag =>
                     h(
                         NTag,
                         {
@@ -88,6 +94,12 @@ const columns = [
                     ),
                 ),
             ),
+        filterOptions: [...new Set(items.value.flatMap(item => item.tags))].map(
+            tag => ({ label: tag, value: tag }),
+        ),
+        filter: (value, row) => {
+            return Boolean(row.tags.includes(value as string))
+        },
     },
     {
         title: '物品描述',
@@ -142,7 +154,7 @@ const columns = [
             ])
         },
     },
-]
+])
 
 onMounted(async () => {
     fetchUserItems()

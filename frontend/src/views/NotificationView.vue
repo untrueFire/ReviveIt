@@ -37,7 +37,13 @@ import {
     rejectNotification,
     setRead,
 } from '../utils/api'
-import { useMessage, NFlex, NButton, NTime } from 'naive-ui'
+import {
+    useMessage,
+    NFlex,
+    NButton,
+    NTime,
+    type DataTableColumn,
+} from 'naive-ui'
 import { type Notification } from '../types/Api'
 const store = useStore()
 const message = useMessage()
@@ -185,13 +191,13 @@ const columns = [
     },
 ]
 
-const columns2 = [
+const columns2: DataTableColumn<Notification>[] = [
     {
         title: '时间',
         key: 'time',
         resizable: true,
         ellipsis: true,
-        sorter: (row1: Notification, row2: Notification) =>
+        sorter: (row1, row2) =>
             new Date(row1.timestamp).getTime() -
             new Date(row2.timestamp).getTime(),
         render: relativeTime,
@@ -201,14 +207,14 @@ const columns2 = [
         key: 'content',
         resizable: true,
         ellipsis: true,
-        render: (row: Notification) => format(row, 1)[0],
+        render: row => format(row, 1)[0],
     },
     {
         title: '结果',
         key: 'result',
         resizable: true,
         ellipsis: true,
-        render: (row: Notification) => format(row, 1)[1],
+        render: row => format(row, 1)[1],
         filterOptions: [
             {
                 label: '已同意',
@@ -223,8 +229,8 @@ const columns2 = [
                 value: '已被先行复活',
             },
         ],
-        filter(value: string, row: Notification) {
-            return ~format(row, 1)[1].indexOf(value)
+        filter(value, row) {
+            return Boolean(~format(row, 1)[1].indexOf(value as string))
         },
     },
 ]
