@@ -1,4 +1,9 @@
-import { reactive } from 'vue'
+/**
+ * Stores common-used functions to reduce duplication
+ */
+import type { ValidateError } from 'async-validator'
+import { NTag, type FormValidationError } from 'naive-ui'
+import { h, reactive } from 'vue'
 /**
  * Default pager used in this project
  */
@@ -33,4 +38,48 @@ export const tagTypes = [
 export function choice<T>(arr: readonly T[]): T {
     const randomIndex = Math.floor(Math.random() * arr.length)
     return arr[randomIndex]
+}
+
+/**
+ * A wrapper for the render function for tags
+ * using the above functions
+ *
+ * TODO: Decoupling the model
+ * @param model the form model that contains the tags
+ * @returns a render function that renders the tags
+ */
+export function renderTag(model: {
+    name: string
+    tags: string[]
+    description: string
+    contactInfo: string
+}) {
+    function render(tag: string, index: number) {
+        return h(
+            NTag,
+            {
+                type: choice(tagTypes),
+                closable: true,
+                bordered: false,
+                onClose: () => {
+                    model.tags.splice(index, 1)
+                },
+            },
+            () => tag,
+        )
+    }
+    return render
+}
+
+/**
+ * General error handler form `NForm`.
+ *
+ * Shows each error using `NMessage`
+ * @param error `FormValidationError[]`
+ */
+export function handleFormError(error: FormValidationError[]) {
+    const message = window.$message
+    error.forEach(field => {
+        field.forEach((err: ValidateError) => message.error(`${err.message}`))
+    })
 }

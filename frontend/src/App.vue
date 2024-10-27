@@ -18,9 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import { zhCN, dateZhCN, useOsTheme, darkTheme } from 'naive-ui'
+import { zhCN, dateZhCN } from 'naive-ui'
 import { useThemeStore } from './stores'
-const osThemeRef = useOsTheme()
 const store = useThemeStore()
-store.theme = osThemeRef.value === 'dark' ? darkTheme : null
 </script>

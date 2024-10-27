@@ -1,3 +1,6 @@
+/**
+ * Stores api-related functions
+ */
 import axios, { AxiosError } from 'axios'
 import { useStore } from '../stores'
 

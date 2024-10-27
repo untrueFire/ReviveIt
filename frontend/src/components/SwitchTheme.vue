@@ -8,13 +8,12 @@
 <script setup lang="ts">
 import { useThemeStore } from '../stores'
 import { LightModeFilled, DarkModeFilled } from '@vicons/material'
-import { darkTheme } from 'naive-ui'
 const store = useThemeStore()
 const toggleTheme = () => {
-    if (store.theme !== null) {
-        store.theme = null
+    if (store.themeName !== 'dark') {
+        store.themeName = 'dark'
     } else {
-        store.theme = darkTheme
+        store.themeName = 'light'
     }
 }
 </script>

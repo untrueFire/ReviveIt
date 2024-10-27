@@ -214,3 +214,11 @@ onMounted(() => {
     handleInput()
 })
 </script>
+
+<style scoped>
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+</style>

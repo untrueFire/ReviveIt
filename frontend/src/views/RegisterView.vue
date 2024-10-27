@@ -45,7 +45,7 @@ import { useRouter } from 'vue-router'
 import { post } from '../utils/api'
 import { useStore } from '../stores'
 import { useMessage, type FormInst, type FormItemRule } from 'naive-ui'
-import type { ValidateError } from 'async-validator'
+import { handleFormError } from '@/utils/constants'
 const store = useStore()
 const router = useRouter()
 const message = useMessage()
@@ -147,13 +147,7 @@ const handleRegister = (event: MouseEvent) => {
                 message.error('注册失败')
             }
         })
-        .catch(error => {
-            Object.keys(error).forEach(field => {
-                error[field].forEach((err: ValidateError) =>
-                    message.error(`${err.message}`),
-                )
-            })
-        })
+        .catch(handleFormError)
 }
 
 onMounted(() => {

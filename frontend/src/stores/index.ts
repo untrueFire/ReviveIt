@@ -1,21 +1,23 @@
-import { ref, computed, type Ref } from 'vue'
-import { defineStore, type StoreDefinition } from 'pinia'
-import type { BuiltInGlobalTheme } from 'naive-ui/es/themes/interface'
+import { ref, computed, watchEffect } from 'vue'
+import { defineStore } from 'pinia'
 import type { Notification, User } from '../types/Api'
+import { darkTheme, lightTheme, useOsTheme } from 'naive-ui'
 
 /**
  * Separate definition for global theme.
- *
- * Because its type is too long,
- * we must manually annotate it
  */
-type themeRef = Ref<BuiltInGlobalTheme | null, BuiltInGlobalTheme | null>
-export const useThemeStore: StoreDefinition<
-    'theme',
-    Pick<{ theme: themeRef }, 'theme'>
-> = defineStore('theme', () => {
-    const theme = ref<BuiltInGlobalTheme | null>(null)
-    return { theme }
+export const useThemeStore = defineStore('theme', () => {
+    const osThemeRef = useOsTheme()
+    const themeName = ref(
+        localStorage.getItem('theme') || osThemeRef.value || 'auto',
+    )
+    const theme = computed(() =>
+        themeName.value === 'dark' ? darkTheme : lightTheme,
+    )
+    watchEffect(() => {
+        localStorage.setItem('theme', themeName.value)
+    })
+    return { themeName, theme }
 })
 
 /**

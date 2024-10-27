@@ -71,3 +71,19 @@ async function handleKnock() {
     }, 200)
 }
 </script>
+
+<style scoped>
+@keyframes run {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(0.8);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+</style>

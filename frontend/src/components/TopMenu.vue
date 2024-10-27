@@ -128,3 +128,17 @@ const menuOptions = computed(() => [
     },
 ])
 </script>
+
+<style scoped>
+.top-menu {
+  list-style-type: none;
+  margin: 10px;
+  padding: 0;
+  display: flex;
+}
+
+.top-menu a {
+  font-size: 16px;
+}
+
+</style>

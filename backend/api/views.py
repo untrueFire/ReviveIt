@@ -61,6 +61,7 @@ item_schema = openapi.Schema(
         "name": openapi.Schema(type=openapi.TYPE_STRING, description="物品名称"),
         "description": openapi.Schema(type=openapi.TYPE_STRING, description="物品描述"),
         "contact_info": openapi.Schema(type=openapi.TYPE_STRING, description="联系人信息"),
+        "tags": openapi.Schema(title="tags", type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_STRING), description="标签"),
     },
     required=["name", "description", "contact_info"],
 )

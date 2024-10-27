@@ -27,11 +27,11 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useMessage, type FormInst, type FormValidationError } from 'naive-ui'
-import { type ValidateError } from 'async-validator'
+import { useMessage, type FormInst } from 'naive-ui'
 import { post } from '../utils/api'
 import { useStore } from '../stores'
 import type { User } from '@/types/Api'
+import { handleFormError } from '@/utils/constants'
 const router = useRouter()
 const store = useStore()
 const message = useMessage()
@@ -94,13 +94,7 @@ const handleLogin = (event: MouseEvent) => {
                     message.error('登录失败')
                 })
         })
-        .catch((error: FormValidationError[]) => {
-            error.forEach(field => {
-                field.forEach((err: ValidateError) =>
-                    message.error(`${err.message}`),
-                )
-            })
-        })
+        .catch(handleFormError)
 }
 onMounted(() => {
     if (store.isLoggedIn) {
