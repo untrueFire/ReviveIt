@@ -27,7 +27,7 @@ class ItemSerializer(TaggitSerializer, serializers.ModelSerializer):
 
     class Meta:
         model = Item
-        fields = ["id", "name", "description", "contact_info", "owner", "tags"]
+        fields = ["id", "name", "description", "contactInfo", "owner", "tags"]
 
 
 class SimpleItemSerializer(serializers.ModelSerializer):

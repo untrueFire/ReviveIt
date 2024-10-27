@@ -20,7 +20,7 @@ class Item(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
     tags = TaggableManager()
-    contact_info = models.CharField(max_length=200)
+    contactInfo = models.CharField(max_length=200)
     owner: User = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default=1)
     deleted = models.BooleanField(default=False)
 

@@ -19,12 +19,12 @@ const model = reactive<{
     name: string
     tags: string[]
     description: string
-    contact_info: string
+    contactInfo: string
 }>({
     name: '',
     tags: [],
     description: '',
-    contact_info: '',
+    contactInfo: '',
 })
 const HandleAddItem = (
     formRef: Ref<FormInst | null>,
@@ -32,7 +32,7 @@ const HandleAddItem = (
         name: string
         tags: string[]
         description: string
-        contact_info: string
+        contactInfo: string
     }>,
 ) => {
     formRef.value
@@ -42,7 +42,7 @@ const HandleAddItem = (
                 name: model.name,
                 tags: model.tags,
                 description: model.description,
-                contact_info: model.contact_info,
+                contactInfo: model.contactInfo,
             })
                 .then(() => {
                     message.success('物品添加成功')

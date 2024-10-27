@@ -158,7 +158,7 @@ const columns = computed(() => {
         },
         {
             title: '联系方式',
-            key: 'contact_info',
+            key: 'contactInfo',
             ellipsis: true,
             resizable: true,
             sorter: 'default',

@@ -24,7 +24,7 @@
                     </n-flex>
                 </template>
                 {{ item.description }}
-                <template #footer> 联系方式：{{ item.contact_info }} </template>
+                <template #footer> 联系方式：{{ item.contactInfo }} </template>
             </n-card>
         </div>
     </div>
@@ -48,7 +48,7 @@ const item = ref<Item>({
     name: '',
     tags: [],
     description: '',
-    contact_info: '',
+    contactInfo: '',
     owner: {
         id: 0,
         username: '',

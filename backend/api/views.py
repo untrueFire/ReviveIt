@@ -60,10 +60,10 @@ item_schema = openapi.Schema(
     properties={
         "name": openapi.Schema(type=openapi.TYPE_STRING, description="物品名称"),
         "description": openapi.Schema(type=openapi.TYPE_STRING, description="物品描述"),
-        "contact_info": openapi.Schema(type=openapi.TYPE_STRING, description="联系人信息"),
+        "contactInfo": openapi.Schema(type=openapi.TYPE_STRING, description="联系人信息"),
         "tags": openapi.Schema(title="tags", type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_STRING), description="标签"),
     },
-    required=["name", "description", "contact_info"],
+    required=["name", "description", "contactInfo"],
 )
 
 
@@ -141,7 +141,7 @@ def update_item(request: rest_framework.request.Request, item_id: int):
         openapi.Parameter("orderby", openapi.IN_QUERY, description="排序字段", type=openapi.TYPE_STRING, required=False),
     ],
     operation_summary="根据关键字查询物品",
-    responses={200: ItemSerializer()},
+    responses={200: ItemSerializer(many=True)},
 )
 @api_view(["GET"])
 @permission_classes([AllowAny])
@@ -449,3 +449,31 @@ def remove_tag(request: rest_framework.request.Request):
             return fast403
     except Item.DoesNotExist:
         return fast404
+
+
+@swagger_auto_schema(
+    method="post",
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            "tags": openapi.Schema(title="tags", type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_STRING), description="要查询的标签"),
+        },
+        required=["tags"],
+    ),
+    operation_summary="根据标签查询物品",
+    responses={200: ItemSerializer(many=True), 400: INVALID_REQUEST},
+)
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def search_tag(request: rest_framework.request.Request):
+    tags: str | list[str] = request.data["tags"]
+    if isinstance(tags, str):
+        tags = [tags]
+    limit = int(request._request.GET.get("limit", default=100))
+    offset = int(request._request.GET.get("offset", default=0))
+    orderby = request._request.GET.get("orderby")
+    items = Item.objects.filter(tags__name__in=tags).distinct()
+    if orderby:
+        items = items.order_by(orderby)
+    serializer = ItemSerializer(items[offset : offset + limit], many=True)
+    return Response(serializer.data)

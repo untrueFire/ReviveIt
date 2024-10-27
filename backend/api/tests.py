@@ -15,8 +15,8 @@ class GetItemsTestCase(TestCase):
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(username="testuser", password="testpass")
-        self.item1 = Item.objects.create(name="Item 1", description="Description 1", contact_info="Contact 1", owner=self.user)
-        self.item2 = Item.objects.create(name="Item 2", description="Description 2", contact_info="Contact 2", owner=self.user)
+        self.item1 = Item.objects.create(name="Item 1", description="Description 1", contactInfo="Contact 1", owner=self.user)
+        self.item2 = Item.objects.create(name="Item 2", description="Description 2", contactInfo="Contact 2", owner=self.user)
 
     def test_get_single_item(self):
         response = self.client.get(reverse("get_item", args=[self.item1.id]))
@@ -37,20 +37,20 @@ class AddItemTestCase(TestCase):
         self.client.login(username="testuser", password="testpass")
 
     def test_add_item_success(self):
-        data = {"name": "New Item", "description": "New Description", "contact_info": "New Contact"}
-        response = self.client.post(reverse("add_item"), data)
+        data = {"name": "New Item", "description": "New Description", "contactInfo": "New Contact"}
+        response = self.client.post(reverse("add_item"), json.dumps(data), content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json()["message"], SUCCESS)
 
     def test_add_item_unauthenticated(self):
         self.client.logout()
-        data = {"name": "New Item", "description": "New Description", "contact_info": "New Contact"}
-        response = self.client.post(reverse("add_item"), data)
+        data = {"name": "New Item", "description": "New Description", "contactInfo": "New Contact"}
+        response = self.client.post(reverse("add_item"), json.dumps(data), content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_add_item_invalid(self):
         self.client.login(username="testuser", password="testpass")
-        data = {"name": "New Item", "description": 1, "contact_info": ""}
+        data = {"name": "New Item", "description": 1, "contactInfo": ""}
         response = self.client.post(reverse("add_item"), json.dumps(data), content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -61,7 +61,7 @@ class DeleteItemTestCase(TestCase):
         self.client = Client()
         self.user = User.objects.create_user(username="testuser", password="testpass")
         self.user2 = User.objects.create_user(username="testuser2", password="testpass2")
-        self.item = Item.objects.create(name="Item 1", description="Description 1", contact_info="Contact 1", owner=self.user)
+        self.item = Item.objects.create(name="Item 1", description="Description 1", contactInfo="Contact 1", owner=self.user)
         self.client.login(username="testuser", password="testpass")
 
     def test_delete_item(self):
@@ -88,7 +88,7 @@ class UpdateItemTestCase(TestCase):
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(username="testuser", password="testpass")
-        self.item = Item.objects.create(name="Item 1", description="Description 1", contact_info="Contact 1", owner=self.user)
+        self.item = Item.objects.create(name="Item 1", description="Description 1", contactInfo="Contact 1", owner=self.user)
         self.client.login(username="testuser", password="testpass")
 
     def test_update_item(self):
@@ -99,19 +99,19 @@ class UpdateItemTestCase(TestCase):
         self.assertEqual(self.item.name, data["name"])
 
     def test_update_nonexistent_item(self):
-        data = {"name": "Updated Item", "description": "Updated Description", "contact_info": "Updated Contact"}
+        data = {"name": "Updated Item", "description": "Updated Description", "contactInfo": "Updated Contact"}
         response = self.client.post(reverse("update_item", args=[999]), json.dumps(data), content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.json()["message"], NOT_FOUND)
 
     def test_update_item_unauthorized(self):
         self.client.logout()
-        data = {"name": "Updated Item", "description": "Updated Description", "contact_info": "Updated Contact"}
+        data = {"name": "Updated Item", "description": "Updated Description", "contactInfo": "Updated Contact"}
         response = self.client.post(reverse("update_item", args=[self.item.id]), json.dumps(data), content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_update_item_invalid_data(self):
-        data = {"name": []}
+        data = {"name": False}
         response = self.client.post(reverse("update_item", args=[self.item.id]), json.dumps(data), content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.json()["message"], INVALID_REQUEST)
@@ -119,7 +119,7 @@ class UpdateItemTestCase(TestCase):
     def test_update_item_not_owner(self):
         User.objects.create_user(username="anotheruser", password="anotherpass")
         self.client.login(username="anotheruser", password="anotherpass")
-        data = {"name": "Updated Item", "description": "Updated Description", "contact_info": "Updated Contact"}
+        data = {"name": "Updated Item", "description": "Updated Description", "contactInfo": "Updated Contact"}
         response = self.client.post(reverse("update_item", args=[self.item.id]), json.dumps(data), content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(response.json()["message"], PERMISSION_DENIED)
@@ -130,8 +130,8 @@ class SearchItemsTestCase(TestCase):
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(username="testuser", password="testpass")
-        self.item1 = Item.objects.create(name="Item 1", description="Description 1", contact_info="Contact 1", owner=self.user)
-        self.item2 = Item.objects.create(name="Item 2", description="Description 2", contact_info="Contact 2", owner=self.user)
+        self.item1 = Item.objects.create(name="Item 1", description="Description 1", contactInfo="Contact 1", owner=self.user)
+        self.item2 = Item.objects.create(name="Item 2", description="Description 2", contactInfo="Contact 2", owner=self.user)
 
     def test_search_items(self):
         response = self.client.get(reverse("search_items"), {"q": "Item 1"})
@@ -319,7 +319,6 @@ class UserNotificationsTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.json()), 1)
 
-
     def test_user_notifications_unauthenticated(self):
         response = self.client.get(reverse("user_notifications"))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -330,7 +329,7 @@ class GetMyItemTestCase(TestCase):
         self.client = Client()
         self.user = User.objects.create_user(username="testuser", password="testpass")
         self.user2 = User.objects.create_user(username="testuser2", password="testpass2")
-        self.item2 = Item.objects.create(name="Item 2", description="Description 2", contact_info="Contact 2", owner=self.user2)
+        self.item2 = Item.objects.create(name="Item 2", description="Description 2", contactInfo="Contact 2", owner=self.user2)
 
     def test_get_my_items_success(self):
         self.client.login(username="testuser", password="testpass")
@@ -338,13 +337,13 @@ class GetMyItemTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json(), [])
 
-        self.item1 = Item.objects.create(name="Item 1", description="Description 1", contact_info="Contact 1", owner=self.user)
+        self.item1 = Item.objects.create(name="Item 1", description="Description 1", contactInfo="Contact 1", owner=self.user)
         response = self.client.get(reverse("get_my_items"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.json()), 1)
         self.assertEqual(response.json()[0], ItemSerializer(self.item1).data)
 
-        self.item3 = Item.objects.create(name="Item 3", description="Description 3", contact_info="Contact 3", owner=self.user)
+        self.item3 = Item.objects.create(name="Item 3", description="Description 3", contactInfo="Contact 3", owner=self.user)
         response = self.client.get(reverse("get_my_items"), QUERY_STRING="orderby=-name")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.json()), 2)
@@ -354,83 +353,88 @@ class GetMyItemTestCase(TestCase):
         response = self.client.get(reverse("get_my_items"))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+
 class ReadTestCase(TestCase):
     def setUp(self):
         self.client = Client()
-        self.user = User.objects.create_user(username='testuser', password='testpassword')
-        self.other_user = User.objects.create_user(username='otheruser', password='otherpassword')
+        self.user = User.objects.create_user(username="testuser", password="testpassword")
+        self.other_user = User.objects.create_user(username="otheruser", password="otherpassword")
         self.notification = Notification.objects.create(actor=self.other_user, recipient=self.user)
 
-
     def test_read_notification_success(self):
-        self.client.login(username='testuser', password='testpassword')
-        response = self.client.post(reverse('read', args=[self.notification.id]))
+        self.client.force_login(self.user)
+        response = self.client.post(reverse("read", args=[self.notification.id]))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.notification.refresh_from_db()
         self.assertFalse(self.notification.unread)
 
     def test_read_notification_unauthorized(self):
         self.client.logout()
-        response = self.client.post(reverse('read', args=[self.notification.id]))
+        response = self.client.post(reverse("read", args=[self.notification.id]))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_read_notification_not_found(self):
-        self.client.login(username='testuser', password='testpassword')
-        response = self.client.post(reverse('read', args=[999]))
+        self.client.force_login(self.user)
+        response = self.client.post(reverse("read", args=[999]))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_read_notification_not_recipient(self):
-        self.client.login(username='otheruser', password='otherpassword')
-        response = self.client.post(reverse('read', args=[self.notification.id]))
+        self.client.force_login(self.other_user)
+        response = self.client.post(reverse("read", args=[self.notification.id]))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class ChallengeViewTest(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(username='testuser', password='testpassword')
+        self.user = User.objects.create_user(username="testuser", password="testpassword")
         self.client = Client()
 
     def test_challenge_success(self):
-        self.client.login(username='testuser', password='testpassword')
-        response = self.client.post(reverse('challenge'))
+        self.client.login(username="testuser", password="testpassword")
+        response = self.client.post(reverse("challenge"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("challenge", response.json())
         self.assertIn("difficulty", response.json())
 
     def test_challenge_unauthorized(self):
-        response = self.client.post(reverse('challenge'))
+        response = self.client.post(reverse("challenge"))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
 
 class KnockViewTest(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(username='testuser', password='testpassword')
-        self.user2 = User.objects.create_user(username='testuser2', password='testpassword2')
+        self.user = User.objects.create_user(username="testuser", password="testpassword")
+        self.user2 = User.objects.create_user(username="testuser2", password="testpassword2")
         self.client = Client()
-        self.client.login(username='testuser', password='testpassword')
-        response = self.client.post(reverse('challenge')).json()
+        self.client.login(username="testuser", password="testpassword")
+        response = self.client.post(reverse("challenge")).json()
         self.challenge = response["challenge"]
         self.difficulty = response["difficulty"]
 
     def test_knock_success(self):
         nonce = self.generate_valid_nonce(self.challenge, self.difficulty)
-        response = self.client.post(reverse('knock'), data={"nonce": nonce})
+        data = {"nonce": nonce}
+        response = self.client.post(reverse("knock"), json.dumps(data), content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.user.refresh_from_db()
         self.assertEqual(self.user.balance, 1)
 
     def test_knock_unauthorized(self):
         self.client.logout()
-        response = self.client.post(reverse('knock'), data={"nonce": "invalid_nonce"})
+        data = {"nonce": "invalid_nonce"}
+        response = self.client.post(reverse("knock"), json.dumps(data), content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_knock_no_challenge(self):
-        self.client.login(username='testuser2', password='testpassword2')
-        response = self.client.post(reverse('knock'), data={"nonce": "invalid_nonce"})
+        self.client.login(username="testuser2", password="testpassword2")
+        data = {"nonce": "invalid_nonce"}
+        response = self.client.post(reverse("knock"), json.dumps(data), content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_knock_invalid_nonce(self):
-        self.client.login(username='testuser', password='testpassword')
-        response = self.client.post(reverse('knock'), data={"nonce": "invalid_nonce"})
+        self.client.login(username="testuser", password="testpassword")
+        data = {"nonce": "invalid_nonce"}
+        response = self.client.post(reverse("knock"), json.dumps(data), content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def generate_valid_nonce(self, challenge, difficulty):
@@ -443,119 +447,91 @@ class KnockViewTest(TestCase):
             if sha256((challenge + nonce).encode()).hexdigest().endswith("0" * difficulty):
                 return nonce
 
+
 class TestTagViews(TestCase):
     def setUp(self):
         self.client = Client()
-        self.user = User.objects.create_user(username='testuser', password='testpass')
+        self.user = User.objects.create_user(username="testuser", password="testpass")
         self.client.force_login(self.user)
-        self.item = Item.objects.create(owner=self.user, name='Test Item')
+        self.item = Item.objects.create(owner=self.user, name="Test Item")
 
     def test_add_tag(self):
-        url = reverse('add_tag')
-        data = {
-            'item_id': self.item.id,
-            'tags': ['tag1', 'tag2']
-        }
-        response = self.client.post(url, data, content_type='application/json')
+        url = reverse("add_tag")
+        data = {"item_id": self.item.id, "tags": ["tag1", "tag2"]}
+        response = self.client.post(url, json.dumps(data), content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.item.refresh_from_db()
-        self.assertIn('tag1', self.item.tags.names())
-        self.assertIn('tag2', self.item.tags.names())
+        self.assertIn("tag1", self.item.tags.names())
+        self.assertIn("tag2", self.item.tags.names())
 
     def test_add_tag_string(self):
-        url = reverse('add_tag')
-        data = {
-            'item_id': self.item.id,
-            'tags': 'tag_string'
-        }
-        response = self.client.post(url, data, content_type='application/json')
+        url = reverse("add_tag")
+        data = {"item_id": self.item.id, "tags": "tag_string"}
+        response = self.client.post(url, json.dumps(data), content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.item.refresh_from_db()
-        self.assertIn('tag_string', self.item.tags.names())
+        self.assertIn("tag_string", self.item.tags.names())
 
     def test_add_tag_invalid_request(self):
-        url = reverse('add_tag')
-        data = {
-            'item_id': self.item.id,
-            'tags': 123
-        }
-        response = self.client.post(url, data, content_type='application/json')
+        url = reverse("add_tag")
+        data = {"item_id": self.item.id, "tags": 123}
+        response = self.client.post(url, json.dumps(data), content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_add_tag_permission_denied(self):
-        other_user = User.objects.create_user(username='otheruser', password='otherpass')
-        other_item = Item.objects.create(owner=other_user, name='Other Item')
-        url = reverse('add_tag')
-        data = {
-            'item_id': other_item.id,
-            'tags': ['tag1', 'tag2']
-        }
-        response = self.client.post(url, data, content_type='application/json')
+        other_user = User.objects.create_user(username="otheruser", password="otherpass")
+        other_item = Item.objects.create(owner=other_user, name="Other Item")
+        url = reverse("add_tag")
+        data = {"item_id": other_item.id, "tags": ["tag1", "tag2"]}
+        response = self.client.post(url, json.dumps(data), content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_add_tag_not_found(self):
-        url = reverse('add_tag')
-        data = {
-            'item_id': 9999,
-            'tags': ['tag1', 'tag2']
-        }
-        response = self.client.post(url, data, content_type='application/json')
+        url = reverse("add_tag")
+        data = {"item_id": 9999, "tags": ["tag1", "tag2"]}
+        response = self.client.post(url, json.dumps(data), content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_remove_tag(self):
-        self.item.tags.add('tag1', 'tag2')
-        url = reverse('remove_tag')
-        data = {
-            'item_id': self.item.id,
-            'tags': ['tag1']
-        }
-        response = self.client.post(url, data, content_type='application/json')
+        self.item.tags.add("tag1", "tag2")
+        url = reverse("remove_tag")
+        data = {"item_id": self.item.id, "tags": ["tag1"]}
+        response = self.client.post(url, json.dumps(data), content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.item.refresh_from_db()
-        self.assertNotIn('tag1', self.item.tags.names())
-        self.assertIn('tag2', self.item.tags.names())
+        self.assertNotIn("tag1", self.item.tags.names())
+        self.assertIn("tag2", self.item.tags.names())
 
     def test_remove_tag_string(self):
-        self.item.tags.add('tag_string')
-        url = reverse('remove_tag')
-        data = {
-            'item_id': self.item.id,
-            'tags': 'tag_string'
-        }
-        response = self.client.post(url, data, content_type='application/json')
+        self.item.tags.add("tag_string")
+        url = reverse("remove_tag")
+        data = {"item_id": self.item.id, "tags": "tag_string"}
+        response = self.client.post(url, json.dumps(data), content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.item.refresh_from_db()
-        self.assertNotIn('tag_string', self.item.tags.names())
+        self.assertNotIn("tag_string", self.item.tags.names())
 
     def test_remove_tag_invalid_request(self):
-        url = reverse('remove_tag')
-        data = {
-            'item_id': self.item.id,
-            'tags': 123
-        }
-        response = self.client.post(url, data, content_type='application/json')
+        url = reverse("remove_tag")
+        data = {"item_id": self.item.id, "tags": 123}
+        response = self.client.post(url, json.dumps(data), content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_remove_tag_permission_denied(self):
-        other_user = User.objects.create_user(username='otheruser', password='otherpass')
-        other_item = Item.objects.create(owner=other_user, name='Other Item')
-        other_item.tags.add('tag1', 'tag2')
-        url = reverse('remove_tag')
-        data = {
-            'item_id': other_item.id,
-            'tags': ['tag1']
-        }
-        response = self.client.post(url, data, content_type='application/json')
+        other_user = User.objects.create_user(username="otheruser", password="otherpass")
+        other_item = Item.objects.create(owner=other_user, name="Other Item")
+        other_item.tags.add("tag1", "tag2")
+        url = reverse("remove_tag")
+        data = {"item_id": other_item.id, "tags": ["tag1"]}
+        response = self.client.post(url, json.dumps(data), content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_remove_tag_not_found(self):
-        url = reverse('remove_tag')
-        data = {
-            'item_id': 9999,
-            'tags': ['tag1']
-        }
-        response = self.client.post(url, data, content_type='application/json')
+        url = reverse("remove_tag")
+        data = {"item_id": 9999, "tags": ["tag1"]}
+        response = self.client.post(url, json.dumps(data), content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
 
 class TestMiddleware(TestCase):
     def setUp(self):
@@ -566,7 +542,55 @@ class TestMiddleware(TestCase):
         To cover `if not is_test_environment():` in `./middleware.py`
         """
         import sys
-        sys.argv[1:2] = ['']
-        ReviveTestCase(methodName='test_revive_invalid_request').run()
-        sys.argv[1:2] = ['test']
 
+        sys.argv[1:2] = [""]
+        ReviveTestCase(methodName="test_revive_invalid_request").run()
+        sys.argv[1:2] = ["test"]
+
+
+class TestSearchTags(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create(username="1", password="1")
+        self.item1 = Item.objects.create(name="Item 1", description="desc1", contactInfo="contact1")
+        self.item1.tags.add("tag2", "tag3")
+        self.item2 = Item.objects.create(name="Item 2", description="desc2", contactInfo="contact2")
+        self.item2.tags.add("tag1", "tag3")
+        self.item3 = Item.objects.create(name="Item 3", description="desc3", contactInfo="contact3")
+        self.item3.tags.add("tag1", "tag2")
+
+    def test_search_tag_valid_request(self):
+        url = reverse("search_tag")
+        data = {"tags": ["tag1"]}
+        response = self.client.post(url, json.dumps(data), content_type="application/json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        expected_data = ItemSerializer([self.item2, self.item3], many=True).data
+        self.assertEqual(response.json(), expected_data)
+
+        data = {"tags": "tag2"}
+        response = self.client.post(url, json.dumps(data), content_type="application/json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        expected_data = ItemSerializer([self.item1, self.item3], many=True).data
+        self.assertEqual(response.json(), expected_data)
+
+    def test_search_tag_invalid_request(self):
+        url = reverse("search_tag")
+        data = {}
+        response = self.client.post(url, json.dumps(data), content_type="application/json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_search_tag_pagination(self):
+        url = reverse("search_tag")
+        data = {"tags": ["tag3"]}
+        response = self.client.post(url, json.dumps(data), content_type="application/json", QUERY_STRING="limit=1&offset=1")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        expected_data = ItemSerializer([self.item2], many=True).data
+        self.assertEqual(response.json(), expected_data)
+
+    def test_search_tag_ordering(self):
+        url = reverse("search_tag")
+        data = {"tags": ["tag2"]}
+        response = self.client.post(url, json.dumps(data), content_type="application/json", QUERY_STRING="orderby=-name")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        expected_data = ItemSerializer([self.item3, self.item1], many=True).data
+        self.assertEqual(response.json(), expected_data)

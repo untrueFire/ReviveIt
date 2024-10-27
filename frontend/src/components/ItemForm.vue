@@ -26,10 +26,10 @@
                     required
                 />
             </n-form-item>
-            <n-form-item path="contact_info" label="联系方式">
+            <n-form-item path="contactInfo" label="联系方式">
                 <n-input
-                    id="contact_info"
-                    v-model:value="model.contact_info"
+                    id="contactInfo"
+                    v-model:value="model.contactInfo"
                     placeholder="联系方式"
                     required
                 />
@@ -50,7 +50,7 @@ interface Props {
         name: string
         tags: string[]
         description: string
-        contact_info: string
+        contactInfo: string
     }
 }
 const props = defineProps<Props>()
@@ -80,7 +80,7 @@ function handleSubmit(e: MouseEvent) {
         name: '',
         tags: [],
         description: '',
-        contact_info: '',
+        contactInfo: '',
     })
 }
 const rules = {
@@ -98,7 +98,7 @@ const rules = {
             trigger: 'blur',
         },
     ],
-    contact_info: [
+    contactInfo: [
         {
             required: true,
             message: '请输入联系方式',

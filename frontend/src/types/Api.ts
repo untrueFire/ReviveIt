@@ -41,7 +41,7 @@ export interface Item {
      * @minLength 1
      * @maxLength 200
      */
-    contact_info: string
+    contactInfo: string
     owner: PublicUser
     tags: string[]
 }
@@ -385,7 +385,7 @@ export class Api<
                 /** 物品描述 */
                 description: string
                 /** 联系人信息 */
-                contact_info: string
+                contactInfo: string
             },
             params: RequestParams = {},
         ) =>
@@ -457,7 +457,7 @@ export class Api<
                 /** 物品描述 */
                 description: string
                 /** 联系人信息 */
-                contact_info: string
+                contactInfo: string
             },
             params: RequestParams = {},
         ) =>

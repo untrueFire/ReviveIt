@@ -45,7 +45,7 @@ export function renderTag(model: {
     name: string
     tags: string[]
     description: string
-    contact_info: string
+    contactInfo: string
 }) {
     function render(tag: string, index: number) {
         return h(

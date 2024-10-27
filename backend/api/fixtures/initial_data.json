@@ -6,7 +6,7 @@
             "name": "Item 1",
             "tags": ["tag2", "tag3"],
             "description": "Description for Item 1",
-            "contact_info": "Contact info for Item 1",
+            "contactInfo": "Contact info for Item 1",
             "owner": 1
         }
     },
@@ -17,7 +17,7 @@
             "name": "Item 2",
             "tags": ["tag1", "tag3"],
             "description": "Description for Item 2",
-            "contact_info": "Contact info for Item 2",
+            "contactInfo": "Contact info for Item 2",
             "owner": 1
         }
     },
@@ -28,7 +28,7 @@
             "name": "Item 3",
             "tags": ["tag1", "tag2"],
             "description": "Description for Item 3",
-            "contact_info": "Contact info for Item 3",
+            "contactInfo": "Contact info for Item 3",
             "owner": 1
         }
     }

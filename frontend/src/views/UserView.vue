@@ -98,7 +98,7 @@ const columns = [
     },
     {
         title: '联系方式',
-        key: 'contact_info',
+        key: 'contactInfo',
         ellipsis: true,
         sorter: 'default',
         resizable: true,

@@ -22,12 +22,12 @@ const model = reactive<{
     name: string
     tags: string[]
     description: string
-    contact_info: string
+    contactInfo: string
 }>({
     name: '',
     tags: [],
     description: '',
-    contact_info: '',
+    contactInfo: '',
 })
 
 onMounted(async () => {
@@ -48,7 +48,7 @@ const HandleEditItem = (
         name: string
         tags: string[]
         description: string
-        contact_info: string
+        contactInfo: string
     }>,
 ) => {
     formRef.value
@@ -58,7 +58,7 @@ const HandleEditItem = (
                 name: model.name,
                 tags: model.tags,
                 description: model.description,
-                contact_info: model.contact_info,
+                contactInfo: model.contactInfo,
             })
                 .then(() => {
                     message.success('物品更新成功')
