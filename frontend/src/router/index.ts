@@ -58,7 +58,7 @@ const router = createRouter({
             },
         },
         {
-            path: '/additem',
+            path: '/addItem',
             name: 'AddItem',
             component: AddItem,
             meta: {
@@ -85,7 +85,7 @@ const router = createRouter({
             },
         },
         {
-            path: '/woodenfish',
+            path: '/woodenFish',
             name: 'WoodenFish',
             component: WoodenFishView,
             meta: {

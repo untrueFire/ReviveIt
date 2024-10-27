@@ -40,7 +40,7 @@ class AddItemTestCase(TestCase):
         data = {"name": "New Item", "description": "New Description", "contact_info": "New Contact"}
         response = self.client.post(reverse("add_item"), data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json()["message"], SUCCCESS)
+        self.assertEqual(response.json()["message"], SUCCESS)
 
     def test_add_item_unauthenticated(self):
         self.client.logout()
@@ -224,7 +224,7 @@ class RejectDealTestCase(TestCase):
         balance = self.buyer.balance
         response = self.client.post(reverse("reject_deal", args=[self.notification.id]))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json()["message"], SUCCCESS)
+        self.assertEqual(response.json()["message"], SUCCESS)
         self.buyer.refresh_from_db()
         self.assertEqual(self.buyer.balance, balance + self.price)
         self.notification.refresh_from_db()
@@ -263,7 +263,7 @@ class ReviveTestCase(TestCase):
         price = 50
         response = self.client.post(reverse("revive", args=[self.item.id]), {"price": price})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json()["message"], SUCCCESS)
+        self.assertEqual(response.json()["message"], SUCCESS)
         self.user.refresh_from_db()
         self.assertEqual(self.user.balance, balance - price)
 

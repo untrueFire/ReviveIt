@@ -26,7 +26,7 @@
 
 <script setup lang="ts">
 import { h, ref, onMounted } from 'vue'
-import { pagination, choice, tagTypes } from '../utils/constants'
+import { pagination, randomTagType } from '../utils/constants'
 import { useRouter } from 'vue-router'
 import { fetchUserItems, deleteItem } from '../utils/api'
 import { useStore } from '../stores'
@@ -82,7 +82,7 @@ const columns = [
                         {
                             round: true,
                             bordered: false,
-                            type: choice(tagTypes),
+                            type: randomTagType(),
                         },
                         () => tag,
                     ),

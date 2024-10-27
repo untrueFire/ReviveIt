@@ -33,7 +33,7 @@ export async function getCsrftoken() {
 }
 
 /**
- * Error handler for expirated login status
+ * Error handler for expired login status
  *
  * Redirect to login page when visiting
  * pages that require login without login status
@@ -64,7 +64,7 @@ function errorHandler(error: Error) {
 /**
  * Wrapper for `axios.get` function
  * using `withCredentials: true` to
- * handle cross reigon
+ * handle cross region
  * @param url the url to visit
  * @returns `response.data`
  */

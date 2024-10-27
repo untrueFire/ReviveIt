@@ -21,14 +21,7 @@ export const pagination = reactive({
     },
 })
 
-export const tagTypes = [
-    'default',
-    'primary',
-    'info',
-    'success',
-    'warning',
-    'error',
-] as const
+export const tagTypes = ['info', 'success', 'warning', 'error'] as const
 
 /**
  * Pick a random element from `arr`.
@@ -52,13 +45,13 @@ export function renderTag(model: {
     name: string
     tags: string[]
     description: string
-    contactInfo: string
+    contact_info: string
 }) {
     function render(tag: string, index: number) {
         return h(
             NTag,
             {
-                type: choice(tagTypes),
+                type: randomTagType(),
                 closable: true,
                 bordered: false,
                 onClose: () => {
@@ -82,4 +75,24 @@ export function handleFormError(error: FormValidationError[]) {
     error.forEach(field => {
         field.forEach((err: ValidateError) => message.error(`${err.message}`))
     })
+}
+
+/**
+ * Storing the available tags
+ * that hasn't been used recently
+ */
+let availableTags = [...tagTypes]
+/**
+ * Get a random tag type with maximum repetition period
+ * @returns one of the tag types
+ */
+export function randomTagType() {
+    if (availableTags.length === 0) {
+        availableTags = [...tagTypes]
+    }
+    const randomIndex = Math.floor(Math.random() * availableTags.length)
+    const selectedTag = availableTags[randomIndex]
+    availableTags.splice(randomIndex, 1)
+
+    return selectedTag
 }

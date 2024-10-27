@@ -71,7 +71,7 @@ item_schema = openapi.Schema(
     method="post",
     request_body=item_schema,
     operation_summary="添加物品",
-    responses={200: SUCCCESS, 400: INVALID_REQUEST},
+    responses={200: SUCCESS, 400: INVALID_REQUEST},
 )
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
@@ -89,7 +89,7 @@ def add_item(request: rest_framework.request.Request):
         openapi.Parameter("item_id", openapi.IN_PATH, description="要删除的物品ID", type=openapi.TYPE_INTEGER, required=True),
     ],
     operation_summary="删除指定ID的物品",
-    responses={200: SUCCCESS, 400: INVALID_REQUEST, 403: PERMISSION_DENIED, 404: NOT_FOUND},
+    responses={200: SUCCESS, 400: INVALID_REQUEST, 403: PERMISSION_DENIED, 404: NOT_FOUND},
 )
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
@@ -174,7 +174,7 @@ def get_user_info(request):
         openapi.Parameter("notification_id", openapi.IN_PATH, description="要同意的通知ID", type=openapi.TYPE_INTEGER, required=True),
     ],
     operation_summary="同意指定ID的通知",
-    responses={200: SUCCCESS, 400: INVALID_REQUEST, 403: PERMISSION_DENIED, 404: NOT_FOUND},
+    responses={200: SUCCESS, 400: INVALID_REQUEST, 403: PERMISSION_DENIED, 404: NOT_FOUND},
 )
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
@@ -215,7 +215,7 @@ def accept_deal(request: rest_framework.request.Request, notification_id: int):
         openapi.Parameter("notification_id", openapi.IN_PATH, description="要拒绝的通知ID", type=openapi.TYPE_INTEGER, required=True),
     ],
     operation_summary="拒绝指定ID的通知",
-    responses={200: SUCCCESS, 400: INVALID_REQUEST, 403: PERMISSION_DENIED, 404: NOT_FOUND},
+    responses={200: SUCCESS, 400: INVALID_REQUEST, 403: PERMISSION_DENIED, 404: NOT_FOUND},
 )
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
@@ -252,7 +252,7 @@ def reject_deal(request: rest_framework.request.Request, notification_id: int):
         openapi.Parameter("item_id", openapi.IN_PATH, description="要复活的物品ID", type=openapi.TYPE_INTEGER, required=True),
     ],
     operation_summary="复活指定ID的物品",
-    responses={200: SUCCCESS, 404: NOT_FOUND, 403: NO_BALANCE, 400: INVALID_REQUEST},
+    responses={200: SUCCESS, 404: NOT_FOUND, 403: NO_BALANCE, 400: INVALID_REQUEST},
 )
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
@@ -308,7 +308,7 @@ def user_notifications_read(request: rest_framework.request.Request):
         openapi.Parameter("notification_id", openapi.IN_PATH, description="要标为已读的通知ID", type=openapi.TYPE_INTEGER, required=True),
     ],
     operation_summary="将指定ID的通知标为已读",
-    responses={200: SUCCCESS, 400: INVALID_REQUEST, 403: PERMISSION_DENIED},
+    responses={200: SUCCESS, 400: INVALID_REQUEST, 403: PERMISSION_DENIED},
 )
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
@@ -364,7 +364,7 @@ def challenge(request: rest_framework.request.Request):
     ),
     operation_description="验证规则是`sha256(challenge + nonce)`以`difficulty`个`0`结尾",
     operation_summary="验证一个PoW",
-    responses={200: SUCCCESS, 400: INVALID_REQUEST, 403: NO_CRED},
+    responses={200: SUCCESS, 400: INVALID_REQUEST, 403: NO_CRED},
 )
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
@@ -400,7 +400,7 @@ def knock(request: rest_framework.request.Request):
         required=["item_id", "tags"],
     ),
     operation_summary="为指定ID的物品添加标签",
-    responses={200: SUCCCESS, 400: INVALID_REQUEST, 403: PERMISSION_DENIED, 404: NOT_FOUND},
+    responses={200: SUCCESS, 400: INVALID_REQUEST, 403: PERMISSION_DENIED, 404: NOT_FOUND},
 )
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
@@ -431,7 +431,7 @@ def add_tag(request: rest_framework.request.Request):
         required=["item_id", "tags"],
     ),
     operation_summary="为指定ID的物品移除标签",
-    responses={200: SUCCCESS, 400: INVALID_REQUEST, 403: PERMISSION_DENIED, 404: NOT_FOUND},
+    responses={200: SUCCESS, 400: INVALID_REQUEST, 403: PERMISSION_DENIED, 404: NOT_FOUND},
 )
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])

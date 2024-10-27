@@ -14,7 +14,6 @@
                     v-model:value="model.password1"
                     type="password"
                     placeholder="请输入密码"
-                    @input="handlePasswordInput"
                     :input-props="{ autocomplete: 'new-password' }"
                 />
             </n-form-item>
@@ -89,24 +88,6 @@ const rules = {
             trigger: ['blur', 'password-input'],
         },
     ],
-}
-const handlePasswordInput = () => {
-    if (model.value.password2) {
-        formRef.value?.validate(
-            errorss => {
-                if (errorss) {
-                    errorss.forEach(errors =>
-                        errors.forEach(error =>
-                            message.error(error.message as string),
-                        ),
-                    )
-                }
-            },
-            rule => {
-                return rule?.key === 'password2'
-            },
-        )
-    }
 }
 const handleRegister = (event: MouseEvent) => {
     event.preventDefault()

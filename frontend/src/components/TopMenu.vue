@@ -105,7 +105,7 @@ const menuOptions = computed(() => [
                 },
                 { default: () => '添加物品' },
             ),
-        key: 'additem',
+        key: 'addItem',
         show: store.isLoggedIn,
     },
     {
@@ -119,26 +119,25 @@ const menuOptions = computed(() => [
                 },
                 { default: () => '木鱼' },
             ),
-        key: 'woodenfish',
+        key: 'woodenFish',
         show: store.isLoggedIn,
     },
     {
         label: () => h(SwitchTheme),
-        key: 'switchtheme',
+        key: 'switchTheme',
     },
 ])
 </script>
 
 <style scoped>
 .top-menu {
-  list-style-type: none;
-  margin: 10px;
-  padding: 0;
-  display: flex;
+    list-style-type: none;
+    margin: 10px;
+    padding: 0;
+    display: flex;
 }
 
 .top-menu a {
-  font-size: 16px;
+    font-size: 16px;
 }
-
 </style>

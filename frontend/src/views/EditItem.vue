@@ -1,66 +1,39 @@
 <template>
-    <div class="edit-item-form">
-        <h1>编辑物品</h1>
-        <n-form>
-            <div class="form-group">
-                <label for="name">物品名称</label>
-                <n-input
-                    id="name"
-                    v-model:value="item.name"
-                    placeholder="物品名称"
-                    required
-                />
-            </div>
-            <div class="form-group">
-                <label for="description">物品描述</label>
-                <n-input
-                    type="textarea"
-                    id="description"
-                    v-model:value="item.description"
-                    placeholder="物品描述"
-                    required
-                />
-            </div>
-            <div class="form-group">
-                <label for="contact_info">联系方式</label>
-                <n-input
-                    id="contact_info"
-                    v-model:value="item.contact_info"
-                    placeholder="联系方式"
-                    required
-                />
-            </div>
-            <n-button @click="handleUpdateItem">更新</n-button>
-        </n-form>
-    </div>
+    <ItemForm
+        title="编辑物品"
+        v-model:model="model"
+        @formSubmitted="HandleEditItem"
+    />
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { reactive, onMounted, type Reactive, type Ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { fetchItem, updateItem } from '../utils/api'
-import { useMessage } from 'naive-ui'
+import { useMessage, type FormInst } from 'naive-ui'
+import { handleFormError } from '@/utils/constants'
 
 const route = useRoute()
 const router = useRouter()
 const message = useMessage()
 
-const itemId = route.params.id
-const item = ref({
-    id: 0,
+const itemId = Number(route.params.id)
+const model = reactive<{
+    name: string
+    tags: string[]
+    description: string
+    contact_info: string
+}>({
     name: '',
+    tags: [],
     description: '',
     contact_info: '',
-    owner: {
-        id: 0,
-        username: '',
-    },
 })
 
 onMounted(async () => {
-    fetchItem(Number(itemId))
+    fetchItem(itemId)
         .then(data => {
-            item.value = data
+            Object.assign(model, data)
         })
         .catch(error => {
             console.error(error)
@@ -69,15 +42,30 @@ onMounted(async () => {
         })
 })
 
-async function handleUpdateItem() {
-    updateItem(Number(itemId), item.value)
+const HandleEditItem = (
+    formRef: Ref<FormInst | null>,
+    model: Reactive<{
+        name: string
+        tags: string[]
+        description: string
+        contact_info: string
+    }>,
+) => {
+    formRef.value
+        ?.validate()
         .then(() => {
-            message.success('物品更新成功')
-            router.push({ name: 'User' })
+            updateItem(itemId, {
+                name: model.name,
+                tags: model.tags,
+                description: model.description,
+                contact_info: model.contact_info,
+            })
+                .then(() => {
+                    message.success('物品更新成功')
+                    router.push('/user')
+                })
+                .catch(() => message.error('物品更新失败'))
         })
-        .catch(error => {
-            console.error(error)
-            message.error('更新物品失败')
-        })
+        .catch(handleFormError)
 }
 </script>

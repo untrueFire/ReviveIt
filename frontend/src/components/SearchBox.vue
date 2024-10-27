@@ -44,7 +44,7 @@
 
 <script setup lang="ts">
 import { h, ref, onMounted, computed } from 'vue'
-import { pagination, choice, tagTypes } from '../utils/constants'
+import { pagination, randomTagType } from '../utils/constants'
 import { search, ReviveItem, updateUser } from '../utils/api.js'
 import { useStore } from '../stores/index.js'
 import {
@@ -142,7 +142,7 @@ const columns = computed(() => {
                             {
                                 round: true,
                                 bordered: false,
-                                type: choice(tagTypes),
+                                type: randomTagType(),
                             },
                             () => tag,
                         ),
@@ -217,8 +217,8 @@ onMounted(() => {
 
 <style scoped>
 .modal-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 </style>

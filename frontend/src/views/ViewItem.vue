@@ -10,6 +10,19 @@
                     footer: 'soft',
                 }"
             >
+                <template #header-extra>
+                    <n-flex>
+                        <template v-for="tag in item.tags" :key="tag">
+                            <n-tag
+                                round
+                                :type="randomTagType()"
+                                :bordered="false"
+                            >
+                                {{ tag }}
+                            </n-tag>
+                        </template>
+                    </n-flex>
+                </template>
                 {{ item.description }}
                 <template #footer> 联系方式：{{ item.contact_info }} </template>
             </n-card>
@@ -21,16 +34,19 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { fetchItem } from '../utils/api'
-import { useMessage } from 'naive-ui'
+import { useMessage, NTag } from 'naive-ui'
+import type { Item } from '@/types/Api'
+import { randomTagType } from '@/utils/constants'
 
 const route = useRoute()
 const router = useRouter()
 const message = useMessage()
 
 const itemId = route.params.id
-const item = ref({
+const item = ref<Item>({
     id: 0,
     name: '',
+    tags: [],
     description: '',
     contact_info: '',
     owner: {
