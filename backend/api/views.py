@@ -1,4 +1,7 @@
 import rest_framework.request
+from django.core.exceptions import RequestDataTooBig
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from notifications.signals import notify
@@ -477,3 +480,51 @@ def search_tag(request: rest_framework.request.Request):
         items = items.order_by(orderby)
     serializer = ItemSerializer(items[offset : offset + limit], many=True)
     return Response(serializer.data)
+
+@swagger_auto_schema(
+    method='post',
+    operation_description="上传一个文件，返回其URL",
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        required=['file'],
+        properties={
+            'file': openapi.Schema(type=openapi.TYPE_FILE, description="要上传的文件"),
+        },
+    ),
+    responses={
+        200: openapi.Response(
+            description="文件上传成功",
+            schema=openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'url': openapi.Schema(type=openapi.TYPE_STRING, description="文件的URL"),
+                },
+            ),
+        ),
+        400: INVALID_REQUEST,
+        413: REQUEST_TOO_BIG,
+        422: INVALID_FORMAT
+    },
+)
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def upload_file(request: rest_framework.request.Request):
+    try:
+        if 'file' not in request.FILES:
+            return JsonResponse({'error': NO_FILE}, status=400)
+        from hashlib import sha256
+        from os.path import splitext
+        file_obj = request.FILES['file']
+        file_content = file_obj.read()
+        if len(file_content) > settings.DATA_UPLOAD_MAX_MEMORY_SIZE:
+            raise RequestDataTooBig
+        _, ext = splitext(file_obj.name)
+        assert ext in settings.ALLOWED_IMAGE_EXTENSIONS
+        new_filename = sha256(file_content).hexdigest() + ext
+        file_name = default_storage.save(new_filename, ContentFile(file_content))
+        file_url = default_storage.url(file_name)
+        return JsonResponse({'url': file_url})
+    except RequestDataTooBig:
+        return fast413
+    except AssertionError:
+        return fast422

@@ -1,9 +1,12 @@
 import json
 
+from django.core.files.storage import default_storage
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase
 from django.urls import reverse
 from notifications.models import Notification
 from rest_framework import status
+from rest_framework.test import APIClient
 
 from .messages import *
 from .models import *
@@ -594,3 +597,49 @@ class TestSearchTags(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         expected_data = ItemSerializer([self.item3, self.item1], many=True).data
         self.assertEqual(response.json(), expected_data)
+
+
+class UploadFileTestCase(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.url = reverse('upload_file')
+        self.user = User.objects.create_user(username='testuser', password='testpass')
+        self.client.force_authenticate(self.user)
+        self.uploaded_files = []  # 用于记录上传的文件名
+
+    def test_upload_file_success(self):
+        file_content = b'GIF89a'
+        file_name = 'test_file.gif'
+        file = SimpleUploadedFile(file_name, file_content)
+        response = self.client.post(self.url, {'file': file}, format='multipart')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response_data = response.json()
+        self.assertIn('url', response_data)
+        saved_file_name = response_data['url'].split('/')[-1]
+        self.assertTrue(default_storage.exists(saved_file_name))
+        self.uploaded_files.append(saved_file_name)
+
+    def test_upload_file_no_file_provided(self):
+        response = self.client.post(self.url, {}, format='multipart')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        response_data = response.json()
+        self.assertIn('error', response_data)
+        self.assertEqual(response_data['error'], NO_FILE)
+
+    def test_upload_file_too_big(self):
+        file_content = b'a' * (settings.DATA_UPLOAD_MAX_MEMORY_SIZE + 1)
+        file_name = 'large_file.png'
+        file = SimpleUploadedFile(file_name, file_content)
+        response = self.client.post(self.url, {'file': file}, format='multipart')
+        self.assertEqual(response.status_code, status.HTTP_413_REQUEST_ENTITY_TOO_LARGE)
+
+    def test_upload_file_invalid_type(self):
+        file_content = b'<script>alert(1);</script>'
+        file_name = 'bad_file.html'
+        file = SimpleUploadedFile(file_name, file_content)
+        response = self.client.post(self.url, {'file': file}, format='multipart')
+        self.assertEqual(response.status_code, status.HTTP_422_UNPROCESSABLE_ENTITY)
+
+    def tearDown(self):
+        for file_name in self.uploaded_files:
+            default_storage.delete(file_name)

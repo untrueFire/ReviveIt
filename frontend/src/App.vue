@@ -5,13 +5,13 @@
         :date-locale="dateZhCN"
     >
         <n-global-style />
-            <n-message-provider>
-                <n-loading-bar-provider>
-                    <TopMenu />
-                    <router-view />
-                    <n-back-top />
-                </n-loading-bar-provider>
-            </n-message-provider>
+        <n-message-provider>
+            <n-loading-bar-provider>
+                <TopMenu />
+                <router-view />
+                <n-back-top />
+            </n-loading-bar-provider>
+        </n-message-provider>
     </n-config-provider>
 </template>
 
@@ -23,6 +23,6 @@ const store = useThemeStore()
 
 <style>
 #app {
-  text-align: center;
+    text-align: center;
 }
 </style>

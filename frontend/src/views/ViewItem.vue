@@ -25,7 +25,10 @@
                 </template>
                 <MdPreview
                     editorId="preview-only"
-                    :modelValue="item.description"
+                    v-model="item.description"
+                    :theme="editorTheme"
+                    @onError="onError"
+                    style="text-align: left"
                 />
                 <template #footer> 联系方式：{{ item.contactInfo }} </template>
             </n-card>
@@ -34,18 +37,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { fetchItem } from '../utils/api'
 import { useMessage, NTag } from 'naive-ui'
 import type { Item } from '@/types/Api'
-import { randomTagType } from '@/utils/constants'
+import { randomTagType, onError } from '@/utils/constants'
 import { MdPreview } from 'md-editor-v3'
 import 'md-editor-v3/lib/style.css'
+import { useThemeStore } from '@/stores'
 
 const route = useRoute()
 const router = useRouter()
 const message = useMessage()
+const store = useThemeStore()
+const editorTheme = computed(() =>
+    store.themeName === 'dark' ? 'dark' : 'light',
+)
 
 const itemId = route.params.id
 const item = ref<Item>({

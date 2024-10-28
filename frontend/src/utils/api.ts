@@ -1,7 +1,7 @@
 /**
  * Stores api-related functions
  */
-import axios, { AxiosError } from 'axios'
+import axios, { AxiosError, type AxiosRequestConfig } from 'axios'
 import { useStore } from '../stores'
 
 /**
@@ -86,18 +86,41 @@ export async function get(url: string) {
  * @param data the data to post
  * @returns `response.data`
  */
-export async function post(url: string, data: string | object | null = null) {
+export async function post(
+    url: string,
+    data: string | object | null = null,
+    config?: AxiosRequestConfig<string | object | null> | undefined,
+) {
+    const basicConfig = {
+        withCredentials: true,
+        headers: {
+            'X-CSRFToken': await getCsrftoken(),
+        },
+    }
+    config = {
+        ...config,
+        ...basicConfig,
+        headers: {
+            ...config?.headers,
+            ...basicConfig.headers,
+        },
+    }
     try {
-        const response = await axios.post(url, data, {
-            withCredentials: true,
-            headers: {
-                'X-CSRFToken': await getCsrftoken(),
-            },
-        })
+        const response = await axios.post(url, data, config)
         return response.data
     } catch (error) {
         errorHandler(error as Error)
     }
+}
+
+export async function uploadFiles(file: File): Promise<string> {
+    const form = new FormData()
+    form.append('file', file)
+    return post('/api/file/upload/', form, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    }).then(data => data.url)
 }
 
 export const fetchUserInfo = () => get('/api/user/')

@@ -96,3 +96,14 @@ export function randomTagType() {
 
     return selectedTag
 }
+
+/**
+ * Default error handler for `md-editor-v3`
+ * @param err
+ */
+export function onError(err: {
+    name: 'Cropper' | 'fullscreen' | 'prettier' | 'overlength'
+    message: string
+}) {
+    window.$message.error(err.message)
+}

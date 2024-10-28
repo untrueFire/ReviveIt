@@ -21,6 +21,8 @@
                 <MdEditor
                     v-model="model.description"
                     :theme="editorTheme"
+                    @onUploadImg="onUploadImg"
+                    @onError="onError"
                     style="text-align: left"
                 />
             </n-form-item>
@@ -38,12 +40,13 @@
 </template>
 
 <script setup lang="ts">
-import { renderTag } from '@/utils/constants'
+import { renderTag, onError } from '@/utils/constants'
 import type { FormInst } from 'naive-ui'
 import { computed, reactive, ref, watch, type Ref } from 'vue'
 import { MdEditor } from 'md-editor-v3'
 import 'md-editor-v3/lib/style.css'
 import { useThemeStore } from '@/stores'
+import { uploadFiles } from '@/utils/api'
 const store = useThemeStore()
 const editorTheme = computed(() =>
     store.themeName === 'dark' ? 'dark' : 'light',
@@ -87,6 +90,7 @@ function handleSubmit(e: MouseEvent) {
         contactInfo: '',
     })
 }
+
 const rules = {
     name: [
         {
@@ -109,6 +113,17 @@ const rules = {
             trigger: 'blur',
         },
     ],
+}
+const onUploadImg = async (
+    files: File[],
+    callback: (urls: string[]) => void,
+): Promise<void> => {
+    try {
+        callback(await Promise.all(files.map(uploadFiles)))
+    } catch (error) {
+        console.error('Error uploading images:', error)
+        window.$message.error('图片上传失败')
+    }
 }
 </script>
 

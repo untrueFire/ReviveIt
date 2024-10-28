@@ -1,0 +1,8 @@
+static/
+*htmlcov/
+files/
+*.pycache
+*.coverage
+*.sqlite3
+*.py[cod]
+*__pycache__/

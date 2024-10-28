@@ -34,10 +34,7 @@ export default defineConfig({
                 'vue',
                 'vue-router',
                 {
-                    'naive-ui': [
-                        'useMessage',
-                        'useLoadingBar',
-                    ],
+                    'naive-ui': ['useMessage', 'useLoadingBar'],
                     axios: ['axios'],
                 },
             ],
@@ -45,27 +42,12 @@ export default defineConfig({
             defaultExportByFilename: true,
             // Auto import for module exports under directories
             // by default it only scan one level of modules under the directory
-            dirs: [
-                // './hooks',
-                // './composables' // only root modules
-                // './composables/**', // all nested modules
-                // ...
-            ],
-
+            dirs: [],
             // Filepath to generate corresponding .d.ts file.
             // Defaults to './auto-imports.d.ts' when `typescript` is installed locally.
             // Set `false` to disable.
             dts: './auto-imports.d.ts',
-
-            // Array of strings of regexes that contains imports meant to be ignored during
-            // the declaration file generation. You may find this useful when you need to provide
-            // a custom signature for a function.
-            ignoreDts: ['ignoredFunction', /^ignore_/],
-
-            // Auto import inside Vue template
-            // see https://github.com/unjs/unimport/pull/15 and https://github.com/unjs/unimport/pull/72
-            vueTemplate: false,
-
+            vueTemplate: true,
             // Custom resolvers, compatible with `unplugin-vue-components`
             // see https://github.com/antfu/unplugin-auto-import/pull/23/
             resolvers: [NaiveUiResolver()],

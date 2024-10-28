@@ -1,5 +1,8 @@
 db.sqlite3
 *__pycache__/
+.coverage
+.pylintrc
 requirements-dev.txt
 static/
 htmlcov/
+files/
