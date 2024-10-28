@@ -6,14 +6,27 @@
 </template>
 
 <script setup lang="ts">
-import { RouterLink } from 'vue-router'
+import { useRouter, RouterLink } from 'vue-router'
 import NotificationButton from './NotificationButton.vue'
 import { useStore } from '../stores'
+import { logout } from '../utils/api'
 import { h, computed } from 'vue'
-import { useMessage } from 'naive-ui'
+import { NButton, useMessage } from 'naive-ui'
 import SwitchTheme from './SwitchTheme.vue'
+
+const router = useRouter()
 const store = useStore()
-window.$message = useMessage()
+const message = useMessage()
+window.$message = message
+
+function handleLogout() {
+    logout()
+        .then(() => {
+            store.user = undefined
+            router.push({ name: 'Auth' })
+        })
+        .catch(() => message.error('登出失败'))
+}
 const menuOptions = computed(() => [
     {
         label: () =>
@@ -64,11 +77,10 @@ const menuOptions = computed(() => [
     {
         label: () =>
             h(
-                RouterLink,
+                NButton,
                 {
-                    to: {
-                        name: 'Logout',
-                    },
+                    onclick: handleLogout,
+                    text: true,
                 },
                 { default: () => '登出' },
             ),
@@ -121,6 +133,6 @@ const menuOptions = computed(() => [
 }
 
 :global(.v-overflow) {
-  justify-content: flex-end;
+    justify-content: flex-end;
 }
 </style>

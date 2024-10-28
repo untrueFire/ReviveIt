@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import LogoutView from '../views/LogoutView.vue'
 import UserView from '../views/UserView.vue'
 import AddItem from '../views/AddItem.vue'
 import EditItem from '../views/EditItem.vue'
@@ -36,15 +35,6 @@ const router = createRouter({
             component: UserView,
             meta: {
                 title: '我的',
-                needLogin: true,
-            },
-        },
-        {
-            path: '/logout',
-            name: 'Logout',
-            component: LogoutView,
-            meta: {
-                title: '登出确认',
                 needLogin: true,
             },
         },
