@@ -22,7 +22,8 @@ docker compose up -d
 然后在浏览器访问`http://localhost/`
 
 # 文档
-- API文档可以在`http://localhost:8000/`（交互式 `Swagger Ui` 格式） 或 `http://127.0.0.1:8000/redoc`（`ReDoc` 格式）查看
+- 直接使用 `docker run --rm -d -p80:80 --env-file ./backend/.env reviveit-backend` 单独启动后端
+- 然后可以在`http://localhost:8000/`（交互式 `Swagger Ui` 格式） 或 `http://127.0.0.1:8000/redoc`（`ReDoc` 格式）查看API文档
 
 ## 提示
 开发中，随时可能有破坏性变更

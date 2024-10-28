@@ -21,7 +21,8 @@ docker compose up -d
 Then visit it in browser by `http://localhost/`
 
 ## Documentation
-- Documentation for API can be viewed at `http://localhost:8000/`(interactive `Swagger Ui` format) or `http://127.0.0.1:8000/redoc`(`ReDoc` format)
+- Directly start the backend separately by `docker run --rm -d -p80:80 --env-file ./backend/.env reviveit-backend`
+- Documentation for API can then be viewed at `http://localhost/`(interactive `Swagger Ui` format) or `http://localhost/redoc`(`ReDoc` format)
 
 ## Notice
 Always under development

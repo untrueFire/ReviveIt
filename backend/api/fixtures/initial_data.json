@@ -4,7 +4,6 @@
         "pk": 1,
         "fields": {
             "name": "Item 1",
-            "tags": ["tag2", "tag3"],
             "description": "Description for Item 1",
             "contactInfo": "Contact info for Item 1",
             "owner": 1
@@ -15,7 +14,6 @@
         "pk": 2,
         "fields": {
             "name": "Item 2",
-            "tags": ["tag1", "tag3"],
             "description": "Description for Item 2",
             "contactInfo": "Contact info for Item 2",
             "owner": 1
@@ -26,7 +24,6 @@
         "pk": 3,
         "fields": {
             "name": "Item 3",
-            "tags": ["tag1", "tag2"],
             "description": "Description for Item 3",
             "contactInfo": "Contact info for Item 3",
             "owner": 1

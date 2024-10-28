@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     "allauth.account",
     "corsheaders",
     "notifications",
-    'taggit',
+    "taggit",
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -67,7 +67,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
     "api.middleware.TransactionMiddleware",
-    'django.middleware.gzip.GZipMiddleware',
+    "django.middleware.gzip.GZipMiddleware",
 ]
 
 ROOT_URLCONF = "reviveit_backend.urls"
@@ -168,7 +168,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_METHODS = ["*"]
 SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_SAMESITE = "None"
-CSRF_TRUSTED_ORIGINS = ["http://localhost","http://127.0.0.1"]
+CSRF_TRUSTED_ORIGINS = ["http://localhost", "http://127.0.0.1"]
 ALLOWED_HOSTS = ["*"]
 
 
@@ -178,23 +178,24 @@ AUTH_USER_MODEL = "api.User"
 DJANGO_NOTIFICATIONS_CONFIG = {"USE_JSONFIELD": True}
 
 # 设置文件上传的存储路径
-MEDIA_URL = '/api/file/get/'
-MEDIA_ROOT = BASE_DIR / 'files'
+MEDIA_URL = "/api/file/get/"
+MEDIA_ROOT = BASE_DIR / "files"
 
-# 设置最大上传文件大小（可选）
+# 设置最大上传文件大小
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10MB
 FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10MB
 
 # 合法图片后缀名白名单
 ALLOWED_IMAGE_EXTENSIONS = [
-    '.jpg',  # JPEG 图片
-    '.jpeg', # JPEG 图片
-    '.png',  # PNG 图片
-    '.gif',  # GIF 图片
-    '.bmp',  # BMP 图片
-    '.tiff', # TIFF 图片
-    '.tif',  # TIFF 图片
-    '.webp', # WebP 图片
-    '.svg',  # SVG 图片
-    '.ico',  # ICO 图片
+    ".jpg",
+    ".jpeg",
+    ".jfif",
+    ".png",
+    ".gif",
+    ".bmp",
+    ".tiff",
+    ".tif",
+    ".webp",
+    ".svg",
+    ".ico",
 ]

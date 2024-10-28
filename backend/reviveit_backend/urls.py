@@ -9,7 +9,7 @@ from rest_framework import permissions
 schema_view = get_schema_view(
     openapi.Info(
         title="ReviveIt API",
-        default_version="v1",
+        default_version="v0.2.0",
         description="API documentation for ReviveIt",
     ),
     public=True,

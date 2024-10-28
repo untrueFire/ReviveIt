@@ -1,5 +1,5 @@
 #!/bin/sh
-python manage.py makemigrations items
+python manage.py makemigrations api
 python manage.py migrate
 python manage.py createsuperuser --noinput
 python manage.py loaddata initial_data.json
