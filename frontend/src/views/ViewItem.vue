@@ -23,7 +23,10 @@
                         </template>
                     </n-flex>
                 </template>
-                {{ item.description }}
+                <MdPreview
+                    editorId="preview-only"
+                    :modelValue="item.description"
+                />
                 <template #footer> 联系方式：{{ item.contactInfo }} </template>
             </n-card>
         </div>
@@ -37,7 +40,7 @@ import { fetchItem } from '../utils/api'
 import { useMessage, NTag } from 'naive-ui'
 import type { Item } from '@/types/Api'
 import { randomTagType } from '@/utils/constants'
-
+import { MdPreview } from 'md-editor-v3'
 const route = useRoute()
 const router = useRouter()
 const message = useMessage()

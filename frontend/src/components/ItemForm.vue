@@ -1,7 +1,7 @@
 <template>
     <div class="item-form">
         <h1>{{ title }}</h1>
-        <n-form ref="formRef" :model="model" :rules="rules" class="form-group">
+        <n-form ref="formRef" :model="model" :rules="rules">
             <n-form-item path="name" label="物品名称">
                 <n-input
                     id="name"
@@ -18,13 +18,7 @@
                 />
             </n-form-item>
             <n-form-item path="description" label="物品描述">
-                <n-input
-                    type="textarea"
-                    id="description"
-                    v-model:value="model.description"
-                    placeholder="物品描述"
-                    required
-                />
+                <MdEditor v-model="model.description" :theme="editorTheme"/>
             </n-form-item>
             <n-form-item path="contactInfo" label="联系方式">
                 <n-input
@@ -42,8 +36,12 @@
 <script setup lang="ts">
 import { renderTag } from '@/utils/constants'
 import type { FormInst } from 'naive-ui'
-import { reactive, ref, watch, type Ref } from 'vue'
-
+import { computed, reactive, ref, watch, type Ref } from 'vue'
+import { MdEditor } from 'md-editor-v3';
+import "md-editor-v3/lib/style.css";
+import { useThemeStore } from '@/stores';
+const store = useThemeStore()
+const editorTheme = computed(() => store.themeName === 'dark' ? 'dark': 'light')
 interface Props {
     title: string
     model: {
@@ -109,8 +107,7 @@ const rules = {
 </script>
 
 <style scoped>
-.item-form {
-    max-width: 400px;
+ .item-form {
     margin: 0 auto;
     padding: 20px;
     border: 1px solid #ccc;

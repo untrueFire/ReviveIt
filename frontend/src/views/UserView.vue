@@ -164,3 +164,20 @@ onMounted(async () => {
         .catch(error => message.error('加载用户信息和物品失败:', error))
 })
 </script>
+
+<style scoped>
+.user-profile {
+  max-width: 70%;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.user-profile h1,
+.user-profile h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+</style>

@@ -1,8 +1,14 @@
 <template>
-    <div class="logout-page">
+    <div>
         <h1>登出</h1>
         <p>你确定要登出吗？</p>
-        <n-button @click="handleLogout" type="error">登出</n-button>
+        <n-button
+            @click="handleLogout"
+            type="error"
+            round
+            style="padding: 10px 20px"
+            >确定</n-button
+        >
     </div>
 </template>
 
