@@ -41,6 +41,8 @@ import { useMessage, NTag } from 'naive-ui'
 import type { Item } from '@/types/Api'
 import { randomTagType } from '@/utils/constants'
 import { MdPreview } from 'md-editor-v3'
+import 'md-editor-v3/lib/style.css'
+
 const route = useRoute()
 const router = useRouter()
 const message = useMessage()

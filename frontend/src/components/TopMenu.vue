@@ -1,12 +1,7 @@
 <template>
     <nav class="top-menu">
         <h1>ReviveIt</h1>
-        <n-menu
-            mode="horizontal"
-            responsive
-            :options="menuOptions"
-            style="display: flex; justify-content: flex-end"
-        />
+        <n-menu mode="horizontal" responsive :options="menuOptions" />
     </nav>
 </template>
 
@@ -39,26 +34,12 @@ const menuOptions = computed(() => [
                 RouterLink,
                 {
                     to: {
-                        name: 'Login',
+                        name: 'Auth',
                     },
                 },
-                { default: () => '登录' },
+                { default: () => '登录/注册' },
             ),
-        key: 'login',
-        show: !store.isLoggedIn,
-    },
-    {
-        label: () =>
-            h(
-                RouterLink,
-                {
-                    to: {
-                        name: 'Register',
-                    },
-                },
-                { default: () => '注册' },
-            ),
-        key: 'register',
+        key: 'auth',
         show: !store.isLoggedIn,
     },
     {
@@ -131,13 +112,15 @@ const menuOptions = computed(() => [
 
 <style scoped>
 .top-menu {
-    list-style-type: none;
     margin: 10px;
-    padding: 0;
     display: flex;
 }
 
 .top-menu a {
     font-size: 16px;
+}
+
+:global(.v-overflow) {
+  justify-content: flex-end;
 }
 </style>

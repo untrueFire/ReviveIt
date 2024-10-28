@@ -55,7 +55,7 @@ function errorHandler(error: Error) {
         const message = window.$message
         message.error('登录失效')
         clearInterval(store.intervalId)
-        window.location.href = '/login'
+        window.location.href = '/auth'
     } else {
         throw error
     }

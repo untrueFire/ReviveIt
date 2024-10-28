@@ -27,7 +27,7 @@ const style = computed(() => {
     if (isAnimePlaying.value) {
         res.animation = 'run 0.2s linear'
     }
-    if (store.theme !== null) {
+    if (store.themeName === 'dark') {
         res.filter = 'invert(1)'
     }
     return res
@@ -72,7 +72,7 @@ async function handleKnock() {
 }
 </script>
 
-<style scoped>
+<style>
 @keyframes run {
     0% {
         transform: scale(1);

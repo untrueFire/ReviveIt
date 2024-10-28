@@ -5,7 +5,6 @@
         :date-locale="dateZhCN"
     >
         <n-global-style />
-        <n-notification-provider>
             <n-message-provider>
                 <n-loading-bar-provider>
                     <TopMenu />
@@ -13,7 +12,6 @@
                     <n-back-top />
                 </n-loading-bar-provider>
             </n-message-provider>
-        </n-notification-provider>
     </n-config-provider>
 </template>
 
@@ -22,3 +20,9 @@ import { zhCN, dateZhCN } from 'naive-ui'
 import { useThemeStore } from './stores'
 const store = useThemeStore()
 </script>
+
+<style>
+#app {
+  text-align: center;
+}
+</style>

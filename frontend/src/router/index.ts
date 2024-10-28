@@ -1,8 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import LoginView from '../views/LoginView.vue'
 import LogoutView from '../views/LogoutView.vue'
-import RegisterView from '../views/RegisterView.vue'
 import UserView from '../views/UserView.vue'
 import AddItem from '../views/AddItem.vue'
 import EditItem from '../views/EditItem.vue'
@@ -12,6 +10,7 @@ import ViewItem from '../views/ViewItem.vue'
 import NotFound from '../views/NotFound.vue'
 import { useStore } from '../stores'
 import { updateUser } from '../utils/api'
+import AuthView from '@/views/AuthView.vue'
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
@@ -24,19 +23,11 @@ const router = createRouter({
             },
         },
         {
-            path: '/login',
-            name: 'Login',
-            component: LoginView,
+            path: '/auth',
+            name: 'Auth',
+            component: AuthView,
             meta: {
-                title: '登录',
-            },
-        },
-        {
-            path: '/register',
-            name: 'Register',
-            component: RegisterView,
-            meta: {
-                title: '注册',
+                title: '认证',
             },
         },
         {
@@ -117,7 +108,7 @@ router.beforeEach(async (to, _from, next) => {
     if (to.meta.needLogin && !store.isLoggedIn) {
         const message = window.$message
         message.error('需要登录')
-        next({ name: 'Login' })
+        next({ name: 'Auth' })
     } else {
         next()
     }

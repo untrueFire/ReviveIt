@@ -24,7 +24,7 @@ async function handleLogout() {
     try {
         await logout()
         store.user = undefined
-        router.push({ name: 'Login' })
+        router.push({ name: 'Auth' })
     } catch {
         message.error('登出失败')
     }

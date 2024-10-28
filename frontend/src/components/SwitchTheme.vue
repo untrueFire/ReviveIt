@@ -1,6 +1,6 @@
 <template>
     <n-icon @click="toggleTheme">
-        <LightModeFilled v-if="store.theme !== null" />
+        <LightModeFilled v-if="store.themeName === 'dark'" />
         <DarkModeFilled v-else />
     </n-icon>
 </template>
