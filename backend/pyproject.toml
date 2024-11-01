@@ -22,4 +22,5 @@ index-url = "https://mirror.sjtu.edu.cn/pypi/web/simple"
 dev = [
     "coverage>=7.6.4",
     "coveralls>=4.0.1",
+    "pylint>=3.3.1",
 ]
