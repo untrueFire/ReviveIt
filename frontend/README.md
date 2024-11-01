@@ -1,6 +1,6 @@
 # ReviveIt frontend
 
-This is the frontend of ReviveIt, written in Vue3, mainly uses [Naive UI](https://www.naiveui.com/) as UI framework.
+This is the frontend of ReviveIt, written in Vue3, mainly used [Naive UI](https://www.naiveui.com/) as its UI framework.
 
 ## Project Setup
 

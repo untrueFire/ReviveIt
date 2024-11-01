@@ -1,7 +1,7 @@
 [project]
 name = "reviveit_backend"
 version = "0.2.0"
-description = "Backend for reviveIt"
+description = "Backend for ReviveIt"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
