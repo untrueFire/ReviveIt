@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
     image: reviveit-backend
     container_name: reviveit-backend
-    restart: "no"
+    restart: "always"
     env_file:
       - ./backend/.env
     networks:
@@ -17,7 +17,7 @@ services:
       dockerfile: Dockerfile
     image: reviveit-frontend
     container_name: reviveit-frontend
-    restart: "no"
+    restart: "always"
     ports:
       - "80:80"
     environment:

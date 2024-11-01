@@ -6,3 +6,4 @@ requirements-dev.txt
 static/
 htmlcov/
 files/
+.venv/

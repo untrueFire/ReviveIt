@@ -1,0 +1,8 @@
+django==5.0.9
+django-allauth
+drf-yasg
+django-cors-headers
+django-notifications-hq
+gunicorn
+django-taggit
+setuptools

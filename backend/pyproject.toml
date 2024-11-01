@@ -1,0 +1,25 @@
+[project]
+name = "reviveit_backend"
+version = "0.2.0"
+description = "Backend for reviveIt"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "django-allauth>=65.1.0",
+    "django-cors-headers>=4.6.0",
+    "django-notifications-hq>=1.8.3",
+    "django-taggit>=6.1.0",
+    "django==5.0.9",
+    "drf-yasg>=1.21.8",
+    "gunicorn>=23.0.0",
+    "setuptools>=75.3.0",
+]
+
+[tool.uv]
+index-url = "https://mirror.sjtu.edu.cn/pypi/web/simple"
+
+[dependency-groups]
+dev = [
+    "coverage>=7.6.4",
+    "coveralls>=4.0.1",
+]

@@ -6,4 +6,5 @@ files/
 *.sqlite3
 *.py[cod]
 *__pycache__/
-venv/
+.venv/
+.python-version
