@@ -12,7 +12,7 @@ source .venv/bin/activate && \
 ./manage.py migrate && \
 ./manage.py createsuperuser
 ```
-If you don't want to use `uv`, you can still use your own tools for local running and testing, just change the first line to `pip install -r requirements.in	`
+If you don't want to use `uv`, you can still use your own tools for local running and testing, just change the first line to `pip install -r requirements.in`
 
 ## Hot-Reload for Development
 ```sh
