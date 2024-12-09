@@ -1,6 +1,6 @@
 <template>
     <nav class="top-menu">
-        <h1>ReviveIt</h1>
+        <h1 @click="router.push('/')">ReviveIt</h1>
         <n-menu mode="horizontal" responsive :options="menuOptions" />
     </nav>
 </template>
@@ -28,19 +28,6 @@ function handleLogout() {
         .catch(() => message.error('登出失败'))
 }
 const menuOptions = computed(() => [
-    {
-        label: () =>
-            h(
-                RouterLink,
-                {
-                    to: {
-                        name: 'Home',
-                    },
-                },
-                { default: () => '广场' },
-            ),
-        key: 'home',
-    },
     {
         label: () =>
             h(
