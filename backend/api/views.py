@@ -201,6 +201,10 @@ def accept_deal(request: rest_framework.request.Request, notification_id: int):
                 notification.save()
                 return fast200
             else:
+                # 若已售空，退款
+                buyer = deal.buyer
+                buyer.balance += deal.price
+                buyer.save()
                 notify.send(request.user, verb="sold out", recipient=new_owner, action_object=deal)
                 notification.mark_as_read()
                 notification.data = "sold out"
