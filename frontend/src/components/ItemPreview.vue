@@ -1,6 +1,6 @@
 <template>
     <div>
-        <n-ellipsis style="max-width: 80%" :tooltip="false" :line-clamp="5">
+        <n-ellipsis :tooltip="false" :line-clamp="5">
             <template #tooltip></template>
             {{ remove_markdown(props.markdownContent).slice(0, 400) }}
         </n-ellipsis>
@@ -9,7 +9,7 @@
                 :x-gap="16"
                 :y-gap="16"
                 :cols="gridCols"
-                style="width: 90%; margin: auto"
+                style="width: 60%; margin-right: auto;"
                 @click.stop
             >
                 <template v-for="(url, index) in displayedImages" :key="index">

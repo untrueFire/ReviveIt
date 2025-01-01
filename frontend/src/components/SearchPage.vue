@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div style="text-align: left">
         <n-input
             type="text"
             v-model:value="query"
@@ -8,17 +8,15 @@
             class="searchBox"
         />
         <ItemGrid :items="reactive(items)" v-slot="{ item }">
-            <template>
-                <n-button
-                    :strong="true"
-                    :tertiary="true"
-                    size="small"
-                    v-if="item.owner.id != (store.user as User).id"
-                    :onclick="() => handleReviveItem(item.id)"
-                >
-                    复活
-                </n-button>
-            </template>
+            <n-button
+                :strong="true"
+                :tertiary="true"
+                size="small"
+                v-if="item.owner.id != (store.user as User).id"
+                :onclick="() => handleReviveItem(item.id)"
+            >
+                复活
+            </n-button>
         </ItemGrid>
         <n-modal
             v-model:show="showModal"
@@ -52,12 +50,7 @@
 import { h, ref, onMounted, reactive } from 'vue'
 import { search, ReviveItem, updateUser } from '../utils/api.js'
 import { useStore } from '../stores/index.js'
-import {
-    useMessage,
-    NButton,
-    NIcon,
-    NIconWrapper,
-} from 'naive-ui'
+import { useMessage, NButton, NIcon, NIconWrapper } from 'naive-ui'
 import { QuestionMarkRound } from '@vicons/material'
 import type { Item, User } from '@/types/Api'
 import ItemGrid from './ItemGrid.vue'

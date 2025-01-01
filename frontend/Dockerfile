@@ -4,7 +4,8 @@ WORKDIR /app
 
 COPY package*.json pnpm-lock.yaml ./
 
-RUN corepack enable &&\
+RUN npm config set registry https://registry.npmmirror.com &&\
+	corepack enable &&\
 	corepack prepare pnpm@9.15.2 &&\
 	pnpm config set registry https://registry.npmmirror.com/ &&\
 	pnpm install --frozen-lockfile
