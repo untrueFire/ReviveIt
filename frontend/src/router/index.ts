@@ -80,7 +80,6 @@ const router = createRouter({
             component: ViewItem,
             meta: {
                 title: '物品详情',
-                needLogin: true,
             },
         },
         {

@@ -30,7 +30,10 @@
                     @onError="onError"
                     style="text-align: left"
                 />
-                <template #footer> 联系方式：{{ item.contactInfo }} </template>
+                <template #footer>
+                    联系人：{{ item.owner.username }}<br/>
+                    联系方式：{{ item.contactInfo }}
+                </template>
             </n-card>
         </div>
     </div>

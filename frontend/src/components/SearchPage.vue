@@ -12,7 +12,7 @@
                 :strong="true"
                 :tertiary="true"
                 size="small"
-                v-if="item.owner.id != (store.user as User).id"
+                v-if="store.user && item.owner.id != (store.user as User).id"
                 :onclick="() => handleReviveItem(item.id)"
             >
                 复活

@@ -1,5 +1,6 @@
 <template>
     <n-virtual-list
+        v-if="items.length > 0"
         style="max-width: 600px; margin: 0 auto"
         :item-size="42"
         :items="items"
@@ -29,14 +30,18 @@
                     </n-flex>
                 </template>
                 <ItemPreview :markdownContent="item.description" @click="handleViewItem(item.id)"/>
-                <template #footer> 联系方式：{{ item.contactInfo }} </template>
+                <template #footer>
+                    联系人：{{ item.owner.username }}<br/>
+                    联系方式：{{ item.contactInfo }}
+                </template>
                 <template #action>
                     <slot :item="(item as Item)" @click.stop></slot>
                 </template>
             </n-card>
-            <br/><br/><br/>
         </template>
     </n-virtual-list>
+    <n-empty v-else size="huge" description="什么也没有找到" style="margin-top:50px">
+  </n-empty>
 </template>
 
 <script lang="ts" setup>
