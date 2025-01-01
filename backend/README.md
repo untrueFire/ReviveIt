@@ -8,15 +8,13 @@ We recommend to [install `uv`](https://docs.astral.sh/uv/getting-started/install
 ```sh
 uv sync && \
 source .venv/bin/activate && \
-./manage.py makemigrations api && \
-./manage.py migrate && \
-./manage.py createsuperuser
+make init
 ```
 If you don't want to use `uv`, you can still use your own tools for local running and testing, just change the first line to `pip install -r requirements.in`
 
 ## Hot-Reload for Development
 ```sh
-./manage.py runserver
+make dev
 ```
 
 ## Run for production
@@ -29,11 +27,11 @@ Refer to the dockerfile.
 ### Run Unit Tests with [Coverage.py](https://coverage.readthedocs.io/en/latest/)
 
 ```sh
-coverage run --include=api/*.py ./manage.py test
+make test
 ```
 
 ### Lint with [PyLint](https://www.pylint.org/)
 
 ```sh
-uv run pylint --rcfile=.pylintrc api reviveit_backend
+make lint
 ```

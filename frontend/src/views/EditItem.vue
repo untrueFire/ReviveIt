@@ -1,7 +1,7 @@
 <template>
     <ItemForm
         title="编辑物品"
-        v-model:model="model"
+        :model="model"
         @formSubmitted="HandleEditItem"
     />
 </template>
