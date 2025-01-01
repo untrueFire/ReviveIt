@@ -27,6 +27,7 @@
 <script setup lang="ts">
 import { h, ref, onMounted, computed, type ComputedRef } from 'vue'
 import { pagination, randomTagType } from '../utils/constants'
+import removeMarkdown from 'remove-markdown'
 import { useRouter } from 'vue-router'
 import { fetchUserItems, deleteItem } from '../utils/api'
 import { useStore } from '../stores'
@@ -107,6 +108,7 @@ const columns: ComputedRef<DataTableColumn<Item>[]> = computed(() => [
         ellipsis: true,
         sorter: 'default',
         resizable: true,
+        render: row => h('div', removeMarkdown(row.description))
     },
     {
         title: '联系方式',
