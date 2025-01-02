@@ -1,7 +1,7 @@
 <template>
     <div>
         <h1>物品详情</h1>
-        <div class="container">
+        <div>
             <n-card
                 embedded
                 :title="item.name"

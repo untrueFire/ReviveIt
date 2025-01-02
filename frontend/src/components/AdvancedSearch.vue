@@ -1,12 +1,20 @@
 <template>
     <div>
+        <h1>高级搜索</h1>
         <n-input
             type="text"
             v-model:value="query"
             @input="handleInput"
             placeholder="搜索名称或描述..."
-            class="searchBox"
+            style="text-align: center"
         />
+        <n-button
+            type="info"
+            ghost
+            @click="$router.push('/')"
+            style="float: right"
+            >返回首页</n-button
+        >
         <n-data-table
             v-if="items.length"
             :columns="columns"
@@ -14,6 +22,12 @@
             :pagination="pagination"
             striped
         />
+        <n-empty
+            v-else
+            size="huge"
+            description="什么也没有找到"
+            style="margin-top: 50px"
+        ></n-empty>
         <n-modal
             v-model:show="showModal"
             class="modal-content"
@@ -162,7 +176,7 @@ const columns = computed(() => {
             ellipsis: true,
             resizable: true,
             sorter: 'default',
-            render: row => h('div', removeMarkdown(row.description))
+            render: row => h('div', removeMarkdown(row.description)),
         },
         {
             title: '联系方式',

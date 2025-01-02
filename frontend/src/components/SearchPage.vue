@@ -5,8 +5,15 @@
             v-model:value="query"
             @input="handleInput"
             placeholder="搜索名称或描述..."
-            class="searchBox"
+            style="text-align: center"
         />
+        <n-button
+            type="info"
+            ghost
+            @click="$router.push('/search')"
+            style="float: right"
+            >高级搜索</n-button
+        >
         <ItemGrid :items="reactive(items)" v-slot="{ item }">
             <n-button
                 :strong="true"

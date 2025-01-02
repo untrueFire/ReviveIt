@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import AdvancedSearch from '../components/AdvancedSearch.vue'
 import UserView from '../views/UserView.vue'
 import AddItem from '../views/AddItem.vue'
 import EditItem from '../views/EditItem.vue'
@@ -9,7 +10,7 @@ import ViewItem from '../views/ViewItem.vue'
 import NotFound from '../views/NotFound.vue'
 import { useStore } from '../stores'
 import { updateUser } from '../utils/api'
-import AuthView from '@/views/AuthView.vue'
+import AuthView from '../views/AuthView.vue'
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
@@ -17,6 +18,14 @@ const router = createRouter({
             path: '/',
             name: 'Home',
             component: HomeView,
+            meta: {
+                title: '首页',
+            },
+        },
+        {
+            path: '/search',
+            name: 'AdvancedSearch',
+            component: AdvancedSearch,
             meta: {
                 title: '首页',
             },

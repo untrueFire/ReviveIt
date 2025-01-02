@@ -40,8 +40,7 @@
             </n-card>
         </template>
     </n-virtual-list>
-    <n-empty v-else size="huge" description="什么也没有找到" style="margin-top:50px">
-  </n-empty>
+    <n-empty v-else size="huge" description="什么也没有找到" style="margin-top:50px" />
 </template>
 
 <script lang="ts" setup>
