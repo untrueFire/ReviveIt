@@ -3,6 +3,7 @@
         <h1>用户信息</h1>
         <div v-if="store.user">
             <p><strong>用户名:</strong> {{ store.user.username }}</p>
+            <p><strong>用户组:</strong> {{ groupTable[store.user.group] }}</p>
             <p><strong>功德:</strong> {{ store.user.balance }}</p>
         </div>
         <div v-else>
@@ -26,7 +27,7 @@
 
 <script setup lang="ts">
 import { h, ref, onMounted, computed, type ComputedRef } from 'vue'
-import { pagination, randomTagType } from '../utils/constants'
+import { groupTable, pagination, randomTagType } from '../utils/constants'
 import removeMarkdown from 'remove-markdown'
 import { useRouter } from 'vue-router'
 import { fetchUserItems, deleteItem } from '../utils/api'

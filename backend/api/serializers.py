@@ -8,8 +8,10 @@ from .models import *
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "username", "balance"]
-
+        fields = ["id", "username", "balance", "group"]
+        extra_kwargs = {
+            'group': {'help_text': '用户组，guest 为临时用户，user 为正式用户，admin 为管理员'},
+        }
 
 class PublicUserSerializer(serializers.ModelSerializer):
     """

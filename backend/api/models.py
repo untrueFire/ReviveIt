@@ -6,10 +6,14 @@ from taggit.managers import TaggableManager
 
 class User(AbstractUser):
     balance = models.PositiveIntegerField(default=0)
-
+    is_active = models.BooleanField(default=False)
+    
     class Meta(AbstractUser.Meta):
         swappable = "AUTH_USER_MODEL"
 
+    @property
+    def group(self):
+        return 'admin' if self.is_staff else ('user' if self.is_active else 'guest')
 
 class ItemManager(models.Manager):
     def get_queryset(self):

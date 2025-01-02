@@ -27,7 +27,7 @@ const router = createRouter({
             name: 'AdvancedSearch',
             component: AdvancedSearch,
             meta: {
-                title: '首页',
+                title: '高级搜索',
             },
         },
         {

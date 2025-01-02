@@ -47,6 +47,7 @@ export interface Item {
 }
 
 export interface User {
+    group: 'admin' | 'user' | 'guest'
     /** ID */
     id: number
     /**

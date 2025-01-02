@@ -107,3 +107,9 @@ export function onError(err: {
 }) {
     window.$message.error(err.message)
 }
+
+export const groupTable = {
+    'admin': '管理员',
+    'user': '正式用户',
+    'guest': '临时用户',
+}

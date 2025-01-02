@@ -149,7 +149,10 @@ const handleLogin = (event: MouseEvent) => {
                         store.user = data as User
                         message.success('登录成功')
                         router.push('/user')
-                    } else {
+                    } else if(typeof data === 'string' && data.includes('账号未激活')) {
+                        message.error('该账号未激活，请等待管理员批准')
+                    }
+                     else {
                         const errorList = (data as string).match(
                             /<ul class="errorlist(.*?)<\/ul>/s,
                         )

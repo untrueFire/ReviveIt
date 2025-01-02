@@ -17,7 +17,7 @@ class GetItemsTestCase(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.user = User.objects.create_user(username="testuser", password="testpass")
+        self.user = User.objects.create_user(username="testuser", password="testpass", is_active=True)
         self.item1 = Item.objects.create(name="Item 1", description="Description 1", contactInfo="Contact 1", owner=self.user)
         self.item2 = Item.objects.create(name="Item 2", description="Description 2", contactInfo="Contact 2", owner=self.user)
 
@@ -36,7 +36,7 @@ class AddItemTestCase(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.user = User.objects.create_user(username="testuser", password="testpass")
+        self.user = User.objects.create_user(username="testuser", password="testpass", is_active=True)
         self.client.login(username="testuser", password="testpass")
 
     def test_add_item_success(self):
@@ -62,8 +62,8 @@ class DeleteItemTestCase(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.user = User.objects.create_user(username="testuser", password="testpass")
-        self.user2 = User.objects.create_user(username="testuser2", password="testpass2")
+        self.user = User.objects.create_user(username="testuser", password="testpass", is_active=True)
+        self.user2 = User.objects.create_user(username="testuser2", password="testpass2", is_active=True)
         self.item = Item.objects.create(name="Item 1", description="Description 1", contactInfo="Contact 1", owner=self.user)
         self.client.login(username="testuser", password="testpass")
 
@@ -90,7 +90,7 @@ class UpdateItemTestCase(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.user = User.objects.create_user(username="testuser", password="testpass")
+        self.user = User.objects.create_user(username="testuser", password="testpass", is_active=True)
         self.item = Item.objects.create(name="Item 1", description="Description 1", contactInfo="Contact 1", owner=self.user)
         self.client.login(username="testuser", password="testpass")
 
@@ -120,7 +120,7 @@ class UpdateItemTestCase(TestCase):
         self.assertEqual(response.json()["message"], INVALID_REQUEST)
 
     def test_update_item_not_owner(self):
-        User.objects.create_user(username="anotheruser", password="anotherpass")
+        User.objects.create_user(username="anotheruser", password="anotherpass", is_active=True)
         self.client.login(username="anotheruser", password="anotherpass")
         data = {"name": "Updated Item", "description": "Updated Description", "contactInfo": "Updated Contact"}
         response = self.client.post(reverse("update_item", args=[self.item.id]), json.dumps(data), content_type="application/json")
@@ -132,7 +132,7 @@ class SearchItemsTestCase(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.user = User.objects.create_user(username="testuser", password="testpass")
+        self.user = User.objects.create_user(username="testuser", password="testpass", is_active=True)
         self.item1 = Item.objects.create(name="Item 1", description="Description 1", contactInfo="Contact 1", owner=self.user)
         self.item2 = Item.objects.create(name="Item 2", description="Description 2", contactInfo="Contact 2", owner=self.user)
 
@@ -157,7 +157,7 @@ class GetUserInfoTestCase(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.user = User.objects.create_user(username="testuser", password="testpass")
+        self.user = User.objects.create_user(username="testuser", password="testpass", is_active=True)
         self.client.login(username="testuser", password="testpass")
 
     def test_get_user_info(self):
@@ -174,8 +174,8 @@ class GetUserInfoTestCase(TestCase):
 class AcceptDealTestCase(TestCase):
     def setUp(self):
         self.client = Client()
-        self.user = User.objects.create_user(username="testuser", password="testpass")
-        self.new_owner = User.objects.create_user(username="newowner", password="newpass")
+        self.user = User.objects.create_user(username="testuser", password="testpass", is_active=True)
+        self.new_owner = User.objects.create_user(username="newowner", password="newpass", is_active=True)
         self.item = Item.objects.create(owner=self.user)
         self.transaction = Transaction.objects.create(buyer=self.new_owner, target=self.item, price=100)
         self.notification = Notification.objects.create(actor=self.new_owner, verb="proposed", action_object=self.transaction, recipient=self.user)
@@ -215,8 +215,8 @@ class RejectDealTestCase(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.user = User.objects.create_user(username="testuser", password="testpass")
-        self.buyer = User.objects.create_user(username="buyer", password="buyerpass")
+        self.user = User.objects.create_user(username="testuser", password="testpass", is_active=True)
+        self.buyer = User.objects.create_user(username="buyer", password="buyerpass", is_active=True)
         self.client.login(username="testuser", password="testpass")
         self.item = Item.objects.create(owner=self.user)
         self.price = 50
@@ -256,8 +256,8 @@ class RejectDealTestCase(TestCase):
 class ReviveTestCase(TestCase):
     def setUp(self):
         self.client = Client()
-        self.user = User.objects.create_user(username="testuser", password="testpass", balance=100)
-        self.user2 = User.objects.create_user(username="testuser2", password="testpass2")
+        self.user = User.objects.create_user(username="testuser", password="testpass", balance=100, is_active=True)
+        self.user2 = User.objects.create_user(username="testuser2", password="testpass2", is_active=True)
         self.item = Item.objects.create(owner=self.user2)
 
     def test_revive_success(self):
@@ -297,7 +297,7 @@ class ReviveTestCase(TestCase):
 class UserNotificationsTestCase(TestCase):
     def setUp(self):
         self.client = Client()
-        self.user = User.objects.create_user(username="testuser", password="testpass")
+        self.user = User.objects.create_user(username="testuser", password="testpass", is_active=True)
         self.notification = Notification.objects.create(actor=self.user, recipient=self.user)
 
     def test_user_notifications_success(self):
@@ -330,8 +330,8 @@ class UserNotificationsTestCase(TestCase):
 class GetMyItemTestCase(TestCase):
     def setUp(self):
         self.client = Client()
-        self.user = User.objects.create_user(username="testuser", password="testpass")
-        self.user2 = User.objects.create_user(username="testuser2", password="testpass2")
+        self.user = User.objects.create_user(username="testuser", password="testpass", is_active=True)
+        self.user2 = User.objects.create_user(username="testuser2", password="testpass2", is_active=True)
         self.item2 = Item.objects.create(name="Item 2", description="Description 2", contactInfo="Contact 2", owner=self.user2)
 
     def test_get_my_items_success(self):
@@ -360,8 +360,8 @@ class GetMyItemTestCase(TestCase):
 class ReadTestCase(TestCase):
     def setUp(self):
         self.client = Client()
-        self.user = User.objects.create_user(username="testuser", password="testpassword")
-        self.other_user = User.objects.create_user(username="otheruser", password="otherpassword")
+        self.user = User.objects.create_user(username="testuser", password="testpassword", is_active=True)
+        self.other_user = User.objects.create_user(username="otheruser", password="otherpassword", is_active=True)
         self.notification = Notification.objects.create(actor=self.other_user, recipient=self.user)
 
     def test_read_notification_success(self):
@@ -389,7 +389,7 @@ class ReadTestCase(TestCase):
 
 class ChallengeViewTest(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(username="testuser", password="testpassword")
+        self.user = User.objects.create_user(username="testuser", password="testpassword", is_active=True)
         self.client = Client()
 
     def test_challenge_success(self):
@@ -406,8 +406,8 @@ class ChallengeViewTest(TestCase):
 
 class KnockViewTest(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(username="testuser", password="testpassword")
-        self.user2 = User.objects.create_user(username="testuser2", password="testpassword2")
+        self.user = User.objects.create_user(username="testuser", password="testpassword", is_active=True)
+        self.user2 = User.objects.create_user(username="testuser2", password="testpassword2", is_active=True)
         self.client = Client()
         self.client.login(username="testuser", password="testpassword")
         response = self.client.post(reverse("challenge")).json()
@@ -454,7 +454,7 @@ class KnockViewTest(TestCase):
 class TestTagViews(TestCase):
     def setUp(self):
         self.client = Client()
-        self.user = User.objects.create_user(username="testuser", password="testpass")
+        self.user = User.objects.create_user(username="testuser", password="testpass", is_active=True)
         self.client.force_login(self.user)
         self.item = Item.objects.create(owner=self.user, name="Test Item")
 
@@ -482,7 +482,7 @@ class TestTagViews(TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_add_tag_permission_denied(self):
-        other_user = User.objects.create_user(username="otheruser", password="otherpass")
+        other_user = User.objects.create_user(username="otheruser", password="otherpass", is_active=True)
         other_item = Item.objects.create(owner=other_user, name="Other Item")
         url = reverse("add_tag")
         data = {"item_id": other_item.id, "tags": ["tag1", "tag2"]}
@@ -521,7 +521,7 @@ class TestTagViews(TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_remove_tag_permission_denied(self):
-        other_user = User.objects.create_user(username="otheruser", password="otherpass")
+        other_user = User.objects.create_user(username="otheruser", password="otherpass", is_active=True)
         other_item = Item.objects.create(owner=other_user, name="Other Item")
         other_item.tags.add("tag1", "tag2")
         url = reverse("remove_tag")
