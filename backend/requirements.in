@@ -6,3 +6,4 @@ django-notifications-hq
 gunicorn
 django-taggit
 setuptools
+psycopg[binary]

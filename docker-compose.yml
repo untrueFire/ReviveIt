@@ -8,8 +8,22 @@ services:
     restart: "always"
     env_file:
       - ./backend/.env
+    volumes:
+      - ./backend/.pg_service.conf:/root/.pg_service.conf2:ro
+      - ./backend/.pgpass:/root/.pgpass:ro
+    environment:
+      - PGSERVICEFILE=/root/.pg_service.conf
+      - PGPASSFILE=/root/.pgpass
+      - DB_HOST=db
+    command: >
+      sh -c "
+      python -c 'import os,sys; sys.stdout.write(os.path.expandvars(sys.stdin.read()))' < /root/.pg_service.conf2 > /root/.pg_service.conf &&
+      /app/setup.sh"
+    depends_on:
+      - db
     networks:
       - internal
+      - database
 
   frontend:
     build:
@@ -27,6 +41,30 @@ services:
     networks:
       - internal
 
+  db:
+    image: postgres:17
+    container_name: reviveit-db
+    restart: "always"
+    environment:
+      POSTGRES_DB: reviveit
+      POSTGRES_USER: reviveit
+      POSTGRES_PASSWORD: root
+      POSTGRES_LISTEN_ADDRESSES: '*'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - database
+    command: >
+      bash -c "
+      echo \"host all all 0.0.0.0/0 scram-sha-256\" >> /var/lib/postgresql/data/pg_hba.conf &&
+      /usr/local/bin/docker-entrypoint.sh postgres
+      "    
+
+volumes:
+  postgres_data:
+
 networks:
   internal:
+    driver: bridge
+  database:
     driver: bridge

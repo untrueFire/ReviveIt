@@ -9,6 +9,7 @@ on:
     branches: ["master"]
     paths:
       - 'backend/**'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -18,6 +19,21 @@ jobs:
       max-parallel: 4
       matrix:
         python-version: ["3.10", "3.11", "3.12"]
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: reviveit
+          POSTGRES_PASSWORD: root
+          POSTGRES_DB: reviveit
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - uses: actions/checkout@v4
@@ -33,8 +49,10 @@ jobs:
       - name: Run Tests
         working-directory: backend
         run: |
-          coverage run --include=api/*.py ./manage.py test
+          coverage run --include=api/*.py ./manage.py test --settings=test_setting
           coverage report
           coveralls
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PGSERVICEFILE: .pg_service.conf
+          PGPASSFILE: .pgpass

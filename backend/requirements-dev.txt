@@ -64,6 +64,8 @@ packaging==24.1
     #   gunicorn
 platformdirs==4.3.6
     # via pylint
+psycopg==3.2.3
+    # via -r requirements.in
 pylint==3.3.1
     # via -r requirements-dev.in
 pytz==2024.2
@@ -82,6 +84,8 @@ swapper==1.4.0
     # via django-notifications-hq
 tomlkit==0.13.2
     # via pylint
+typing-extensions==4.12.2
+    # via psycopg
 uritemplate==4.1.1
     # via drf-yasg
 urllib3==2.2.3
