@@ -64,6 +64,20 @@ const menuOptions = computed(() => [
     {
         label: () =>
             h(
+                RouterLink,
+                {
+                    to: {
+                        name: 'Admin',
+                    },
+                },
+                { default: () => '管理' },
+            ),
+        key: 'admin',
+        show: store.isLoggedIn && store.user?.group === 'admin',
+    },
+    {
+        label: () =>
+            h(
                 NButton,
                 {
                     onclick: handleLogout,

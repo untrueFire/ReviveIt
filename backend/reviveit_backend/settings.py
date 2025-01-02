@@ -201,3 +201,7 @@ ALLOWED_IMAGE_EXTENSIONS = [
     ".svg",
     ".ico",
 ]
+
+# 实现 admin 页面嵌入（iframe）的功能
+# TODO：写一个独立的管理页面
+X_FRAME_OPTIONS = "SAMEORIGIN"

@@ -11,6 +11,7 @@ import NotFound from '../views/NotFound.vue'
 import { useStore } from '../stores'
 import { updateUser } from '../utils/api'
 import AuthView from '../views/AuthView.vue'
+import AdminView from '@/views/AdminView.vue'
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
@@ -90,6 +91,11 @@ const router = createRouter({
             meta: {
                 title: '物品详情',
             },
+        },
+        {
+            path: '/admin/:pathMatch(.*)*',
+            name: 'Admin',
+            component: AdminView,
         },
         {
             path: '/:pathMatch(.*)*',
