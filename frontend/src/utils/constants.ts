@@ -4,6 +4,7 @@
 import type { ValidateError } from 'async-validator'
 import { NTag, type FormValidationError } from 'naive-ui'
 import { h, reactive } from 'vue'
+import MarkdownIt from 'markdown-it'
 /**
  * Default pager used in this project
  */
@@ -109,7 +110,15 @@ export function onError(err: {
 }
 
 export const groupTable = {
-    'admin': '管理员',
-    'user': '正式用户',
-    'guest': '临时用户',
+    admin: '管理员',
+    user: '正式用户',
+    guest: '临时用户',
+}
+
+// 提取纯文本的函数
+export function removeMd(markdown: string): string {
+    const md = new MarkdownIt()
+    const html = md.render(markdown)
+    const plainText = html.replace(/<[^>]+>/g, '')
+    return plainText
 }

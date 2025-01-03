@@ -72,7 +72,7 @@ import {
 } from 'naive-ui'
 import { useRouter } from 'vue-router'
 import { QuestionMarkRound } from '@vicons/material'
-import removeMarkdown from 'remove-markdown'
+import { removeMd } from '../utils/constants'
 import type { Item, User } from '@/types/Api'
 const router = useRouter()
 const store = useStore()
@@ -176,7 +176,7 @@ const columns = computed(() => {
             ellipsis: true,
             resizable: true,
             sorter: 'default',
-            render: row => h('div', removeMarkdown(row.description)),
+            render: row => h('div', removeMd(row.description)),
         },
         {
             title: '联系方式',

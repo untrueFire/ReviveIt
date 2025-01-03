@@ -2,7 +2,7 @@
     <div>
         <n-ellipsis :tooltip="false" :line-clamp="5">
             <template #tooltip></template>
-            {{ remove_markdown(props.markdownContent).slice(0, 400) }}
+            {{ removeMd(props.markdownContent).slice(0, 400) }}
         </n-ellipsis>
         <n-image-group show-toolbar-tooltip>
             <n-grid
@@ -49,7 +49,7 @@
 <script lang="ts" setup>
 import { ref, computed } from 'vue'
 import markdownIt from 'markdown-it'
-import remove_markdown from 'remove-markdown'
+import { removeMd } from '../utils/constants'
 import type Token from 'markdown-it/lib/token.mjs'
 const imgRef = ref<HTMLImageElement[] | null>(null);
 const props = defineProps({
