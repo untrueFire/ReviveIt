@@ -55,12 +55,12 @@
 
 <script setup lang="ts">
 import { h, ref, onMounted, reactive } from 'vue'
-import { search, ReviveItem, updateUser } from '../utils/api.js'
-import { useStore } from '../stores/index.js'
+import { search, ReviveItem, updateUser } from '@/utils/api.js'
+import { useStore } from '@/stores/index.js'
 import { useMessage, NButton, NIcon, NIconWrapper } from 'naive-ui'
 import { QuestionMarkRound } from '@vicons/material'
 import type { Item, User } from '@/types/Api'
-import ItemGrid from './ItemGrid.vue'
+import ItemGrid from '@/components/ItemGrid.vue'
 const store = useStore()
 const query = ref('')
 const items = ref<Item[]>([])

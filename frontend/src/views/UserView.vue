@@ -27,11 +27,11 @@
 
 <script setup lang="ts">
 import { h, ref, onMounted, computed, type ComputedRef } from 'vue'
-import { groupTable, pagination, randomTagType } from '../utils/constants'
-import { removeMd } from '../utils/constants'
+import { groupTable, pagination, randomTagType } from '@/utils/constants'
+import { removeMd } from '@/utils/constants'
 import { useRouter } from 'vue-router'
-import { fetchUserItems, deleteItem } from '../utils/api'
-import { useStore } from '../stores'
+import { fetchUserItems, deleteItem } from '@/utils/api'
+import { useStore } from '@/stores'
 import {
     useMessage,
     NButton,

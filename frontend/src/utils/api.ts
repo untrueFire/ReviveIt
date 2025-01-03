@@ -2,7 +2,7 @@
  * Stores api-related functions
  */
 import axios, { AxiosError, type AxiosRequestConfig } from 'axios'
-import { useStore } from '../stores'
+import { useStore } from '@/stores'
 
 /**
  * Retrieve the value of a cookie from `document.cookie` string

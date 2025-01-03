@@ -104,8 +104,8 @@
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useMessage, type FormInst, type FormItemRule } from 'naive-ui'
-import { post } from '../utils/api'
-import { useStore } from '../stores'
+import { post } from '@/utils/api'
+import { useStore } from '@/stores'
 import type { User } from '@/types/Api'
 import { handleFormError } from '@/utils/constants'
 const router = useRouter()

@@ -69,7 +69,7 @@
 </template>
 
 <script lang="ts" setup>
-import { randomTagType } from '../utils/constants'
+import { randomTagType } from '@/utils/constants'
 import type { Item } from '@/types/Api'
 import ItemPreview from './ItemPreview.vue'
 import { useRouter } from 'vue-router'

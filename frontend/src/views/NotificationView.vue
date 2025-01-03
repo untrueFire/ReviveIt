@@ -29,14 +29,14 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, h } from 'vue'
-import { useStore } from '../stores'
+import { useStore } from '@/stores'
 import {
     updateUnread,
     updateRead,
     acceptNotification,
     rejectNotification,
     setRead,
-} from '../utils/api'
+} from '@/utils/api'
 import {
     useMessage,
     NFlex,
@@ -44,7 +44,7 @@ import {
     NTime,
     type DataTableColumn,
 } from 'naive-ui'
-import { type Notification } from '../types/Api'
+import { type Notification } from '@/types/Api'
 const store = useStore()
 const message = useMessage()
 const intervalId = ref<ReturnType<typeof setInterval>>()

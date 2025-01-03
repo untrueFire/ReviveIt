@@ -58,9 +58,9 @@
 
 <script setup lang="ts">
 import { h, ref, onMounted, computed } from 'vue'
-import { pagination, randomTagType } from '../utils/constants'
-import { search, ReviveItem, updateUser } from '../utils/api.js'
-import { useStore } from '../stores/index.js'
+import { pagination, randomTagType } from '@/utils/constants'
+import { search, ReviveItem, updateUser } from '@/utils/api.js'
+import { useStore } from '@/stores/index.js'
 import {
     useMessage,
     NButton,
@@ -72,7 +72,7 @@ import {
 } from 'naive-ui'
 import { useRouter } from 'vue-router'
 import { QuestionMarkRound } from '@vicons/material'
-import { removeMd } from '../utils/constants'
+import { removeMd } from '@/utils/constants'
 import type { Item, User } from '@/types/Api'
 const router = useRouter()
 const store = useStore()

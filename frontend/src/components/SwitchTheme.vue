@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-import { useThemeStore } from '../stores'
+import { useThemeStore } from '@/stores'
 import { LightModeFilled, DarkModeFilled } from '@vicons/material'
 const store = useThemeStore()
 const toggleTheme = () => {

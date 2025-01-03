@@ -1,6 +1,6 @@
 import { ref, computed, watchEffect } from 'vue'
 import { defineStore } from 'pinia'
-import type { Notification, User } from '../types/Api'
+import type { Notification, User } from '@/types/Api'
 import { darkTheme, lightTheme, useOsTheme } from 'naive-ui'
 
 /**

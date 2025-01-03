@@ -9,7 +9,7 @@
 <script setup lang="ts">
 import { reactive, type Reactive, type Ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { addItem } from '../utils/api'
+import { addItem } from '@/utils/api'
 import { useMessage, type FormInst } from 'naive-ui'
 import { handleFormError } from '@/utils/constants'
 import ItemForm from '@/components/ItemForm.vue'

@@ -60,7 +60,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { fetchItem } from '../utils/api'
+import { fetchItem } from '@/utils/api'
 import { useMessage, NTag } from 'naive-ui'
 import type { Item } from '@/types/Api'
 import { randomTagType, onError } from '@/utils/constants'

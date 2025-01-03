@@ -8,5 +8,5 @@
 </template>
 
 <script setup lang="ts">
-import WoodenFish from '../components/WoodenFish.vue'
+import WoodenFish from '@/components/WoodenFish.vue'
 </script>

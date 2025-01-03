@@ -49,7 +49,7 @@
 <script lang="ts" setup>
 import { ref, computed } from 'vue'
 import markdownIt from 'markdown-it'
-import { removeMd } from '../utils/constants'
+import { removeMd } from '@/utils/constants'
 import type Token from 'markdown-it/lib/token.mjs'
 const imgRef = ref<HTMLImageElement[] | null>(null);
 const props = defineProps({

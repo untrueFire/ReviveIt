@@ -1,10 +1,10 @@
 <template>
     <div>
         <h1>首页</h1>
-        <SearchPage />
+        <SearchView />
     </div>
 </template>
 
 <script setup lang="ts">
-import SearchPage from '@/components/SearchPage.vue'
+import SearchView from '@/views/SearchView.vue'
 </script>

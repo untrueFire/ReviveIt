@@ -8,8 +8,8 @@
 <script setup lang="ts">
 import { useRouter, RouterLink } from 'vue-router'
 import NotificationButton from './NotificationButton.vue'
-import { useStore } from '../stores'
-import { logout } from '../utils/api'
+import { useStore } from '@/stores'
+import { logout } from '@/utils/api'
 import { h, computed } from 'vue'
 import { NAvatar, NButton, NIcon, useMessage } from 'naive-ui'
 import SwitchTheme from './SwitchTheme.vue'

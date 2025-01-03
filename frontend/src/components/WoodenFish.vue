@@ -2,7 +2,7 @@
     <img
         draggable="false"
         width="100"
-        src="../assets/muyu.svg"
+        src="@/assets/muyu.svg"
         alt="我是木鱼"
         @click="handleKnock"
         :style="style"
@@ -10,11 +10,11 @@
 </template>
 
 <script setup lang="ts">
-import { post } from '../utils/api'
+import { post } from '@/utils/api'
 import CryptoJS from 'crypto-js'
 import { useLoadingBar, useMessage } from 'naive-ui'
 import { ref, computed, type StyleValue } from 'vue'
-import { useThemeStore } from '../stores'
+import { useThemeStore } from '@/stores'
 const message = useMessage()
 const loadingBar = useLoadingBar()
 const store = useThemeStore()

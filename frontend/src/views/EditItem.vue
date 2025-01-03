@@ -9,7 +9,7 @@
 <script setup lang="ts">
 import { reactive, onMounted, type Reactive, type Ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { fetchItem, updateItem } from '../utils/api'
+import { fetchItem, updateItem } from '@/utils/api'
 import { useMessage, type FormInst } from 'naive-ui'
 import { handleFormError } from '@/utils/constants'
 
