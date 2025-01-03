@@ -64,6 +64,9 @@ export interface User {
      * @max 9223372036854776000
      */
     balance: number
+    avatar: {
+        filename: string
+    }
 }
 
 export interface SimpleItem {

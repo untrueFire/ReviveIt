@@ -11,7 +11,7 @@ import NotificationButton from './NotificationButton.vue'
 import { useStore } from '../stores'
 import { logout } from '../utils/api'
 import { h, computed } from 'vue'
-import { NButton, useMessage } from 'naive-ui'
+import { NAvatar, NButton, NIcon, useMessage } from 'naive-ui'
 import SwitchTheme from './SwitchTheme.vue'
 
 const router = useRouter()
@@ -51,10 +51,25 @@ const menuOptions = computed(() => [
                         name: 'User',
                     },
                 },
-                { default: () => '我的' },
+                { default: () => store.user?.username },
             ),
         key: 'user',
         show: store.isLoggedIn,
+        icon: () =>
+            h(NAvatar, {
+                src:
+                    'http://127.0.0.1/api/file/get/' +
+                    store.user?.avatar.filename,
+                round: true,
+                style: {
+                    width: '24px',
+                    height: '24px',
+                },
+                "imgProps": {
+                    "width": "24px",
+                    "height": "24px",
+                }
+            }),
     },
     {
         label: () => h(NotificationButton),
@@ -136,4 +151,5 @@ const menuOptions = computed(() => [
 :global(.v-overflow) {
     justify-content: flex-end;
 }
+
 </style>

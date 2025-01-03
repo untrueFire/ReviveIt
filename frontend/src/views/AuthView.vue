@@ -234,7 +234,12 @@ const handleRegister = (event: MouseEvent) => {
                         store.user = data
                         message.success('注册成功')
                         router.push('/user')
-                    } else {
+                    }
+                    else if (typeof data === 'string' && data.includes('账号未激活')) {
+                        message.success('注册成功，请等待管理员批准')
+                        router.push('/')
+                    }
+                     else {
                         const errorList = data.match(
                             /<ul class="errorlist(.*?)<\/ul>/s,
                         )

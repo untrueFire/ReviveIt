@@ -1,3 +1,4 @@
+from django.db import IntegrityError
 import rest_framework.request
 from django.core.exceptions import RequestDataTooBig
 from django.core.files.base import ContentFile
@@ -516,17 +517,30 @@ def upload_file(request: rest_framework.request.Request):
     try:
         if 'file' not in request.FILES:
             return JsonResponse({'error': NO_FILE}, status=400)
+        
         from hashlib import sha256
         from os.path import splitext
+        
         file_obj = request.FILES['file']
         file_content = file_obj.read()
+        
         if len(file_content) > settings.DATA_UPLOAD_MAX_MEMORY_SIZE:
             raise RequestDataTooBig
+        
         _, ext = splitext(file_obj.name)
         assert ext in settings.ALLOWED_IMAGE_EXTENSIONS
+        
         new_filename = sha256(file_content).hexdigest() + ext
+        
         file_name = default_storage.save(new_filename, ContentFile(file_content))
         file_url = default_storage.url(file_name)
+        
+        try:
+            image = Image(filename=new_filename)
+            image.save()
+        except IntegrityError:
+            pass # 如果文件名已存在，忽略异常（因为文件已存储，URL 仍然有效）
+        
         return JsonResponse({'url': file_url})
     except RequestDataTooBig:
         return fast413
