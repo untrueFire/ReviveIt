@@ -58,8 +58,9 @@ const menuOptions = computed(() => [
         icon: () =>
             h(NAvatar, {
                 src:
-                    'http://127.0.0.1/api/file/get/' +
+                    '/api/file/get/' +
                     store.user?.avatar.filename,
+                "fallback-src": "/api/file/get/default_avatar.png",
                 round: true,
                 style: {
                     width: '24px',

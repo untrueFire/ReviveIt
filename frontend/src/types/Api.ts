@@ -20,6 +20,9 @@ export interface PublicUser {
      * @pattern ^[\w.@+-]+$
      */
     username: string
+    avatar: {
+        filename: string
+    }
 }
 
 export interface Item {

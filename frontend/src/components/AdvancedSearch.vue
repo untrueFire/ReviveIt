@@ -211,7 +211,7 @@ const columns = computed(() => {
                         { default: () => '详情' },
                     ),
                 ]
-                if (row.owner.id != (store.user as User).id) {
+                if (store.user && row.owner.id != store.user.id) {
                     buttons.push(
                         h(
                             NButton,

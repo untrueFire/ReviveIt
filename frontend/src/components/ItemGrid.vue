@@ -13,7 +13,7 @@
                 :segmented="{
                     content: 'soft',
                     footer: 'soft',
-                    action: 'soft'
+                    action: 'soft',
                 }"
             >
                 <template #header-extra>
@@ -29,10 +29,30 @@
                         </n-tag>
                     </n-flex>
                 </template>
-                <ItemPreview :markdownContent="item.description" @click="handleViewItem(item.id)"/>
+                <ItemPreview
+                    :markdownContent="item.description"
+                    @click="handleViewItem(item.id)"
+                />
                 <template #footer>
-                    联系人：{{ item.owner.username }}<br/>
-                    联系方式：{{ item.contactInfo }}
+                    <n-flex justify="space-between">
+                        <n-flex>
+                            <n-avatar
+                                :src="
+                                    '/api/file/get/' +
+                                    item.owner.avatar.filename"
+                                fallback-src="/api/file/get/default_avatar.png"
+                                round
+                                :style="{ width: '24px', height: '24px' }"
+                                :img-props="{ width: '24px', height: '24px' }"
+                            />
+                            <n-text>
+                                {{ item.owner.username }}
+                            </n-text>
+                        </n-flex>
+                        <n-text>
+                            {{ item.contactInfo }}
+                        </n-text>
+                    </n-flex>
                 </template>
                 <template #action>
                     <slot :item="(item as Item)" @click.stop></slot>
@@ -40,7 +60,12 @@
             </n-card>
         </template>
     </n-virtual-list>
-    <n-empty v-else size="huge" description="什么也没有找到" style="margin-top:50px" />
+    <n-empty
+        v-else
+        size="huge"
+        description="什么也没有找到"
+        style="margin-top: 50px"
+    />
 </template>
 
 <script lang="ts" setup>

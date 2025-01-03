@@ -23,10 +23,10 @@ class PublicUserSerializer(serializers.ModelSerializer):
     """
     公开视图，不展示敏感信息（余额）
     """
-
+    avatar = ImageSerializer()
     class Meta:
         model = User
-        fields = ["id", "username"]
+        fields = ["id", "username", "avatar"]
 
 
 class ItemSerializer(TaggitSerializer, serializers.ModelSerializer):

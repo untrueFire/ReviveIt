@@ -31,8 +31,26 @@
                     style="text-align: left"
                 />
                 <template #footer>
-                    联系人：{{ item.owner.username }}<br/>
-                    联系方式：{{ item.contactInfo }}
+                    <n-flex justify="space-between">
+                        <n-flex>
+                            <n-avatar
+                                :src="
+                                    '/api/file/get/' +
+                                    item.owner.avatar.filename
+                                "
+                                fallback-src="/api/file/get/default_avatar.png"
+                                round
+                                :style="{ width: '24px', height: '24px' }"
+                                :img-props="{ width: '24px', height: '24px' }"
+                            />
+                            <n-text>
+                                {{ item.owner.username }}
+                            </n-text>
+                        </n-flex>
+                        <n-text>
+                            {{ item.contactInfo }}
+                        </n-text>
+                    </n-flex>
                 </template>
             </n-card>
         </div>
@@ -68,6 +86,9 @@ const item = ref<Item>({
     owner: {
         id: 0,
         username: '',
+        avatar: {
+            filename: '',
+        },
     },
 })
 
