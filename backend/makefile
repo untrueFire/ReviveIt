@@ -13,3 +13,6 @@ init:
 sync:
 	./manage.py makemigrations api && \
 	./manage.py migrate
+flush:
+	./manage.py flush
+	rm files/*

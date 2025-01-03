@@ -535,11 +535,7 @@ def upload_file(request: rest_framework.request.Request):
         file_name = default_storage.save(new_filename, ContentFile(file_content))
         file_url = default_storage.url(file_name)
         
-        try:
-            image = Image(filename=new_filename)
-            image.save()
-        except IntegrityError:
-            pass # 如果文件名已存在，忽略异常（因为文件已存储，URL 仍然有效）
+        Image.objects.get_or_create(filename=new_filename)
         
         return JsonResponse({'url': file_url})
     except RequestDataTooBig:
