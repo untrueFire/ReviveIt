@@ -22,8 +22,9 @@ docker compose up -d
 然后在浏览器访问`http://localhost/`
 
 # 文档
-- 直接使用 `docker run --rm -d -p80:80 --env-file ./backend/.env reviveit-backend` 单独启动后端
-- 然后可以在`http://localhost:8000/`（交互式 `Swagger Ui` 格式） 或 `http://127.0.0.1:8000/redoc`（`ReDoc` 格式）查看API文档
+- 如果你不想配置 `PostgreSQL` 环境，取消 `backend/reviveit_backend/settings.py` 中 `102-105` 的注释来将数据库切换到 `sqlite3` 
+- 直接使用 `docker run --rm -d -p80:80 --env-file ./backend/.env reviveit-backend` 单独启动后端（你可能首先需要使用 `sqlite3` 作为数据库构建镜像）
+- 然后可以在`http://localhost/`（交互式 `Swagger Ui` 格式） 或 `http://localhost/redoc`（`ReDoc` 格式）查看API文档
 
-## 提示
-开发中，随时可能有破坏性变更
+## 设计文档（检查要求）
+- 见 [文档](./docs/readme.md)

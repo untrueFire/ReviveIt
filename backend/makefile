@@ -7,6 +7,7 @@ lint:
 	uv run pylint --rcfile=.pylintrc api reviveit_backend
 init:
 	cp static/default_avatar.png files/default_avatar.png && \
+	mkdir -p files/ && \
 	./manage.py makemigrations api && \
 	./manage.py migrate && \
 	./manage.py createsuperuser && \

@@ -7,4 +7,4 @@ RUN apk add --no-cache nginx && \
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY . .
 EXPOSE 80
-CMD ["sh", "-c", "/app/setup.sh"]
+CMD ["sh", "/app/setup.sh"]

@@ -11,7 +11,7 @@ create_superuser_if_not_exists() {
         echo "Superuser already exists."
     fi
 }
-
+cp static/default_avatar.png files/default_avatar.png && \
 python manage.py makemigrations api && \
 python manage.py migrate && \
 create_superuser_if_not_exists && \

@@ -21,7 +21,8 @@ docker compose up -d
 Then visit it in browser by `http://localhost/`
 
 ## Documentation
-- Directly start the backend separately by `docker run --rm -d -p80:80 --env-file ./backend/.env reviveit-backend`
+- If you do not want to configure `PostgreSQL` environment, switch the database to `sqlite3` by uncommenting `102-105` lines in `backend/reviveit_backend/settings.py`
+- Directly start the backend separately by `docker run --rm -d -p80:80 --env-file ./backend/.env reviveit-backend`(you might first need to build the image using `sqlite3` as database)
 - Documentation for API can then be viewed at `http://localhost/`(interactive `Swagger Ui` format) or `http://localhost/redoc`(`ReDoc` format)
 
 ## Notice

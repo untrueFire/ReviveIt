@@ -7,3 +7,4 @@ static/
 htmlcov/
 files/
 .venv/
+!static/default_avatar.png
