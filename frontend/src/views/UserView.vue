@@ -35,15 +35,15 @@
             <n-layout-content>
                 <n-row style="align-items: center; justify-content: center">
                     <n-col :span="12">
-                        <n-statistic label="持有物品" :value="999">
+                        <n-statistic label="持有物品" :value="store.user.own_item_cnt">
                         </n-statistic>
                     </n-col>
                     <n-col :span="12">
-                        <n-statistic label="复活物品" :value="666">
+                        <n-statistic label="复活物品" :value="store.user.buy_count">
                         </n-statistic>
                     </n-col>
                     <n-col :span="12">
-                        <n-statistic label="放生物品" :value="123">
+                        <n-statistic label="放生物品" :value="store.user.sell_count">
                         </n-statistic>
                     </n-col>
                     <n-col :span="12">

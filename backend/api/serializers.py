@@ -13,7 +13,7 @@ class UserSerializer(serializers.ModelSerializer):
     avatar = ImageSerializer()
     class Meta:
         model = User
-        fields = ["id", "username", "balance", "group", "avatar"]
+        fields = ["id", "username", "balance", "group", "avatar", "own_item_cnt", "buy_count", "sell_count"]
         extra_kwargs = {
             'group': {'help_text': '用户组，guest 为临时用户，user 为正式用户，admin 为管理员'},
         }

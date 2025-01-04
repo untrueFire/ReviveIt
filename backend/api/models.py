@@ -19,7 +19,10 @@ class User(AbstractUser):
     balance = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=False)
     avatar = models.ForeignKey("Image", on_delete=models.SET_NULL, null=True)
-
+    
+    buy_count = models.PositiveIntegerField(default=0)
+    sell_count = models.PositiveIntegerField(default=0)
+    
     class Meta(AbstractUser.Meta):
         swappable = "AUTH_USER_MODEL"
 
@@ -33,6 +36,10 @@ class User(AbstractUser):
             self.is_active = True
         if (not self.avatar) and self.username and self.password:
             self.avatar = default_avatar(self.username)
+            
+    @property
+    def own_item_cnt(self):
+        return self.item_set.count()
          
 
 

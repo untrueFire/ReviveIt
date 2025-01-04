@@ -201,6 +201,10 @@ def accept_deal(request: rest_framework.request.Request, notification_id: int):
                 notification.mark_as_read()
                 notification.data = "accepted"
                 notification.save()
+                deal.buyer.buy_count += 1
+                deal.seller.sell_count += 1
+                deal.buyer.save()
+                deal.seller.save()
                 return fast200
             else:
                 # 若已售空，退款

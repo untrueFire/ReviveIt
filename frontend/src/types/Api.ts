@@ -70,6 +70,9 @@ export interface User {
     avatar: {
         filename: string
     }
+    own_item_cnt: number
+    buy_count: number
+    sell_count: number
 }
 
 export interface SimpleItem {
