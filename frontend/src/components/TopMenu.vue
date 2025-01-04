@@ -11,8 +11,10 @@ import NotificationButton from './NotificationButton.vue'
 import { useStore } from '@/stores'
 import { logout } from '@/utils/api'
 import { h, computed } from 'vue'
-import { NAvatar, NButton, NIcon, useMessage } from 'naive-ui'
+import { NAvatar, NBadge, NButton, useMessage } from 'naive-ui'
 import SwitchTheme from './SwitchTheme.vue'
+import { renderIcon } from '@/utils/constants'
+import { PostAddOutlined } from '@vicons/material'
 
 const router = useRouter()
 const store = useStore()
@@ -45,64 +47,88 @@ const menuOptions = computed(() => [
     {
         label: () =>
             h(
-                RouterLink,
+                NBadge,
                 {
-                    to: {
-                        name: 'User',
-                    },
+                    // dot: true,
+                    value: store.unreadCount,
                 },
-                { default: () => store.user?.username },
+                {
+                    default: () =>
+                        h(
+                            RouterLink,
+                            {
+                                to: {
+                                    name: 'User',
+                                },
+                            },
+                            { default: () => store.user?.username },
+                        ),
+                },
             ),
         key: 'user',
         show: store.isLoggedIn,
         icon: () =>
             h(NAvatar, {
-                src:
-                    '/api/file/get/' +
-                    store.user?.avatar.filename,
-                "fallback-src": "/api/file/get/default_avatar.png",
+                src: '/api/file/get/' + store.user?.avatar.filename,
+                'fallback-src': '/api/file/get/default_avatar.png',
                 round: true,
                 style: {
                     width: '24px',
                     height: '24px',
                 },
-                "imgProps": {
-                    "width": "24px",
-                    "height": "24px",
-                }
+                imgProps: {
+                    width: '24px',
+                    height: '24px',
+                },
             }),
-    },
-    {
-        label: () => h(NotificationButton),
-        key: 'notification',
-        show: store.isLoggedIn,
-    },
-    {
-        label: () =>
-            h(
-                RouterLink,
-                {
-                    to: {
-                        name: 'Admin',
-                    },
-                },
-                { default: () => '管理' },
-            ),
-        key: 'admin',
-        show: store.isLoggedIn && store.user?.group === 'admin',
-    },
-    {
-        label: () =>
-            h(
-                NButton,
-                {
-                    onclick: handleLogout,
-                    text: true,
-                },
-                { default: () => '登出' },
-            ),
-        key: 'logout',
-        show: store.isLoggedIn,
+        children: [
+            {
+                label: () =>
+                    h(
+                        RouterLink,
+                        {
+                            to: {
+                                name: 'User',
+                            },
+                        },
+                        { default: () => '个人中心' },
+                    ),
+                key: 'UserView',
+                show: store.isLoggedIn,
+            },
+            {
+                label: () => h(NotificationButton),
+                key: 'notification',
+                show: store.isLoggedIn,
+            },
+            {
+                label: () =>
+                    h(
+                        RouterLink,
+                        {
+                            to: {
+                                name: 'Admin',
+                            },
+                        },
+                        { default: () => '管理' },
+                    ),
+                key: 'admin',
+                show: store.isLoggedIn && store.user?.group === 'admin',
+            },
+            {
+                label: () =>
+                    h(
+                        NButton,
+                        {
+                            onclick: handleLogout,
+                            text: true,
+                        },
+                        { default: () => '登出' },
+                    ),
+                key: 'logout',
+                show: store.isLoggedIn,
+            },
+        ],
     },
     {
         label: () =>
@@ -117,20 +143,7 @@ const menuOptions = computed(() => [
             ),
         key: 'addItem',
         show: store.isLoggedIn,
-    },
-    {
-        label: () =>
-            h(
-                RouterLink,
-                {
-                    to: {
-                        name: 'WoodenFish',
-                    },
-                },
-                { default: () => '木鱼' },
-            ),
-        key: 'woodenFish',
-        show: store.isLoggedIn,
+        icon: renderIcon(PostAddOutlined),
     },
     {
         label: () => h(SwitchTheme),
@@ -152,5 +165,4 @@ const menuOptions = computed(() => [
 :global(.v-overflow) {
     justify-content: flex-end;
 }
-
 </style>

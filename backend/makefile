@@ -1,7 +1,8 @@
 dev:
 	./manage.py runserver
-test:
-	coverage run --include=api/*.py ./manage.py test --settings=test_setting
+test: sync
+	coverage run --include=api/*.py ./manage.py test && \
+	coverage report
 lint:
 	uv run pylint --rcfile=.pylintrc api reviveit_backend
 init:
@@ -14,5 +15,10 @@ sync:
 	./manage.py makemigrations api && \
 	./manage.py migrate
 flush:
-	./manage.py flush
+	./manage.py flush && \
 	rm files/*
+clean:
+	rm -r htmlcov && \
+	rm -r */__pycache__
+purge: flush clean
+	rm -rf */migrations

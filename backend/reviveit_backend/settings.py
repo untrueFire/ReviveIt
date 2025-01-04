@@ -96,10 +96,8 @@ WSGI_APPLICATION = "reviveit_backend.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "OPTIONS": {
-            "service": "reviveit"
-        },
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
@@ -156,7 +154,7 @@ ACCOUNT_AUTHENTICATION_METHOD = "username"
 ACCOUNT_UNIQUE_EMAIL = False
 ACCOUNT_SIGNUP_PASSWORD_VERIFICATION = True
 
-LOGIN_REDIRECT_URL = "/api/user/"
+LOGIN_REDIRECT_URL = "/api/user"  # 获取用户信息，前端状态验证需要
 LOGOUT_REDIRECT_URL = "/accounts/login/"
 
 APPEND_SLASH = True
@@ -207,4 +205,4 @@ ALLOWED_IMAGE_EXTENSIONS = [
 X_FRAME_OPTIONS = "SAMEORIGIN"
 
 # 默认头像的文件名
-DEFAULT_AVATAR_FILENAME = 'default_avatar.png'
+DEFAULT_AVATAR_FILENAME = "default_avatar.png"

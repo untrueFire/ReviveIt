@@ -8,9 +8,6 @@ from .utils import generate_avatar
 class Image(models.Model):
     filename = models.CharField(max_length=255, unique=True)
 
-    def __str__(self):
-        return self.filename
-
 
 def default_avatar(username: str):
     if not username:
@@ -36,7 +33,9 @@ class User(AbstractUser):
         super().__init__(*args, **kwargs)
         if self.is_staff:
             self.is_active = True
-        self.avatar = default_avatar(self.username)
+        if (not self.avatar) and self.username and self.password:
+            self.avatar = default_avatar(self.username)
+         
 
 
 class ItemManager(models.Manager):

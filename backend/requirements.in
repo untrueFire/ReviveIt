@@ -7,3 +7,4 @@ gunicorn
 django-taggit
 setuptools
 psycopg[binary]
+pillow

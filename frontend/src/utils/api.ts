@@ -29,7 +29,7 @@ export async function getCsrftoken() {
     if (!document.cookie.includes('csrftoken')) {
         await get('/accounts/login')
     }
-    return getCookie('csrftoken')
+    return getCookie('csrftoken') as string
 }
 
 /**
@@ -52,8 +52,7 @@ function errorHandler(error: Error) {
             return
         }
         store.user = undefined
-        const message = window.$message
-        message.error('登录失效')
+        window.$message.error('登录失效')
         clearInterval(store.intervalId)
         window.location.href = '/auth'
     } else {
@@ -145,7 +144,7 @@ export const addItem = (itemData: PartialItem) =>
 export const setRead = (notificationId: number) =>
     post(`/api/notification/read/${notificationId}/`, null)
 export const logout = () => post('/accounts/logout/', null)
-
+export const changeUsername = (username: string) => post('/api/user/username/change/', { username })
 /**
  * Fetch and set unread notifications
  */
@@ -177,3 +176,5 @@ export const updateUser = async () => {
     const store = useStore()
     store.user = await fetchUserInfo()
 }
+
+

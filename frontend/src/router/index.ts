@@ -1,24 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '@/views/HomeView.vue'
-import AdvancedSearch from '@/components/AdvancedSearch.vue'
-import UserView from '@/views/UserView.vue'
-import AddItem from '@/views/AddItem.vue'
-import EditItem from '@/views/EditItem.vue'
-import NotificationView from '@/views/NotificationView.vue'
-import WoodenFishView from '@/views/WoodenFishView.vue'
-import ViewItem from '@/views/ViewItem.vue'
-import NotFound from '@/views/NotFound.vue'
 import { useStore } from '@/stores'
 import { updateUser } from '@/utils/api'
-import AuthView from '@/views/AuthView.vue'
-import AdminView from '@/views/AdminView.vue'
+
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
         {
             path: '/',
             name: 'Home',
-            component: HomeView,
+            component: () => import('@/views/HomeView.vue'),
             meta: {
                 title: '首页',
             },
@@ -26,7 +16,7 @@ const router = createRouter({
         {
             path: '/search',
             name: 'AdvancedSearch',
-            component: AdvancedSearch,
+            component: () => import('@/views/AdvancedSearch.vue'),
             meta: {
                 title: '高级搜索',
             },
@@ -34,7 +24,7 @@ const router = createRouter({
         {
             path: '/auth',
             name: 'Auth',
-            component: AuthView,
+            component: () => import('@/views/AuthView.vue'),
             meta: {
                 title: '认证',
             },
@@ -42,16 +32,16 @@ const router = createRouter({
         {
             path: '/user',
             name: 'User',
-            component: UserView,
+            component: () => import('@/views/UserView.vue'),
             meta: {
-                title: '我的',
+                title: '个人中心',
                 needLogin: true,
             },
         },
         {
             path: '/addItem',
             name: 'AddItem',
-            component: AddItem,
+            component: () => import('@/views/AddItem.vue'),
             meta: {
                 title: '添加物品',
                 needLogin: true,
@@ -60,7 +50,7 @@ const router = createRouter({
         {
             path: '/edit/:id',
             name: 'EditItem',
-            component: EditItem,
+            component: () => import('@/views/EditItem.vue'),
             meta: {
                 title: '更新物品',
                 needLogin: true,
@@ -69,7 +59,7 @@ const router = createRouter({
         {
             path: '/notifications',
             name: 'Notifications',
-            component: NotificationView,
+            component: () => import('@/views/NotificationView.vue'),
             meta: {
                 title: '通知',
                 needLogin: true,
@@ -78,7 +68,7 @@ const router = createRouter({
         {
             path: '/woodenFish',
             name: 'WoodenFish',
-            component: WoodenFishView,
+            component: () => import('@/views/WoodenFishView.vue'),
             meta: {
                 title: '电子木鱼',
                 needLogin: true,
@@ -87,7 +77,7 @@ const router = createRouter({
         {
             path: '/view/:id',
             name: 'ViewItem',
-            component: ViewItem,
+            component: () => import('@/views/ViewItem.vue'),
             meta: {
                 title: '物品详情',
             },
@@ -95,12 +85,16 @@ const router = createRouter({
         {
             path: '/admin/:pathMatch(.*)*',
             name: 'Admin',
-            component: AdminView,
+            component: () => import('@/views/AdminView.vue'),
+            meta: {
+                title: '管理',
+                needLogin: true,
+            },
         },
         {
             path: '/:pathMatch(.*)*',
             name: 'NotFound',
-            component: NotFound,
+            component: () => import('@/views/NotFound.vue'),
         },
     ],
 })

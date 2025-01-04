@@ -40,6 +40,8 @@ packaging==24.1
     # via
     #   drf-yasg
     #   gunicorn
+pillow==11.1.0
+    # via -r requirements.in
 psycopg==3.2.3
     # via -r requirements.in
 psycopg-binary==3.2.3

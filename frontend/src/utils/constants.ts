@@ -2,8 +2,8 @@
  * Stores common-used functions to reduce duplication
  */
 import type { ValidateError } from 'async-validator'
-import { NTag, type FormValidationError } from 'naive-ui'
-import { h, reactive } from 'vue'
+import { NIcon, NTag, type FormValidationError } from 'naive-ui'
+import { h, reactive, type Component } from 'vue'
 import MarkdownIt from 'markdown-it'
 /**
  * Default pager used in this project
@@ -121,4 +121,14 @@ export function removeMd(markdown: string): string {
     const html = md.render(markdown)
     const plainText = html.replace(/<[^>]+>/g, '')
     return plainText
+}
+
+
+/**
+ * Render an icon
+ * @param icon The icon component
+ * @returns A render function that renders the icon
+ */
+export function renderIcon(icon: Component) {
+    return () => h(NIcon, null, { default: () => h(icon) })
 }

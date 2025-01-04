@@ -1,6 +1,6 @@
 static/*/
 *htmlcov/
-files/
+files/*.png
 *.pycache
 *.coverage
 *.sqlite3

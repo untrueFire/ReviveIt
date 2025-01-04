@@ -20,21 +20,6 @@ jobs:
       matrix:
         python-version: ["3.10", "3.11", "3.12"]
 
-    services:
-      postgres:
-        image: postgres:17
-        env:
-          POSTGRES_USER: reviveit
-          POSTGRES_PASSWORD: root
-          POSTGRES_DB: reviveit
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
@@ -49,8 +34,13 @@ jobs:
       - name: Run Tests
         working-directory: backend
         run: |
-          coverage run --include=api/*.py ./manage.py test --settings=test_setting
-          coverage report
+          sed -i 's/"ENGINE": "django.db.backends.postgresql"/"ENGINE": "django.db.backends.sqlite3"/g' reviveit_backend/settings.py && \
+          sed -i 's|"OPTIONS": {"service": "reviveit"},|"NAME": BASE_DIR / "db.sqlite3",|g' reviveit_backend/settings.py && \
+          cat reviveit_backend/settings.py | grep -A 3 DATABASES && \
+          python ./manage.py makemigrations api && \
+          python ./manage.py migrate && \
+          coverage run --include=api/*.py ./manage.py test && \
+          coverage report && \
           coveralls
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

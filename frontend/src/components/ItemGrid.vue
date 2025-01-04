@@ -43,7 +43,6 @@
                                 fallback-src="/api/file/get/default_avatar.png"
                                 round
                                 :style="{ width: '24px', height: '24px' }"
-                                :img-props="{ width: '24px', height: '24px' }"
                             />
                             <n-text>
                                 {{ item.owner.username }}

@@ -1,186 +1,191 @@
 <template>
-    <div class="user-profile">
-        <h1>用户信息</h1>
-        <div v-if="store.user">
-            <p><strong>用户名:</strong> {{ store.user.username }}</p>
-            <p><strong>用户组:</strong> {{ groupTable[store.user.group] }}</p>
-            <p><strong>功德:</strong> {{ store.user.balance }}</p>
-        </div>
-        <div v-else>
-            <p>加载中...</p>
-        </div>
-
-        <h2>添加的物品</h2>
-        <n-data-table
-            v-if="items.length"
-            :columns="columns"
-            :data="items"
-            :pagination="pagination"
-            :bordered="false"
-            striped
-        />
-        <div v-else>
-            <p>没有添加的物品</p>
-        </div>
-    </div>
+    <n-layout has-sider v-if="store.user">
+        <n-layout-sider bordered>
+            <n-layout-header>
+                <n-flex
+                    vertical
+                    style="align-items: center; justify-content: center"
+                >
+                    <n-avatar
+                        size="large"
+                        :src="
+                            '/api/file/get/' +
+                            (store.user as User).avatar.filename
+                        "
+                        fallback-src="/api/file/get/default_avatar.png"
+                        round
+                    />
+                    <n-space>
+                        <n-text>{{ store.user?.username }}</n-text>
+                        <n-highlight
+                            :text="groupTable[(store.user as User).group]"
+                            :patterns="Object.values(groupTable)"
+                            :highlight-style="{
+                                padding: '0 6px',
+                                borderRadius: themeVars.borderRadius,
+                                display: 'inline-block',
+                                color: themeVars.baseColor,
+                                background: themeVars.primaryColor,
+                                transition: `all .3s ${themeVars.cubicBezierEaseInOut}`,
+                            }"
+                        />
+                    </n-space>
+                </n-flex>
+            </n-layout-header>
+            <n-layout-content>
+                <n-row style="align-items: center; justify-content: center">
+                    <n-col :span="12">
+                        <n-statistic label="持有物品" :value="999">
+                        </n-statistic>
+                    </n-col>
+                    <n-col :span="12">
+                        <n-statistic label="复活物品" :value="666">
+                        </n-statistic>
+                    </n-col>
+                    <n-col :span="12">
+                        <n-statistic label="放生物品" :value="123">
+                        </n-statistic>
+                    </n-col>
+                    <n-col :span="12">
+                        <n-statistic label="功德" :value="store.user.balance">
+                        </n-statistic>
+                    </n-col>
+                </n-row>
+            </n-layout-content>
+            <n-layout-footer>
+                <n-menu :options="menuOptions" v-model:value="activeKey"/>
+            </n-layout-footer>
+        </n-layout-sider>
+        <n-layout>
+            <n-layout-header>
+                <n-flex vertical>
+                    <n-flex>
+                        <n-avatar
+                            :src="'/api/file/get/' + store.user.avatar.filename"
+                            fallback-src="/api/file/get/default_avatar.png"
+                            round
+                            style="
+                                width: 50px;
+                                height: 50px;
+                                align-self: center;
+                            "
+                        />
+                        <n-flex vertical style="flex: 2">
+                            <n-flex style="align-items: baseline">
+                                <n-text style="font-size: 20px">
+                                    {{ store.user?.username }}
+                                </n-text>
+                                <n-text style="color: #b2b2b2">
+                                    UID: {{ store.user?.id }}
+                                </n-text>
+                            </n-flex>
+                            <n-progress
+                                type="line"
+                                :percentage="
+                                    (store.user as User)?.balance % 100
+                                "
+                                :height="24"
+                                indicator-placement="inside"
+                                processing
+                            >
+                                小乘
+                            </n-progress>
+                            <n-flex>
+                                <p style="align-self: self-start">
+                                    <strong> 用户组: </strong>
+                                    {{ groupTable[store.user.group] }}
+                                </p>
+                            </n-flex>
+                        </n-flex>
+                        <n-progress
+                            type="circle"
+                            status="success"
+                            :percentage="store.user.balance / 100"
+                        >
+                            大乘
+                        </n-progress>
+                    </n-flex>
+                    <n-divider />
+                </n-flex>
+            </n-layout-header>
+            <n-layout-content style="text-align: left;padding:0 20px;display: contents;">
+                <n-card :bordered="false">
+                    <span style="font-size: 20px">{{ get_title }}</span>
+                    <component :is="get_content" />                    
+                </n-card>
+            </n-layout-content>
+        </n-layout>
+    </n-layout>
 </template>
 
-<script setup lang="ts">
-import { h, ref, onMounted, computed, type ComputedRef } from 'vue'
-import { groupTable, pagination, randomTagType } from '@/utils/constants'
-import { removeMd } from '@/utils/constants'
-import { useRouter } from 'vue-router'
-import { fetchUserItems, deleteItem } from '@/utils/api'
+<script lang="ts" setup>
+import { HomeOutlined, PublishOutlined } from '@vicons/material'
+import { TransactionOutlined, UserOutlined } from '@vicons/antd'
+import { useThemeVars, type MenuOption } from 'naive-ui'
+import { computed, ref, type Component } from 'vue'
 import { useStore } from '@/stores'
-import {
-    useMessage,
-    NButton,
-    NFlex,
-    NTag,
-    type DataTableColumn,
-} from 'naive-ui'
-import type { Item } from '@/types/Api'
-const message = useMessage()
-const router = useRouter()
-const items = ref<Item[]>([])
+import { groupTable, renderIcon } from '@/utils/constants'
+import type { User } from '@/types/Api'
+import UserItems from './UserItems.vue'
+import UserOrders from './UserOrders.vue'
+import UserProfile from './UserProfile.vue'
+import WoodenFishView from './WoodenFishView.vue'
 const store = useStore()
+const themeVars = useThemeVars()
 
-function handleViewItem(itemId: number) {
-    router.push({ name: 'ViewItem', params: { id: itemId } })
-}
-
-function handleEditItem(itemId: number) {
-    router.push({ name: 'EditItem', params: { id: itemId } })
-}
-
-async function handleDeleteItem(itemId: number) {
-    try {
-        await deleteItem(itemId)
-        items.value = items.value.filter(item => item.id !== itemId)
-        message.success('物品删除成功')
-    } catch {
-        message.error('删除物品失败')
+const menuOptions: MenuOption[] = [
+    {
+        label: '首页',
+        key: 'home',
+        icon: renderIcon(HomeOutlined),
+    },
+    {
+        label: '物品管理',
+        key: 'item',
+        icon: renderIcon(PublishOutlined),
+    },
+    {
+        label: '交易管理',
+        key: 'transaction',
+        icon: renderIcon(TransactionOutlined),
+    },
+    {
+        label: '个人资料',
+        key: 'profile',
+        icon: renderIcon(UserOutlined),
+    },
+]
+const activeKey = ref('home')
+const get_title = computed(() => {
+    switch (activeKey.value) {
+        case 'item':
+            return '物品管理'
+        case 'transaction':
+            return '交易管理'
+        case 'profile':
+            return '个人资料'
+        default:
+            return '获取功德'
     }
-}
-
-const columns: ComputedRef<DataTableColumn<Item>[]> = computed(() => [
-    {
-        title: 'ID',
-        key: 'id',
-        sorter: 'default',
-        resizable: true,
-    },
-    {
-        title: '物品名称',
-        key: 'name',
-        ellipsis: true,
-        sorter: 'default',
-        resizable: true,
-    },
-    {
-        title: '标签',
-        key: 'tags',
-        ellipsis: true,
-        resizable: true,
-        render: row =>
-            h(NFlex, () =>
-                row.tags.map(tag =>
-                    h(
-                        NTag,
-                        {
-                            round: true,
-                            bordered: false,
-                            type: randomTagType(),
-                        },
-                        () => tag,
-                    ),
-                ),
-            ),
-        filterOptions: [...new Set(items.value.flatMap(item => item.tags))].map(
-            tag => ({ label: tag, value: tag }),
-        ),
-        filter: (value, row) => {
-            return Boolean(row.tags.includes(value as string))
-        },
-    },
-    {
-        title: '物品描述',
-        key: 'description',
-        ellipsis: true,
-        sorter: 'default',
-        resizable: true,
-        render: row => h('div', removeMd(row.description))
-    },
-    {
-        title: '联系方式',
-        key: 'contactInfo',
-        ellipsis: true,
-        sorter: 'default',
-        resizable: true,
-    },
-    {
-        title: '操作',
-        key: 'actions',
-        resizable: true,
-        render(row: Item) {
-            return h(NFlex, null, () => [
-                h(
-                    NButton,
-                    {
-                        strong: true,
-                        tertiary: true,
-                        size: 'small',
-                        onClick: () => handleViewItem(row.id as number),
-                    },
-                    { default: () => '详情' },
-                ),
-                h(
-                    NButton,
-                    {
-                        strong: true,
-                        tertiary: true,
-                        size: 'small',
-                        onClick: () => handleEditItem(row.id as number),
-                    },
-                    { default: () => '编辑' },
-                ),
-                h(
-                    NButton,
-                    {
-                        strong: true,
-                        tertiary: true,
-                        size: 'small',
-                        onClick: () => handleDeleteItem(row.id as number),
-                    },
-                    { default: () => '删除' },
-                ),
-            ])
-        },
-    },
-])
-
-onMounted(async () => {
-    fetchUserItems()
-        .then(data => {
-            items.value = data
-        })
-        .catch(error => message.error('加载用户信息和物品失败:', error))
+})
+const get_content = computed(() => {
+    switch (activeKey.value) {
+        case 'item':
+            return UserItems
+        case 'transaction':
+            return UserOrders
+        case 'profile':
+            return UserProfile
+        default:
+            return WoodenFishView
+    }
 })
 </script>
 
 <style scoped>
-.user-profile {
-    max-width: 70%;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.user-profile h1,
-.user-profile h2 {
-    text-align: center;
-    margin-bottom: 20px;
+.n-layout-header,
+.n-layout-content,
+.n-layout-footer {
+    padding: 24px;
 }
 </style>

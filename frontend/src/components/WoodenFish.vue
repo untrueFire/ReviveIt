@@ -14,10 +14,12 @@ import { post } from '@/utils/api'
 import CryptoJS from 'crypto-js'
 import { useLoadingBar, useMessage } from 'naive-ui'
 import { ref, computed, type StyleValue } from 'vue'
-import { useThemeStore } from '@/stores'
+import { useStore, useThemeStore } from '@/stores'
+import type { User } from '@/types/Api'
 const message = useMessage()
 const loadingBar = useLoadingBar()
-const store = useThemeStore()
+const store = useStore()
+const themeStore = useThemeStore()
 const isAnimePlaying = ref(false)
 const style = computed(() => {
     const res: StyleValue = {
@@ -27,7 +29,7 @@ const style = computed(() => {
     if (isAnimePlaying.value) {
         res.animation = 'run 0.2s linear'
     }
-    if (store.themeName === 'dark') {
+    if (themeStore.themeName === 'dark') {
         res.filter = 'invert(1)'
     }
     return res
@@ -53,6 +55,7 @@ async function handleKnock() {
         .then(nonce =>
             post('/api/user/knock/', { nonce })
                 .then(() => {
+                    (store.user as User).balance += 1
                     loadingBar.finish()
                     message.success('功德+1')
                 })

@@ -23,4 +23,6 @@ urlpatterns = [
     path("user/notifications/read/", user_notifications_read, name="user_notifications_read"),
     path("user/notifications/unread/", user_notifications_unread, name="user_notifications_unread"),
     path("user/notifications/", user_notifications, name="user_notifications"),
+    path("user/username/change/", change_username, name="change_username"),
+    path("user/avatar/change/", change_avatar, name="change_avatar"),
 ]

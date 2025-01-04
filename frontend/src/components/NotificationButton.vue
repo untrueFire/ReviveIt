@@ -1,5 +1,5 @@
 <template>
-    <n-badge dot :show="store.unreadCount > 0">
+    <n-badge :value="store.unreadCount">
         <router-link to="/notifications">消息</router-link>
     </n-badge>
 </template>

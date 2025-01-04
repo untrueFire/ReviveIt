@@ -330,12 +330,12 @@ class UserNotificationsTestCase(TestCase):
 class GetMyItemTestCase(TestCase):
     def setUp(self):
         self.client = Client()
-        self.user = User.objects.create_user(username="testuser", password="testpass", is_active=True)
-        self.user2 = User.objects.create_user(username="testuser2", password="testpass2", is_active=True)
+        self.user = User.objects.create(username="testuser", password="testpass", is_active=True)
+        self.user2 = User.objects.create(username="testuser2", password="testpass2", is_active=True)
         self.item2 = Item.objects.create(name="Item 2", description="Description 2", contactInfo="Contact 2", owner=self.user2)
 
     def test_get_my_items_success(self):
-        self.client.login(username="testuser", password="testpass")
+        self.client.force_login(self.user)
         response = self.client.get(reverse("get_my_items"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json(), [])
@@ -602,43 +602,139 @@ class TestSearchTags(TestCase):
 class UploadFileTestCase(TestCase):
     def setUp(self):
         self.client = APIClient()
-        self.url = reverse('upload_file')
-        self.user = User.objects.create_user(username='testuser', password='testpass')
+        self.url = reverse("upload_file")
+        self.user = User.objects.create_user(username="testuser", password="testpass")
         self.client.force_authenticate(self.user)
-        self.uploaded_files = []  # 用于记录上传的文件名
+        self.uploaded_files = []
 
     def test_upload_file_success(self):
-        file_content = b'GIF89a'
-        file_name = 'test_file.gif'
+        file_content = b"GIF89a"
+        file_name = "test_file.gif"
         file = SimpleUploadedFile(file_name, file_content)
-        response = self.client.post(self.url, {'file': file}, format='multipart')
+        response = self.client.post(self.url, {"file": file}, format="multipart")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         response_data = response.json()
-        self.assertIn('url', response_data)
-        saved_file_name = response_data['url'].split('/')[-1]
+        self.assertIn("url", response_data)
+        saved_file_name = response_data["url"].split("/")[-1]
         self.assertTrue(default_storage.exists(saved_file_name))
         self.uploaded_files.append(saved_file_name)
 
     def test_upload_file_no_file_provided(self):
-        response = self.client.post(self.url, {}, format='multipart')
+        response = self.client.post(self.url, {}, format="multipart")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         response_data = response.json()
-        self.assertIn('error', response_data)
-        self.assertEqual(response_data['error'], NO_FILE)
+        self.assertIn("error", response_data)
+        self.assertEqual(response_data["error"], NO_FILE)
 
     def test_upload_file_too_big(self):
-        file_content = b'a' * (settings.DATA_UPLOAD_MAX_MEMORY_SIZE + 1)
-        file_name = 'large_file.png'
+        file_content = b"a" * (settings.DATA_UPLOAD_MAX_MEMORY_SIZE + 1)
+        file_name = "large_file.png"
         file = SimpleUploadedFile(file_name, file_content)
-        response = self.client.post(self.url, {'file': file}, format='multipart')
+        response = self.client.post(self.url, {"file": file}, format="multipart")
         self.assertEqual(response.status_code, status.HTTP_413_REQUEST_ENTITY_TOO_LARGE)
 
     def test_upload_file_invalid_type(self):
-        file_content = b'<script>alert(1);</script>'
-        file_name = 'bad_file.html'
+        file_content = b"<script>alert(1);</script>"
+        file_name = "bad_file.html"
         file = SimpleUploadedFile(file_name, file_content)
-        response = self.client.post(self.url, {'file': file}, format='multipart')
+        response = self.client.post(self.url, {"file": file}, format="multipart")
         self.assertEqual(response.status_code, status.HTTP_422_UNPROCESSABLE_ENTITY)
+
+    def tearDown(self):
+        for file_name in self.uploaded_files:
+            default_storage.delete(file_name)
+
+
+class ChangeUsernameTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="testuser", is_active=True)
+        self.client = APIClient()
+        self.client.force_authenticate(user=self.user)
+
+    def test_change_username_success(self):
+        """
+        测试成功修改用户名
+        """
+        url = reverse("change_username")
+        data = {"username": "newusername"}
+        response = self.client.post(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.username, "newusername")
+
+    def test_change_username_empty(self):
+        """
+        测试用户名为空时的错误
+        """
+        url = reverse("change_username")
+        data = {"username": ""}
+        response = self.client.post(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.username, "testuser")
+
+    def test_change_username_unauthenticated(self):
+        """
+        测试未认证用户访问时的错误
+        """
+        self.client.logout()
+        url = reverse("change_username")
+        data = {"username": "newusername"}
+        response = self.client.post(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.username, "testuser")
+
+    def test_change_username_whitespace(self):
+        """
+        测试用户名包含空白字符时的错误
+        """
+        url = reverse("change_username")
+        data = {"username": "  "}
+        response = self.client.post(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.username, "testuser")
+
+
+class ChangeAvatarTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create(username="testuser", password='testpass', is_staff=True)
+        self.image = Image.objects.create(filename="test_image.jpg")
+        self.uploaded_files = []
+
+    def test_change_avatar_success(self):
+        file = SimpleUploadedFile("test_image.jpg", b"file_content", content_type="image/jpeg")
+        orig_filename = self.user.avatar.filename
+        url = reverse("change_avatar")
+        self.client.force_login(self.user)
+        response = self.client.post(url, {"file": file}, format="multipart")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn("url", response.json())
+        self.uploaded_files.append(response.json()["url"].split("/")[-1])
+        self.user.refresh_from_db()
+        self.assertNotEqual(self.user.avatar.filename, orig_filename)
+
+    def test_change_avatar_file_too_large(self):
+        file = SimpleUploadedFile("large_image.jpg", b"x" * (20 * 1024 * 1024), content_type="image/jpeg")
+        url = reverse("change_avatar")
+        self.client.force_login(self.user)
+        response = self.client.post(url, {"file": file}, format="multipart")
+        self.assertEqual(response.status_code, status.HTTP_413_REQUEST_ENTITY_TOO_LARGE)
+
+    def test_change_avatar_invalid_format(self):
+        file = SimpleUploadedFile("invalid_file.txt", b"file_content", content_type="text/plain")
+        url = reverse("change_avatar")
+        self.client.force_login(self.user)
+        response = self.client.post(url, {"file": file}, format="multipart")
+        self.assertEqual(response.status_code, status.HTTP_422_UNPROCESSABLE_ENTITY)
+
+    def test_change_avatar_no_file(self):
+        url = reverse("change_avatar")
+        self.client.force_login(self.user)
+        response = self.client.post(url, {}, format="multipart")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def tearDown(self):
         for file_name in self.uploaded_files:

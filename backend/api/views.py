@@ -1,3 +1,4 @@
+import json
 from django.db import IntegrityError
 import rest_framework.request
 from django.core.exceptions import RequestDataTooBig
@@ -486,15 +487,16 @@ def search_tag(request: rest_framework.request.Request):
     serializer = ItemSerializer(items[offset : offset + limit], many=True)
     return Response(serializer.data)
 
+
 @swagger_auto_schema(
-    method='post',
+    method="post",
     operation_description="上传一个文件，返回其URL",
     request_body=openapi.Schema(
         type=openapi.TYPE_OBJECT,
-        required=['file'],
         properties={
-            'file': openapi.Schema(type=openapi.TYPE_FILE, description="要上传的文件"),
+            "file": openapi.Schema(type=openapi.TYPE_FILE, format="binary", description="要上传的文件"),
         },
+        required=["file"],
     ),
     responses={
         200: openapi.Response(
@@ -502,43 +504,89 @@ def search_tag(request: rest_framework.request.Request):
             schema=openapi.Schema(
                 type=openapi.TYPE_OBJECT,
                 properties={
-                    'url': openapi.Schema(type=openapi.TYPE_STRING, description="文件的URL"),
+                    "url": openapi.Schema(type=openapi.TYPE_STRING, description="文件的URL"),
                 },
             ),
         ),
         400: INVALID_REQUEST,
         413: REQUEST_TOO_BIG,
-        422: INVALID_FORMAT
+        422: INVALID_FORMAT,
     },
 )
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def upload_file(request: rest_framework.request.Request):
     try:
-        if 'file' not in request.FILES:
-            return JsonResponse({'error': NO_FILE}, status=400)
-        
+        if "file" not in request.FILES:
+            return JsonResponse({"error": NO_FILE}, status=400)
+
         from hashlib import sha256
         from os.path import splitext
-        
-        file_obj = request.FILES['file']
+
+        file_obj = request.FILES["file"]
         file_content = file_obj.read()
-        
+
         if len(file_content) > settings.DATA_UPLOAD_MAX_MEMORY_SIZE:
             raise RequestDataTooBig
-        
+
         _, ext = splitext(file_obj.name)
         assert ext in settings.ALLOWED_IMAGE_EXTENSIONS
-        
+
         new_filename = sha256(file_content).hexdigest() + ext
-        
-        file_name = default_storage.save(new_filename, ContentFile(file_content))
-        file_url = default_storage.url(file_name)
-        
+        if not default_storage.exists(new_filename):
+            default_storage.save(new_filename, ContentFile(file_content))
+        file_url = default_storage.url(new_filename)
         Image.objects.get_or_create(filename=new_filename)
-        
-        return JsonResponse({'url': file_url})
+
+        return JsonResponse({"url": file_url})
     except RequestDataTooBig:
         return fast413
     except AssertionError:
         return fast422
+
+
+@swagger_auto_schema(
+    method="post",
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        required=["username"],
+        properties={
+            "username": openapi.Schema(type=openapi.TYPE_STRING, description="新的用户名"),
+        },
+    ),
+)
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def change_username(request: rest_framework.request.Request):
+    new_username = request.data["username"].strip()
+    assert new_username
+    user = request._request.user
+    user.username = new_username
+    user.save()
+    return fast200
+
+
+@swagger_auto_schema(
+    method="post",
+    operation_description="修改头像",
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            "file": openapi.Schema(type=openapi.TYPE_FILE, format="binary", description="新头像"),
+        },
+        required=["file"],
+    ),
+    responses={200: SUCCESS, 400: INVALID_REQUEST, 413: REQUEST_TOO_BIG, 422: INVALID_FORMAT},
+)
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def change_avatar(request: rest_framework.request.Request):
+    response = upload_file(request._request)
+    if response.status_code != 200:
+        return response
+    file_url = json.loads(response._container[0].decode())['url'].split('/')[-1]
+    user: User = request._request.user
+    user.avatar = Image.objects.get(filename=file_url)
+    user.save()
+    full_url = default_storage.url(file_url)
+    return JsonResponse({"url": full_url})
