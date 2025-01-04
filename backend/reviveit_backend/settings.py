@@ -97,9 +97,7 @@ WSGI_APPLICATION = "reviveit_backend.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "OPTIONS": {
-            "service": "reviveit"
-        },
+        "OPTIONS": {"service": "reviveit"},
     }
 }
 
