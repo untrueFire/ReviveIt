@@ -10,8 +10,6 @@ class Image(models.Model):
 
 
 def default_avatar(username: str):
-    if not username:
-        return Image.objects.get_or_create(filename="default_avatar.png")[0]
     if not Image.objects.filter(filename=f"{username}_avatar.png").exists():
         generate_avatar(username)
     return Image.objects.get_or_create(filename=f"{username}_avatar.png")[0]
